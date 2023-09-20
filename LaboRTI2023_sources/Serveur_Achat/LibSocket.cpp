@@ -28,7 +28,7 @@ int ServerSocket(int port)
 
     // Crée la socket, retourne 0 en cas d'échec
     if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("Erreur de socket()");
+        perror("Erreur de socket()\n");
         return 0;
     }
 
@@ -46,7 +46,7 @@ int ServerSocket(int port)
     sprintf(portStr, "%d", port);
 
     if (getaddrinfo(NULL, portStr, &hints, &results) != 0) {
-        perror("Erreur de getaddrinfo()");
+        perror("Erreur de getaddrinfo()\n");
         close(s);
         return 0;
     }
@@ -55,13 +55,13 @@ int ServerSocket(int port)
 
     // Fait appel à bind() pour lier la socket à l'adresse réseau
     if (bind(s, results->ai_addr, results->ai_addrlen) < 0) {
-        perror("Erreur de bind()");
+        perror("Erreur de bind()\n");
         freeaddrinfo(results);
         close(s);
         return 0;
     }
 
-    printf("return de bind %d",socketService);
+    printf("return de bind %d\n",socketService);
 
     freeaddrinfo(results);
     printf("bind() reussi !\n");
@@ -82,11 +82,61 @@ int Accept(int sEcoute,char *ipClient)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //process :
+
+//info : normalement la fonction fonctoinne mais je n'aie pas pu la tester car il faut les ip du serveur 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int ClientSocket(char* ipServeur,int portServeur)
 {
-    return 0;
+    int ClientSocket(char* ipServeur, int portServeur)
+{
+    int s = 0;
+
+    // Création du socket du client
+    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) // Notez la double égalité ici
+    {
+        perror("Erreur de socket()\n");
+        return -1; // Retourne une valeur d'erreur (-1) au lieu de 0
+    }
+
+    printf("Descripteur du socket client : %d\n", s);
+
+    // Récupération des informations du client
+
+    struct addrinfo hints;
+    struct addrinfo *results;
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_NUMERICSERV;
+
+    char portStr[6];
+    sprintf(portStr, "%d", portServeur);
+
+    if (getaddrinfo(ipServeur, portStr, &hints, &results) != 0) 
+    {
+        perror("Erreur de getaddrinfo client\n");
+        close(s);
+        return -1;
+    }
+
+    // Fait appel à connect() pour se connecter au serveur
+    if (connect(s, results->ai_addr, results->ai_addrlen) < 0) 
+    {
+        perror("Erreur de connect()\n");
+        freeaddrinfo(results);
+        close(s);
+        return -1;
+    }
+
+    printf("Connexion réussie !\n");
+
+    freeaddrinfo(results);
+
+    // Retourne le descripteur de fichier du socket client connecté
+    return s;
+}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
