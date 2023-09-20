@@ -1,4 +1,15 @@
 #include "LibSocket.h"
+#include <iostream>
+#include <cstring>
+#include <fstream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //in : prend le port (toujours plus de 1000)
@@ -8,9 +19,7 @@
 //info: je met tout comme ça il faut trier et corriger c'est juste pour avoir la structure
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-int LibSocket::ServerSocket(int port) 
+int ServerSocket(int port)
 {
     int s;
 
@@ -42,19 +51,23 @@ int LibSocket::ServerSocket(int port)
         return 0;
     }
 
+    int socketService=0;
+
     // Fait appel à bind() pour lier la socket à l'adresse réseau
-    if (bind(s, results->ai_addr, results->ai_addrlen) < 0) {
+    if ((socketService = bind(s, results->ai_addr, results->ai_addrlen)) < 0) {
         perror("Erreur de bind()");
         freeaddrinfo(results);
         close(s);
         return 0;
     }
 
+    printf("return de bind %d",socketService);
+
     freeaddrinfo(results);
     printf("bind() reussi !\n");
 
-    //retourn le socket
-    return 1;
+    //retourn le socket d'écoute
+    return s;
 }
 
 
@@ -62,34 +75,34 @@ int LibSocket::ServerSocket(int port)
 //process :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int LibSocket::Accept(int sEcoute,char *ipClient)
+int Accept(int sEcoute,char *ipClient)
 {
-
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //process :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int LibSocket::ClientSocket(char* ipServeur,int portServeur)
+int ClientSocket(char* ipServeur,int portServeur)
 {
-
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //process :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int LibSocket::Send(int sSocket,char* data,int taille)
+int Send(int sSocket,char* data,int taille)
 {
-
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //process :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int LibSocket::Receive(int sSocket,char* data)
+int Receive(int sSocket,char* data)
 {
-
+    return 0;
 }
