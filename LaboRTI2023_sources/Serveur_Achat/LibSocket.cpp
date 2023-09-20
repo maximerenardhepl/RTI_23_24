@@ -10,7 +10,8 @@
 
 
 
-int LibSocket::ServerSocket(int port) {
+int LibSocket::ServerSocket(int port) 
+{
     int s;
 
     // Affiche le pid du processus
@@ -52,7 +53,7 @@ int LibSocket::ServerSocket(int port) {
     freeaddrinfo(results);
     printf("bind() reussi !\n");
 
-    // À ce stade, vous pouvez retourner 1 pour indiquer le succès
+    //retourn le socket
     return 1;
 }
 
