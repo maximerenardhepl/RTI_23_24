@@ -29,7 +29,7 @@ int ServerSocket(int port)
     // Crée la socket, retourne 0 en cas d'échec
     if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("Erreur de socket()");
-        return 0;
+        return -1;
     }
 
     printf("socket creee = %d\n", s);
@@ -48,20 +48,16 @@ int ServerSocket(int port)
     if (getaddrinfo(NULL, portStr, &hints, &results) != 0) {
         perror("Erreur de getaddrinfo()");
         close(s);
-        return 0;
+        return -1;
     }
-
-    int socketService=0;
 
     // Fait appel à bind() pour lier la socket à l'adresse réseau
     if (bind(s, results->ai_addr, results->ai_addrlen) < 0) {
         perror("Erreur de bind()");
         freeaddrinfo(results);
         close(s);
-        return 0;
+        return -1;
     }
-
-    printf("return de bind %d",socketService);
 
     freeaddrinfo(results);
     printf("bind() reussi !\n");
@@ -77,7 +73,35 @@ int ServerSocket(int port)
 
 int Accept(int sEcoute,char *ipClient)
 {
-    return 0;
+    if(listen(sEcoute, SOMAXCONN) == -1)
+    {
+        return -1;
+    }
+    printf("listen() reussi !\n");
+
+    int sService = 0;
+    if((sService = accept(sEcoute, &adrClient, &adrClientLen)) == -1)
+    {
+        return -1;
+    }
+    printf("accept() reussi !");
+    printf("socket de service = %d\n",sService);
+
+    //Définition des structures permettant de récupérer les informations sur le client qui s'est connecté via l'appel système 'accept()'
+    //Aucune utilité actuellement..Mais ces informations pourraient etre stockées dans un fichier de log par exemple
+    struct sockaddr_in adrClient;
+    socklen_t adrClientLen;
+    char host[NI_MAXHOST];
+    char port[NI_MAXSERV];
+
+    getpeername(sService,(struct sockaddr*)&adrClient,&adrClientLen);
+    getnameinfo((struct sockaddr*)&adrClient,adrClientLen,
+    host,NI_MAXHOST,
+    port,NI_MAXSERV,
+    NI_NUMERICSERV | NI_NUMERICHOST);
+
+    ipClient = host
+    return sService;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
