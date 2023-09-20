@@ -16,7 +16,7 @@
 //process : fonction qui sera appelée par le processus serveur
 //out :  retourne la socket d’écoute ainsi créé
 
-//info: je met tout comme ça il faut trier et corriger c'est juste pour avoir la structure
+//info:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int ServerSocket(int port)
@@ -54,7 +54,7 @@ int ServerSocket(int port)
     int socketService=0;
 
     // Fait appel à bind() pour lier la socket à l'adresse réseau
-    if ((socketService = bind(s, results->ai_addr, results->ai_addrlen)) < 0) {
+    if (bind(s, results->ai_addr, results->ai_addrlen) < 0) {
         perror("Erreur de bind()");
         freeaddrinfo(results);
         close(s);
