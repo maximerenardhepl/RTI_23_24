@@ -187,7 +187,7 @@ int Receive(int sSocket,char* data)
     }
     else 
     {
-        char nbBytesStr;
+        char nbBytesStr[2];
         int nbBytes = 0; //Va contenir la valeur correspondant à la taille réelle de la charge utile du paquet de bytes.
         int nbCarLus = 0;
 
@@ -200,7 +200,7 @@ int Receive(int sSocket,char* data)
                 return nbCarLus;
             }
 
-            nbBytes += nbBytesStr * pow(10, j); //Actualisation de la valeur de nbBytes
+            nbBytes += nbBytesStr[0] * pow(10, j); //Actualisation de la valeur de nbBytes
         }
         
         //verif si le char a la capaciter d'accuillir les données (taille)

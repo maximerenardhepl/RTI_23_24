@@ -2,6 +2,7 @@
 #include "LibSocket.h"
 using namespace std;
 
+//nombre para/ port
 int main(int argc, char* argv[])
 {
     if (argc != 2)
