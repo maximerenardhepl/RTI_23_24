@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <math.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +80,13 @@ int Accept(int sEcoute,char *ipClient)
     }
     printf("listen() reussi !\n");
 
+    //Définition des structures permettant de récupérer les informations sur le client qui s'est connecté via l'appel système 'accept()'
+    //Ces informations pourraient etre stockées dans un fichier de log par exemple (idée)
+    struct sockaddr adrClient;
+    socklen_t adrClientLen;
+    char host[NI_MAXHOST];
+    char port[NI_MAXSERV];
+
     int sService = 0;
     if((sService = accept(sEcoute, &adrClient, &adrClientLen)) == -1)
     {
@@ -87,20 +95,17 @@ int Accept(int sEcoute,char *ipClient)
     printf("accept() reussi !");
     printf("socket de service = %d\n",sService);
 
-    //Définition des structures permettant de récupérer les informations sur le client qui s'est connecté via l'appel système 'accept()'
-    //Aucune utilité actuellement..Mais ces informations pourraient etre stockées dans un fichier de log par exemple
-    struct sockaddr_in adrClient;
-    socklen_t adrClientLen;
-    char host[NI_MAXHOST];
-    char port[NI_MAXSERV];
+    if(ipClient != NULL)
+    {
+        getpeername(sService,&adrClient,&adrClientLen);
+        getnameinfo(&adrClient,adrClientLen,
+        host,NI_MAXHOST,
+        port,NI_MAXSERV,
+        NI_NUMERICSERV | NI_NUMERICHOST);
 
-    getpeername(sService,(struct sockaddr*)&adrClient,&adrClientLen);
-    getnameinfo((struct sockaddr*)&adrClient,adrClientLen,
-    host,NI_MAXHOST,
-    port,NI_MAXSERV,
-    NI_NUMERICSERV | NI_NUMERICHOST);
-
-    ipClient = host
+        ipClient = host;
+    }
+    
     return sService;
 }
 
@@ -111,8 +116,6 @@ int Accept(int sEcoute,char *ipClient)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int ClientSocket(char* ipServeur,int portServeur)
-{
-    int ClientSocket(char* ipServeur, int portServeur)
 {
     int s = 0;
 
@@ -159,8 +162,6 @@ int ClientSocket(char* ipServeur,int portServeur)
 
     // Retourne le descripteur de fichier du socket client connecté
     return s;
-}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
