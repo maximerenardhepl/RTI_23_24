@@ -178,5 +178,31 @@ int Send(int sSocket,char* data,int taille)
 
 int Receive(int sSocket,char* data)
 {
-    return 0;
+    if(data == NULL) 
+    {
+        //Le buffer doit etre initialisé
+        return -1;
+    }
+    else 
+    {
+        char nbBytesStr[4];
+        int nbBytes = 0;
+        int nbCarLus = 0;
+
+        for(int i = 0, j = 3; i < 4; i++, j--) 
+        {
+            if((nbCarLus = read(sSocket, nbBytesStr, 1)) <= 0) return nbCarLus;
+            nbBytes += nbBytesStr[i] * pow(10, j);
+        }
+        
+        if(sizeof(data) >= nbBytes)
+        {
+            return (nbCarLus = read(sSocket, data, nbBytes));
+        }
+        else
+        {
+            //Taille du buffer de stockage insuffisante.
+            return -1;
+        }
+    }
 }
