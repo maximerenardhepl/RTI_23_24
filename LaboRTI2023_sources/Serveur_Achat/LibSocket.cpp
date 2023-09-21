@@ -186,13 +186,15 @@ int Receive(int sSocket,char* data)
     else 
     {
         char nbBytesStr[4];
-        int nbBytes = 0;
+        int nbBytes = 0; //Va contenir la valeur correspondant à la taille réelle de la charge utile du paquet de bytes.
         int nbCarLus = 0;
 
-        for(int i = 0, j = 3; i < 4; i++, j--) 
+        //Lecture des 4 premiers octets contenant la taille de la réelle charge utile du paquet de bytes.
+        //Exemple : Charge utile = "Hello World" -> alors le vrai message écrit sur le pipe sera : "0011Hello World"
+        for(int i = 0, j = 3; i < 4; i++, j--)
         {
-            if((nbCarLus = read(sSocket, nbBytesStr, 1)) <= 0) return nbCarLus;
-            nbBytes += nbBytesStr[i] * pow(10, j);
+            if((nbCarLus = read(sSocket, nbBytesStr, 1)) <= 0) return nbCarLus; //Si une erreur se produit lors de la lecture on retourne la valeur retournée par read()
+            nbBytes += nbBytesStr[i] * pow(10, j); //Actualisation de la valeur de nbBytes
         }
         
         if(sizeof(data) >= nbBytes)
@@ -201,7 +203,7 @@ int Receive(int sSocket,char* data)
         }
         else
         {
-            //Taille du buffer de stockage insuffisante.
+            //Taille du buffer de stockage (ici data) insuffisante.
             return -1;
         }
     }
