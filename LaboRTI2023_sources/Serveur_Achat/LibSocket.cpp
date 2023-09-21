@@ -87,6 +87,7 @@ int Accept(int sEcoute,char *ipClient)
     char host[NI_MAXHOST];
     char port[NI_MAXSERV];
 
+    //tout ces para son vide et vont ce remplir grace a accepte
     int sService = 0;
     if((sService = accept(sEcoute, &adrClient, &adrClientLen)) == -1)
     {
@@ -186,7 +187,7 @@ int Receive(int sSocket,char* data)
     }
     else 
     {
-        char nbBytesStr[4];
+        char nbBytesStr;
         int nbBytes = 0; //Va contenir la valeur correspondant à la taille réelle de la charge utile du paquet de bytes.
         int nbCarLus = 0;
 
@@ -194,10 +195,15 @@ int Receive(int sSocket,char* data)
         //Exemple : Charge utile = "Hello World" -> alors le vrai message écrit sur le pipe sera : "0011Hello World"
         for(int i = 0, j = 3; i < 4; i++, j--)
         {
-            if((nbCarLus = read(sSocket, nbBytesStr, 1)) <= 0) return nbCarLus; //Si une erreur se produit lors de la lecture on retourne la valeur retournée par read()
-            nbBytes += nbBytesStr[i] * pow(10, j); //Actualisation de la valeur de nbBytes
+            if((nbCarLus = read(sSocket, nbBytesStr, 1)) <= 0) //Si une erreur se produit lors de la lecture on retourne la valeur retournée par read()
+            {
+                return nbCarLus;
+            }
+
+            nbBytes += nbBytesStr * pow(10, j); //Actualisation de la valeur de nbBytes
         }
         
+        //verif si le char a la capaciter d'accuillir les données (taille)
         if(sizeof(data) >= nbBytes)
         {
             return (nbCarLus = read(sSocket, data, nbBytes));
