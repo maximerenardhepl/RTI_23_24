@@ -5,6 +5,7 @@ using namespace std;
 //nombre para/ port
 int main(int argc, char* argv[])
 {
+    //vérifie la présence d'argument
     if (argc != 2)
     {
         printf("Erreur...\n");
@@ -13,6 +14,7 @@ int main(int argc, char* argv[])
     }
 
     int sEcoute = 0;
+    //je passe un tableau d'argument avec donc l'ip et le port
     if((sEcoute = ServerSocket(atoi(argv[1]))) == -1)
     {
         perror("Erreur de ServerSocket");

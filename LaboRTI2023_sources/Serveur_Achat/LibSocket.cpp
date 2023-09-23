@@ -10,7 +10,11 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <math.h>
+#include <string>
 
+using namespace std;
+
+const int TAILLE_MAX = 1024;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //in : prend le port (toujours plus de 1000)
@@ -167,12 +171,56 @@ int ClientSocket(char* ipServeur,int portServeur)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //process :
+
+//info : pas fait de test mais ça devrais aller (je les ferais samedi soir)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int Send(int sSocket,char* data,int taille)
+int Send(int sSocket, char* data, int taille)
 {
-    return 0;
+    int R = 0;
+
+    // ajoute a l'en-tête avec des zéros à gauche puis le reste
+    string tempo = to_string(taille);
+    string EnTete = string(4 - tempo.length(), '0') + tempo;
+
+    char trame[TAILLE_MAX + 4];
+
+    if (data == nullptr)
+    {
+        printf("Aucune donnée à envoyer\n");
+        return -1;
+    }
+    else
+    {
+        if (taille > TAILLE_MAX)
+        {
+            printf("Trame trop grande\n");
+            return -1;
+        }
+        else
+        {
+            // Copie de l'en-tête dans la trame
+            memcpy(trame, EnTete.c_str(), 4);
+            
+            // Copie des données dans la trame
+            memcpy(trame + 4, data, taille);
+
+            R = write(sSocket, trame, taille + 4);
+
+            if (R < 0)
+            {
+                printf("Erreur lors de l'envoi du message\n");
+                return -1;
+            }
+            else
+            {
+                printf("Message envoyé avec succès (%d octets)\n", R);
+                return R;
+            }
+        }
+    }
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //process :
