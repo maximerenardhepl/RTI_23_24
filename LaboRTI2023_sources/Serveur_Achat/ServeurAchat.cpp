@@ -2,21 +2,23 @@
 #include <pthread.h>
 #include <signal.h>
 #include "LibSocket.h"
+
 using namespace std;
 
 void HandlerSIGINT(int s);
 void* FctThreadClient(void* p);
 
-#define POOL_MAX 10
-int TabSocket[20] = {0};
-pthread_mutex_t mutexSocketsAcceptees;
-pthread_cond_t condSocketsAcceptees;
+#define NB_THREADS_POOL_MAX 10
+#define TAILLE_FILE_ATT 30
+
+int TabSocket[TAILLE_FILE_ATT] = {-1};
+pthread_mutex_t mutexTabSocket;
+pthread_cond_t condTabSocket;
 int indiceEcriture=0, indiceLecture=0;
     
 //nombre para/ port
 int main(int argc, char* argv[])
 {   
-    
     //vérifie la présence d'argument
     if (argc != 2)
     {
@@ -49,9 +51,9 @@ int main(int argc, char* argv[])
     }
 
     //création du pool de thread
-    for(int i=0 ; i < POOL_MAX ; i++)
+    for(int i=0 ; i < NB_THREADS_POOL_MAX ; i++)
     {
-        pthread_create(&th,NULL,FctThreadClient,NULL);
+        pthread_create(&th, NULL, FctThreadClient, NULL);
     }
 
 
@@ -62,11 +64,29 @@ int main(int argc, char* argv[])
         char ipClient[50];
         if((sService = Accept(sEcoute, ipClient)) != -1)
         {
-            pthread_mutex_lock(&mutexSocketsAcceptees);
-            TabSocket[indiceEcriture] = sService;
-            indiceEcriture++;
-            pthread_mutex_unlock(&mutexSocketsAcceptees);
-            pthread_cond_signal(&condSocketsAcceptees);
+            pthread_mutex_lock(&mutexTabSocket);
+
+            //retour début du tableau si place libre dans la file.
+            if (indiceEcriture == (TAILLE_FILE_ATT-1) && TabSocket[0] == -1)
+            {
+                indiceEcriture = 0;
+            }
+            else //Pour les autres cases...
+            {
+                if(indiceEcriture == -1) //Vérif si l'element courant de la file d'attente est libre.
+                {
+                    TabSocket[indiceEcriture] = sService;
+                    indiceEcriture++;
+                    pthread_cond_signal(&condSocketsAcceptees);
+                }
+                else
+                {
+                    //File remplie -> alerter le client et fermer le client.
+                    close(sService);
+                }
+            }
+
+            pthread_mutex_unlock(&mutexTabSocket);
         }
     }
     return 0;
@@ -77,13 +97,13 @@ void* FctThreadClient(void* p)
 {
     int Ssocket=0;
 
-    pthread_mutex_lock(&mutexSocketsAcceptees);
+    pthread_mutex_lock(&mutexTabSocket);
     //ce réveille après un condsignal
-    pthread_cond_wait(&condSocketsAcceptees,&mutexSocketsAcceptees);
+    pthread_cond_wait(&condSocketsAcceptees,&mutexTabSocket);
 
     Ssocket = TabSocket[indiceLecture];
 
-    pthread_mutex_unlock(&mutexSocketsAcceptees);
+    pthread_mutex_unlock(&mutexTabSocket);
 
     return 0;
 }
@@ -91,5 +111,12 @@ void* FctThreadClient(void* p)
 //signale pour couper les processus
 void HandlerSIGINT(int s)
 {
-
+    printf("\nArret du serveur.\n");
+    close(sEcoute);
+    pthread_mutex_lock(&mutexSocketsAcceptees);
+    for (int i=0 ; i<TAILLE_FILE_ATTENTE ; i++)
+    if (socketsAcceptees[i] != -1) close(socketsAcceptees[i]);
+    pthread_mutex_unlock(&mutexSocketsAcceptees);
+    SMOP_Close();
+    exit(0);
 }
