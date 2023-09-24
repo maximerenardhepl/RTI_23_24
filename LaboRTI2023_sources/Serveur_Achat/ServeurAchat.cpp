@@ -10,6 +10,8 @@ using namespace std;
 
 void HandlerSIGINT(int s);
 void* FctThreadClient(void* p);
+void TraitementConnexion(int sService);
+
 
 #define NB_THREADS_POOL_MAX 10
 #define TAILLE_FILE_ATT 30
@@ -101,15 +103,32 @@ void* FctThreadClient(void* p)
 {
     int Ssocket=0;
 
-    pthread_mutex_lock(&mutexTabSocket);
-    //ce réveille après un condsignal
-    pthread_cond_wait(&condTabSocket,&mutexTabSocket);
+    while(1)
+    {
+        pthread_mutex_lock(&mutexTabSocket);
 
-    Ssocket = TabSocket[indiceLecture];
+            //ce réveille après un condsignal
+            pthread_cond_wait(&condTabSocket,&mutexTabSocket);
 
-    pthread_mutex_unlock(&mutexTabSocket);
+            Ssocket = TabSocket[indiceLecture];
+            TabSocket[indiceLecture] = -1;
+            indiceLecture++;
+            
+            if(indiceLecture == TAILLE_FILE_ATT-1)
+            {
+                //remise au début de la tete de lecture
+                indiceLecture=0;
+            }
 
-    return 0;
+        pthread_mutex_unlock(&mutexTabSocket);
+        TraitementConnexion(Ssocket);
+        pthread_exit(0);
+    }
+}
+
+void TraitementConnexion(int sService)
+{
+
 }
 
 //signale pour couper les processus
@@ -124,3 +143,4 @@ void HandlerSIGINT(int s)
     //SMOP_Close();
     exit(0);
 }
+
