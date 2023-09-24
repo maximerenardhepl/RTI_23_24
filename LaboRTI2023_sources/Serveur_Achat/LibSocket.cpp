@@ -14,7 +14,7 @@
 
 using namespace std;
 
-const int TAILLE_MAX = 1024;
+const int TAILLE_MAX = 1496;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //in : prend le port (toujours plus de 1000)
@@ -185,20 +185,20 @@ int Send(int sSocket, char* data, int taille)
 
     char trame[TAILLE_MAX + 4];
 
-    if (data == nullptr)
+    if (data == NULL)
     {
         printf("Aucune donnée à envoyer\n");
         return -1;
     }
     else
     {
-        if (taille > TAILLE_MAX)
-        {
-            printf("Trame trop grande\n");
-            return -1;
-        }
-        else
-        {
+        //if (taille > TAILLE_MAX)
+        //{
+        //    printf("Trame trop grande\n");
+        //    return -1;
+        //}
+        //else
+        //{
             // Copie de l'en-tête dans la trame
             memcpy(trame, EnTete.c_str(), 4);
             
@@ -217,7 +217,7 @@ int Send(int sSocket, char* data, int taille)
                 printf("Message envoyé avec succès (%d octets)\n", R);
                 return R;
             }
-        }
+        //}
     }
 }
 
