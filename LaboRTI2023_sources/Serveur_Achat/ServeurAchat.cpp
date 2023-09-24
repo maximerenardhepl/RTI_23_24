@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     }
 
     //création du pool de thread
-    for(int i=0 ; i<POOL_MAX ; i++)
+    for(int i=0 ; i < POOL_MAX ; i++)
     {
         pthread_create(&th,NULL,FctThreadClient,NULL);
     }
@@ -72,12 +72,13 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+//thread client 
 void* FctThreadClient(void* p)
 {
     int Ssocket=0;
 
     pthread_mutex_lock(&mutexSocketsAcceptees);
-    //ce réveille
+    //ce réveille après un condsignal
     pthread_cond_wait(&condSocketsAcceptees,&mutexSocketsAcceptees);
 
     Ssocket = TabSocket[indiceLecture];
@@ -87,6 +88,7 @@ void* FctThreadClient(void* p)
     return 0;
 }
 
+//signale pour couper les processus
 void HandlerSIGINT(int s)
 {
 
