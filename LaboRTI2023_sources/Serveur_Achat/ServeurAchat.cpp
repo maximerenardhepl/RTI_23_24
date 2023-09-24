@@ -2,6 +2,9 @@
 #include <pthread.h>
 #include <signal.h>
 #include "LibSocket.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -15,6 +18,7 @@ int TabSocket[TAILLE_FILE_ATT] = {-1};
 pthread_mutex_t mutexTabSocket;
 pthread_cond_t condTabSocket;
 int indiceEcriture=0, indiceLecture=0;
+int sEcoute = 0;
     
 //nombre para/ port
 int main(int argc, char* argv[])
@@ -42,7 +46,7 @@ int main(int argc, char* argv[])
     //initialisation
     pthread_t th;
 
-    int sEcoute = 0;
+   
     //je passe un tableau d'argument avec donc l'ip et le port
     if((sEcoute = ServerSocket(atoi(argv[1]))) == -1)
     {
@@ -77,7 +81,7 @@ int main(int argc, char* argv[])
                 {
                     TabSocket[indiceEcriture] = sService;
                     indiceEcriture++;
-                    pthread_cond_signal(&condSocketsAcceptees);
+                    pthread_cond_signal(&condTabSocket);
                 }
                 else
                 {
@@ -99,7 +103,7 @@ void* FctThreadClient(void* p)
 
     pthread_mutex_lock(&mutexTabSocket);
     //ce réveille après un condsignal
-    pthread_cond_wait(&condSocketsAcceptees,&mutexTabSocket);
+    pthread_cond_wait(&condTabSocket,&mutexTabSocket);
 
     Ssocket = TabSocket[indiceLecture];
 
@@ -113,10 +117,10 @@ void HandlerSIGINT(int s)
 {
     printf("\nArret du serveur.\n");
     close(sEcoute);
-    pthread_mutex_lock(&mutexSocketsAcceptees);
-    for (int i=0 ; i<TAILLE_FILE_ATTENTE ; i++)
-    if (socketsAcceptees[i] != -1) close(socketsAcceptees[i]);
-    pthread_mutex_unlock(&mutexSocketsAcceptees);
-    SMOP_Close();
+    pthread_mutex_lock(&mutexTabSocket);
+    for (int i=0 ; i<TAILLE_FILE_ATT ; i++)
+    if (TabSocket[i] != -1) close(TabSocket[i]);
+    pthread_mutex_unlock(&mutexTabSocket);
+    //SMOP_Close();
     exit(0);
 }
