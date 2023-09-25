@@ -164,7 +164,7 @@ void TraitementClient(int sService)
 
     char requete[200], reponse[200];
     bool onContinue = true;
-    int nbLus;
+    int nbLus, nbEcrits;
 
     while(onContinue)
     {
@@ -184,7 +184,17 @@ void TraitementClient(int sService)
         }
 
         printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
-        onContinue = 
+        onContinue = OVESP(requete, reponse, sService);
+
+        if((nbEcrits = Send(sService, reponse, sizeof(reponse))) == -1)
+        {
+            perror("Erreur de Send");
+            close(sService);
+            HandlerSIGINT(0);
+        }
+
+        if(!onContinue)
+            printf("\t[THREAD %p] Fin de connexion de la socket %d\n", pthread_self(), sService);
     }
 }
 
