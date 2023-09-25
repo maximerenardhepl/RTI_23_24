@@ -1,11 +1,13 @@
 #include <iostream>
 #include <pthread.h>
 #include <signal.h>
-#include "../LibSocket/LibSocket.h"
-#include "../ProtocolCommunication/CP.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#include "../LibSocket/LibSocket.h"
+#include "../ProtocolCommunication/CP.h"
+#include "../OVESProtocol/OVESP_Serv.h"
 
 using namespace std;
 
@@ -135,7 +137,11 @@ void* FctThreadClient(void* p)
             }
 
         pthread_mutex_unlock(&mutexTabSocket);
+
+
         TraitementClient(Ssocket);
+        
+        
         pthread_exit(0);
     }
 }
@@ -154,7 +160,32 @@ bool areClientsInQueue()
 
 void TraitementClient(int sService)
 {
+    printf("\t[THREAD %d] Debut traitement du client...\n", pthread_self())
 
+    char requete[200], reponse[200];
+    bool onContinue = true;
+    int nbLus;
+
+    while(onContinue)
+    {
+        printf("\t[THREAD %p] Attente requete...\n",pthread_self());
+        if((nbLus = Receive(sService, requete)) == -1)
+        {
+            perror("Erreur de Receive");
+            close(sService);
+            HandlerSIGINT(0);
+        }
+
+        if(nbLus == 0)
+        {
+            printf("\t[THREAD %p] Fin de connexion du client.\n",pthread_self());
+            close(sService);
+            return;
+        }
+
+        printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
+        onContinue = 
+    }
 }
 
 //signale pour couper les processus
