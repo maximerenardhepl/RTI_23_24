@@ -168,6 +168,7 @@ void TraitementClient(int sService)
 
     while(onContinue)
     {
+        //recois le message
         printf("\t[THREAD %p] Attente requete...\n",pthread_self());
         if((nbLus = Receive(sService, requete)) == -1)
         {
@@ -176,6 +177,7 @@ void TraitementClient(int sService)
             HandlerSIGINT(0);
         }
 
+        //si jamais on a rien lu le socket est deconnecter
         if(nbLus == 0)
         {
             printf("\t[THREAD %p] Fin de connexion du client.\n",pthread_self());
@@ -183,16 +185,19 @@ void TraitementClient(int sService)
             return;
         }
 
+        //savoir qui recois quoi
         printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
         onContinue = OVESP(requete, reponse, sService);
 
+        //on renvoi la reponse au client
         if((nbEcrits = Send(sService, reponse, sizeof(reponse))) == -1)
         {
             perror("Erreur de Send");
             close(sService);
             HandlerSIGINT(0);
         }
-
+    
+        //si oncontinue deviens false c'est la fin de la connexion
         if(!onContinue)
             printf("\t[THREAD %p] Fin de connexion de la socket %d\n", pthread_self(), sService);
     }
