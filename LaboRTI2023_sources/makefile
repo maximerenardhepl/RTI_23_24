@@ -1,5 +1,3 @@
-#.SILENT:
-
 CLI=ClientQt
 depClient=$(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o $(OVESP)/OVESP_Client.o
 

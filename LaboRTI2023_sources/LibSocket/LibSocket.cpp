@@ -82,7 +82,7 @@ int Accept(int sEcoute,char *ipClient)
     {
         return -1;
     }
-    printf("listen() reussi !\n");
+    printf("listen() réussi !\n");
 
     //Définition des structures permettant de récupérer les informations sur le client qui s'est connecté via l'appel système 'accept()'
     //Ces informations pourraient etre stockées dans un fichier de log par exemple (idée)
@@ -91,13 +91,16 @@ int Accept(int sEcoute,char *ipClient)
     char host[NI_MAXHOST];
     char port[NI_MAXSERV];
 
-    //tout ces para son vide et vont ce remplir grace a accepte
+    //tout ces para son vide et vont ce remplir grace a accepte, accept est bloquant
+    
     int sService = 0;
+    printf("bloque sur le accept\n");
     if((sService = accept(sEcoute, &adrClient, &adrClientLen)) == -1)
     {
+        printf("erreur de accept niveau serveur\n");
         return -1;
     }
-    printf("accept() reussi !");
+    printf("accept() reussi !\n");
     printf("socket de service = %d\n",sService);
 
     if(ipClient != NULL)
@@ -144,7 +147,7 @@ int ClientSocket(char* ipServeur,int portServeur)
 
     char portStr[6];
     sprintf(portStr, "%d", portServeur);
-
+    printf("fait un getaddrinfo\n");
     if (getaddrinfo(ipServeur, portStr, &hints, &results) != 0) 
     {
         perror("Erreur de getaddrinfo client\n");
@@ -152,6 +155,9 @@ int ClientSocket(char* ipServeur,int portServeur)
         return -1;
     }
 
+    printf("s = %d\n",s);
+    printf("result aiaddr = %d\n",results->ai_addr);
+    printf("result aiaddrlen = %d\n",results->ai_addrlen);
     // Fait appel à connect() pour se connecter au serveur
     if (connect(s, results->ai_addr, results->ai_addrlen) < 0) 
     {
