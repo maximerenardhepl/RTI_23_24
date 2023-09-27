@@ -6,7 +6,6 @@
 #include <unistd.h>
 
 #include "../LibSocket/LibSocket.h"
-#include "../ProtocolCommunication/CP.h"
 #include "../OVESProtocol/OVESP_Serv.h"
 
 using namespace std;
@@ -20,7 +19,7 @@ bool areClientsInQueue(void);
 #define NB_THREADS_POOL_MAX 10
 #define TAILLE_FILE_ATT 30
 
-int TabSocket[TAILLE_FILE_ATT] = {-1};
+int TabSocket[TAILLE_FILE_ATT];
 pthread_mutex_t mutexTabSocket;
 pthread_cond_t condTabSocket;
 int indiceEcriture=0, indiceLecture=0;
@@ -37,6 +36,14 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
+    //initialisation
+    pthread_mutex_init(&mutexTabSocket,NULL);
+    pthread_cond_init(&condTabSocket,NULL);
+    pthread_t th;
+
+    for(int i=0; i < TAILLE_FILE_ATT; i++)
+        TabSocket[i] = -1;
+
     // Armement des signaux
     struct sigaction A;
     A.sa_flags = 0;
@@ -48,10 +55,6 @@ int main(int argc, char* argv[])
         perror("Erreur de sigaction");
         exit(1);
     }
-    
-    //initialisation
-    pthread_t th;
-
    
     //je passe un tableau d'argument avec donc l'ip et le port
     if((sEcoute = ServerSocket(atoi(argv[1]))) == -1)
@@ -140,10 +143,8 @@ void* FctThreadClient(void* p)
 
 
         TraitementClient(Ssocket);
-        
-        
-        pthread_exit(0);
     }
+    pthread_exit(0);
 }
 
 bool areClientsInQueue()
@@ -160,7 +161,7 @@ bool areClientsInQueue()
 
 void TraitementClient(int sService)
 {
-    printf("\t[THREAD %d] Debut traitement du client...\n", pthread_self())
+    printf("\t[THREAD %p] Debut traitement du client...\n", pthread_self());
 
     char requete[200], reponse[200];
     bool onContinue = true;
@@ -169,7 +170,7 @@ void TraitementClient(int sService)
     while(onContinue)
     {
         //recois le message
-        printf("\t[THREAD %p] Attente requete...\n",pthread_self());
+        printf("\t[THREAD %p] Attente d'une requete...\n", pthread_self());
         if((nbLus = Receive(sService, requete)) == -1)
         {
             perror("Erreur de Receive");

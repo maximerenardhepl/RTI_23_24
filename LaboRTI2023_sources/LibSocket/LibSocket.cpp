@@ -235,6 +235,8 @@ int Receive(int sSocket,char* data)
     }
     else 
     {
+        sleep(30);
+
         char nbBytesStr[2];
         int nbBytes = 0; //Va contenir la valeur correspondant à la taille réelle de la charge utile du paquet de bytes.
         int nbCarLus = 0;

@@ -1,19 +1,12 @@
-void Echange(char* requete, char* reponse)
-{
-    return 0;
-}
+#include "OVESP_Client.h"
+
+void Echange(char* requete, char* reponse) {}
 
 bool OVESP_Login(const char* user,const char* password)
 {
-    return 0;
+    return true;
 }
 
-void OVESP_Logout()
-{
-    return 0;
-}
+void OVESP_Logout() {}
 
-void OVESP_Operation(char op,int a,int b)
-{
-    return 0;
-}
+void OVESP_Operation(char op,int a,int b) {}

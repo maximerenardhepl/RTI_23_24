@@ -1,15 +1,21 @@
-#include "OVESP.h"
+#include "OVESP_Serv.h"
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
 
 int clients[NB_MAX_CLIENTS];
 int nbClients = 0;
 
+pthread_mutex_t mutexClients;
+
 //process : fonction qui va 
 bool OVESP(char* requete, char* reponse, int socket)
 {
-    char* token = strtok(requete, '#');
+    const char *delim = "#";
+    char* token = strtok(requete, delim);
 
     if(strcmp(token, "CONSULT") == 0)
     {
@@ -55,6 +61,4 @@ void OVESP_Close()
     }
     
     pthread_mutex_unlock(&mutexClients);
-
-    return 0;
 }
