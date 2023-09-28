@@ -136,8 +136,6 @@ int ClientSocket(char* ipServeur,int portServeur)
 
     printf("Descripteur du socket client : %d\n", s);
 
-    // Récupération des informations du client
-
     struct addrinfo hints;
     struct addrinfo *results;
     memset(&hints, 0, sizeof(struct addrinfo));
@@ -148,17 +146,23 @@ int ClientSocket(char* ipServeur,int portServeur)
     char portStr[6];
     sprintf(portStr, "%d", portServeur);
     printf("fait un getaddrinfo\n");
+    //prend des info sur le serveur
     if (getaddrinfo(ipServeur, portStr, &hints, &results) != 0) 
     {
         perror("Erreur de getaddrinfo client\n");
         close(s);
         return -1;
     }
+    
+    printf("=========== Informations à propos du serveur pour une connexion ===========\n");
+    printf("Descripteur du socket client = %d\n", s);
+    printf("Adresse et port du serveur = %p\n", (void *)results->ai_addr);
+    printf("Taille de la structure = %zu\n", results->ai_addrlen);
+    printf("=====================================================================\n");
 
-    printf("s = %d\n",s);
-    printf("result aiaddr = %d\n",results->ai_addr);
-    printf("result aiaddrlen = %d\n",results->ai_addrlen);
     // Fait appel à connect() pour se connecter au serveur
+
+    printf("connect client\n");
     if (connect(s, results->ai_addr, results->ai_addrlen) < 0) 
     {
         perror("Erreur de connect()\n");
