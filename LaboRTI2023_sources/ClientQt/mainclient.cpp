@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    printf("socket client = %d\n",sClient);
     printf("Connecte sur le serveur.\n");
 
 

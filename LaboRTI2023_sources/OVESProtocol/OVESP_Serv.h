@@ -8,5 +8,10 @@ bool OVESP_Login(const char* user,const char* password);
 int OVESP_Operation(char op,int a,int b);
 void OVESP_Close();
 
+int estPresent(int socket);
+void ajoute(int socket);
+void retire(int socket);
+
+
 
 #endif
