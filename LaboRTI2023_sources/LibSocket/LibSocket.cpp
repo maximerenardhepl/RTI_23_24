@@ -82,7 +82,7 @@ int Accept(int sEcoute,char *ipClient)
     {
         return -1;
     }
-    printf("listen() reussi !\n");
+    printf("listen() réussi !\n");
 
     //Définition des structures permettant de récupérer les informations sur le client qui s'est connecté via l'appel système 'accept()'
     //Ces informations pourraient etre stockées dans un fichier de log par exemple (idée)
@@ -91,10 +91,13 @@ int Accept(int sEcoute,char *ipClient)
     char host[NI_MAXHOST];
     char port[NI_MAXSERV];
 
-    //tout ces para son vide et vont ce remplir grace a accepte
+    //tout ces para son vide et vont ce remplir grace a accepte, accept est bloquant
+    
     int sService = 0;
+    printf("bloque sur le accept\n");
     if((sService = accept(sEcoute, &adrClient, &adrClientLen)) == -1)
     {
+        printf("erreur de accept niveau serveur\n");
         return -1;
     }
     printf("accept() reussi !\n");
@@ -135,8 +138,6 @@ int ClientSocket(char* ipServeur,int portServeur)
 
     printf("Descripteur du socket client : %d\n", s);
 
-    // Récupération des informations du client
-
     struct addrinfo hints;
     struct addrinfo *results;
     memset(&hints, 0, sizeof(struct addrinfo));
@@ -146,15 +147,24 @@ int ClientSocket(char* ipServeur,int portServeur)
 
     char portStr[6];
     sprintf(portStr, "%d", portServeur);
-
+    printf("fait un getaddrinfo\n");
+    //prend des info sur le serveur
     if (getaddrinfo(ipServeur, portStr, &hints, &results) != 0) 
     {
         perror("Erreur de getaddrinfo client\n");
         close(s);
         return -1;
     }
+    
+    printf("=========== Informations à propos du serveur pour une connexion ===========\n");
+    printf("Descripteur du socket client = %d\n", s);
+    printf("Adresse et port du serveur = %p\n", (void *)results->ai_addr);
+    printf("Taille de la structure = %zu\n", results->ai_addrlen);
+    printf("=====================================================================\n");
 
     // Fait appel à connect() pour se connecter au serveur
+
+    printf("connect client\n");
     if (connect(s, results->ai_addr, results->ai_addrlen) < 0) 
     {
         perror("Erreur de connect()\n");

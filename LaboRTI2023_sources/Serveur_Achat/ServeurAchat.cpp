@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #include "../LibSocket/LibSocket.h"
-#include "../OVESProtocol/OVESP_Serv.h"
+#include "../OVESProtocol/OVESP.h"
 
 using namespace std;
 
@@ -16,8 +16,8 @@ void TraitementClient(int sService);
 bool areClientsInQueue(void);
 
 
-#define NB_THREADS_POOL_MAX 10
-#define TAILLE_FILE_ATT 30
+#define NB_THREADS_POOL_MAX 2
+#define TAILLE_FILE_ATT 10
 
 int TabSocket[TAILLE_FILE_ATT];
 pthread_mutex_t mutexTabSocket;
@@ -190,7 +190,7 @@ void TraitementClient(int sService)
 
         //savoir qui recois quoi
         printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
-        onContinue = OVESP(requete, reponse, sService);
+        onContinue = OVESP_Decode(requete, reponse, sService);
 
         //on renvoi la reponse au client
         if((nbEcrits = Send(sService, reponse, sizeof(reponse))) == -1)
