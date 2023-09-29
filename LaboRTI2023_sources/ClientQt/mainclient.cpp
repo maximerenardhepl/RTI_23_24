@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     }
 
     printf("Connecte sur le serveur.\n");
-
+    //sleep(60);
 
 
     QApplication a(argc, argv);

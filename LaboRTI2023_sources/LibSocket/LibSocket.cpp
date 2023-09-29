@@ -97,7 +97,7 @@ int Accept(int sEcoute,char *ipClient)
     {
         return -1;
     }
-    printf("accept() reussi !");
+    printf("accept() reussi !\n");
     printf("socket de service = %d\n",sService);
 
     if(ipClient != NULL)
@@ -110,6 +110,8 @@ int Accept(int sEcoute,char *ipClient)
 
         ipClient = host;
     }
+
+    //sleep(120);
     
     return sService;
 }

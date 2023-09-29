@@ -42,7 +42,9 @@ int main(int argc, char* argv[])
     pthread_t th;
 
     for(int i=0; i < TAILLE_FILE_ATT; i++)
+    {
         TabSocket[i] = -1;
+    }
 
     // Armement des signaux
     struct sigaction A;
@@ -72,9 +74,9 @@ int main(int argc, char* argv[])
 
     //lancement de la boucle du serveur
     int sService = 0;
+    char ipClient[50];
     while(1)
     {
-        char ipClient[50];
         if((sService = Accept(sEcoute, ipClient)) != -1)
         {
             pthread_mutex_lock(&mutexTabSocket);
@@ -86,7 +88,7 @@ int main(int argc, char* argv[])
             }
             else //Pour les autres cases...
             {*/
-                if(indiceEcriture == -1) //Vérif si l'element courant de la file d'attente est libre.
+                if(TabSocket[indiceEcriture] == -1) //Vérif si l'element courant de la file d'attente est libre.
                 {
                     TabSocket[indiceEcriture] = sService;
                     if(indiceEcriture == (TAILLE_FILE_ATT - 1) /*&& TabSocket[0] == -1*/)
