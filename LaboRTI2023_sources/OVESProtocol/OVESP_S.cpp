@@ -18,6 +18,38 @@ bool OVESP_Decode(char* requete, char* reponse, int socket)
     const char *delim = "#";
     char* token = strtok(requete, delim);
 
+    if (strcmp(ptr,"LOGIN") == 0)
+    {
+        //si le client est déja loger 
+        if(estPresent(socket) == 0)
+        {
+            sprintf(reponse,"LOGIN#ko#Client déjà loggé !");
+            return false;
+        }
+        else
+        {
+            //on verif si il existe (quil est deja inscrit)
+            if(verif_Log(user,password))
+            {
+                //alors on ajout dans la file des cliens
+                sprintf(reponse,"LOGIN#ok");
+                ajoute(socket);
+            }
+            else
+            {
+                //client n'existe pas et n'est pas déja logger
+                sprintf(reponse,"LOGIN#ko#Mauvais identifiants !");
+                return false;
+            }
+        }
+    }
+
+    if (strcmp(ptr,"LOGOUT") == 0)
+    {
+        retire(socket);
+        sprintf(reponse,"LOGOUT#ok");
+    }
+
     if(strcmp(token, "CONSULT") == 0)
     {
 
@@ -41,6 +73,12 @@ bool OVESP_Decode(char* requete, char* reponse, int socket)
     return true;
 }
 
+//regarde dans la bd si le compte existe bien
+bool verif_Log(const char* user,const char* password)
+{
+    //question la bd si le client existe retourne true ou false
+    return true;
+}
 
 //////////////////////////////////////////////////////////
 //fonctions pour la gestion des clients

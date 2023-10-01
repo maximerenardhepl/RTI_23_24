@@ -5,12 +5,42 @@ void Echange(char* requete, char* reponse);
 
 bool OVESP_Login(const char* user,const char* password)
 {
-    return 0;
+    char requete[200],reponse[200];
+    bool onContinue = true;
+
+    // ***** Construction de la requete *********************
+    sprintf(requete,"LOGIN#%s#%s",user,password);
+
+    // ***** Envoi requete + réception réponse **************
+    Echange(requete,reponse);
+
+    // ***** Parsing de la réponse **************************
+    char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
+    ptr = strtok(NULL,"#");
+
+    if (strcmp(ptr,"ok") == 0) 
+    {
+        //connexion réussie
+        printf("connexion réussie.\n");
+    }
+    else
+    {
+        printf("erreur de login");
+        onContinue = false;
+    }
+    return onContinue;
 }
 
 void OVESP_Logout()
 {
-    
+    char requete[200],reponse[200];
+    int nbEcrits, nbLus;
+
+    // ***** Construction de la requete *********************
+    sprintf(requete,"LOGOUT");
+
+    // ***** Envoi requete + réception réponse **************
+    Echange(requete,reponse);
 }
 
 void OVESP_Consult()
