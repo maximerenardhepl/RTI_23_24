@@ -1,7 +1,7 @@
 .SILENT:
 
 CLI=ClientQt
-depClient=$(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o $(SOCK)/LibSocket.o $(OVESP)/OVESP.o
+depClient=$(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o $(SOCK)/LibSocket.o $(OVESP)/OVESP_C.o
 
 SERV=Serveur_Achat
 OVESP=OVESProtocol
@@ -9,23 +9,29 @@ SOCK=LibSocket
 
 all:	ServeurAchat Client
 
-ServeurAchat:	$(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP.o
+ServeurAchat:	$(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o
 	echo "Creation ServeurAchat"
-	g++ $(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP.o -o ServeurAchat -lpthread
+	g++ $(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o -o ServeurAchat -lpthread
 
 LibSocket.o:	$(SOCK)/LibSocket.h $(SOCK)/LibSocket.cpp
 	echo "Creation LibSocket.o"
 	g++ $(SOCK)/LibSocket.cpp -o $(SOCK)/LibSocket.o -c
 
-OVESP.o:	$(OVESP)/OVESP.h $(OVESP)/OVESP.cpp
-	echo "Creation OVESP.o"
-	g++ $(OVESP)/OVESP.cpp -o $(OVESP)/OVESP.o -c
+OVESP_S.o:	$(OVESP)/OVESP_S.h $(OVESP)/OVESP_S.cpp
+	echo "Creation OVESP_S.o"
+	g++ $(OVESP)/OVESP_S.cpp -o $(OVESP)/OVESP_S.o -c
+
 
 
 
 Client:	$(depClient)
 	echo "Creation Client"
-	g++ -Wno-unused-parameter -o Client $(SOCK)/LibSocket.o $(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o  /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so -lpthread
+	g++ -Wno-unused-parameter -o Client $(SOCK)/LibSocket.o $(OVESP)/OVESP_C.o $(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o  /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so -lpthread
+
+OVESP_C.o:	$(OVESP)/OVESP_C.h $(OVESP)/OVESP_C.cpp
+	echo "Creation OVESP_C.o"
+	g++ $(OVESP)/OVESP_C.cpp -o $(OVESP)/OVESP_C.o -c
+
 
 $(CLI)/mainclient.o:	$(CLI)/mainclient.cpp
 	echo "Creation mainclient.o"

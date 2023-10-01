@@ -1,17 +1,18 @@
-#include "OVESP.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <pthread.h>
-
-int clients[NB_MAX_CLIENTS];
-int nbClients = 0;
+#include "OVESP_S.h"
 
 pthread_mutex_t mutexClients;
 
-//process : fonction qui va etre utiliser par le serveur pour traiter les packet entrant
+int clients[NB_MAX_CLIENTS];
+int nbClients = 0;
+//gestion des client
+int estPresent(int socket);
+void ajoute(int socket);
+void retire(int socket);
+
+//questionne la bd pour voir si present
+bool verif_Log(const char* user,const char* password);
+
+
 bool OVESP_Decode(char* requete, char* reponse, int socket)
 {
     const char *delim = "#";
@@ -40,40 +41,10 @@ bool OVESP_Decode(char* requete, char* reponse, int socket)
     return true;
 }
 
-bool OVESP_Login(const char* user,const char* password)
-{
-    return 0;
-}
-
-void OVESP_Logout()
-{
-    
-}
-
-void OVESP_Consult()
-{
-
-}
-
-void OVESP_Achat()
-{
-
-}
-
-void OVESP_Caddie()
-{
-
-}
-
-void OVESP_Confirm()
-{
-
-}
 
 //////////////////////////////////////////////////////////
 //fonctions pour la gestion des clients
 //////////////////////////////////////////////////////////
-
 
 //va etre utiliser l'ors d'un login d'un client 
 //prend un socket du serveur qui est connecter avec le client

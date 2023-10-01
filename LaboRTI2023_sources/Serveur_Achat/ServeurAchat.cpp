@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #include "../LibSocket/LibSocket.h"
-#include "../OVESProtocol/OVESP.h"
+#include "../OVESProtocol/OVESP_S.h"
 
 using namespace std;
 
