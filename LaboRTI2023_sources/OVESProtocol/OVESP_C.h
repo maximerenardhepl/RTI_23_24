@@ -6,6 +6,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <string>
+#include "../Data/Article.h"
+
+using namespace std;
 
 //connecte deconnect du client
 bool OVESP_Login(const char* user,const char* password);

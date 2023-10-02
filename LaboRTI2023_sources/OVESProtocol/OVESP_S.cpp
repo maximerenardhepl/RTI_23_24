@@ -1,9 +1,10 @@
 #include "OVESP_S.h"
 
-pthread_mutex_t mutexClients;
+pthread_mutex_t mutexClients = PTHREAD_MUTEX_INITIALIZER;
 
 int clients[NB_MAX_CLIENTS];
 int nbClients = 0;
+
 //gestion des client
 int estPresent(int socket);
 void ajoute(int socket);
@@ -18,9 +19,9 @@ bool OVESP_Decode(char* requete, char* reponse, int socket)
     const char *delim = "#";
     char* token = strtok(requete, delim);
 
-    if (strcmp(ptr,"LOGIN") == 0)
+    if (strcmp(token,"LOGIN") == 0)
     {
-        //si le client est déja loger 
+        //si le client est déja loger
         if(estPresent(socket) == 0)
         {
             sprintf(reponse,"LOGIN#ko#Client déjà loggé !");
@@ -28,6 +29,8 @@ bool OVESP_Decode(char* requete, char* reponse, int socket)
         }
         else
         {
+            char user[200];
+            char password[200];
             //on verif si il existe (quil est deja inscrit)
             if(verif_Log(user,password))
             {
@@ -44,7 +47,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket)
         }
     }
 
-    if (strcmp(ptr,"LOGOUT") == 0)
+    if (strcmp(token,"LOGOUT") == 0)
     {
         retire(socket);
         sprintf(reponse,"LOGOUT#ok");

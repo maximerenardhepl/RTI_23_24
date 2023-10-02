@@ -3,6 +3,7 @@
 //ce charge d'envoyer et receptionner les paquets
 void Echange(char* requete, char* reponse);
 
+
 bool OVESP_Login(const char* user,const char* password)
 {
     char requete[200],reponse[200];
@@ -43,9 +44,33 @@ void OVESP_Logout()
     Echange(requete,reponse);
 }
 
-void OVESP_Consult()
+Article OVESP_Consult(int idArticle)
 {
+    char requete[200], reponse[200];
+    int nbEcrits, nbLus;
 
+    sprintf(requete, "CONSULT#%d", idArticle);
+    Echange(requete, reponse);
+
+    const char *delim = "#";
+    char* token = strtok(reponse, delim);
+
+    Article resArticle;
+    if(atoi(token) != 0)
+    {
+        //Lancer une exception pour traiter l'erreur survenue dans l'envoi de la requete
+    }
+    else
+    {
+        int id = atoi(strtok(NULL, delim));
+        string intitule = strtok(NULL, delim);
+        int stock = atoi(strtok(NULL, delim));
+        string image = strtok(NULL, delim);
+        float prix = atof(strtok(NULL, delim));
+
+        resArticle = Article(id, intitule, stock, image, prix);
+    }
+    return resArticle;
 }
 
 void OVESP_Achat()
