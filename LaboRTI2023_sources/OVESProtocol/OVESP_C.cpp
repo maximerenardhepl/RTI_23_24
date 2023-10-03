@@ -54,6 +54,7 @@ Article OVESP_Consult(int idArticle, int socket)
 
     const char *delim = "#";
     char* token = strtok(reponse, delim);
+    token = strtok(NULL, delim);
 
     Article resArticle;
     if(atoi(token) != 0)

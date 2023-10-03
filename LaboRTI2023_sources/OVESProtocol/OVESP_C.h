@@ -17,7 +17,7 @@ bool OVESP_Login(const char* user,const char* password, int socket);
 void OVESP_Logout(int socket);
 
 //ce charge de construire les requete pour envoyer au serveur (place une entete)
-void OVESP_Consult(int idArticle, int socket);
+Article OVESP_Consult(int idArticle, int socket);
 void OVESP_Achat();
 void OVESP_Caddie();
 void OVESP_Confirm();

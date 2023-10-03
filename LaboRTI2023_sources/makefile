@@ -15,7 +15,7 @@ all:	$(DATA_DEPENDENCIES) ServeurAchat Client CreationBD
 
 ServeurAchat:	$(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o
 	echo "Creation ServeurAchat"
-	g++ $(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o -o ServeurAchat -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lpthread
+	g++ $(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o $(DATA_DEPENDENCIES) -o ServeurAchat -lpthread -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lmysqlclient -lpthread -lm -lrt -lssl -lcrypto -ldl -lresolv
 
 $(SOCK)/LibSocket.o:	$(SOCK)/LibSocket.h $(SOCK)/LibSocket.cpp
 	echo "Creation LibSocket.o"
@@ -23,7 +23,7 @@ $(SOCK)/LibSocket.o:	$(SOCK)/LibSocket.h $(SOCK)/LibSocket.cpp
 
 $(OVESP)/OVESP_S.o:	$(OVESP)/OVESP_S.h $(OVESP)/OVESP_S.cpp
 	echo "Creation OVESP_S.o"
-	g++ $(OVESP)/OVESP_S.cpp -o $(OVESP)/OVESP_S.o $(DATA_DEPENDENCIES) -c -I/usr/include/mysql -m64 -L/usr/lib64/mysql
+	g++ $(OVESP)/OVESP_S.cpp -o $(OVESP)/OVESP_S.o -c -I/usr/include/mysql -m64 -L/usr/lib64/mysql
 
 
 
