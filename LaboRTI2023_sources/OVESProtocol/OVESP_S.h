@@ -5,13 +5,16 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <string>
+#include <mysql.h>
+#include "../Data/DataBaseException.h"
+#include "../Data/Article.h"
 
 
 //prend la requete du client et la décortique
-bool OVESP_Decode(char* requete, char* reponse, int socket);
+bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn);
 
 //ferme tout les socket si serveur crash
 void OVESP_Close();

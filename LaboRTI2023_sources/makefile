@@ -3,17 +3,19 @@
 CLI=ClientQt
 depClient=$(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o $(SOCK)/LibSocket.o $(OVESP)/OVESP_C.o $(DATA)/Article.o $(DATA)/Exception.o
 
+DATA_DEPENDENCIES=$(DATA)/Article.o $(DATA)/Exception.o $(DATA)/DataBaseException.o
+
 SERV=Serveur_Achat
 OVESP=OVESProtocol
 SOCK=LibSocket
 BD=BD_Maraicher
 DATA=Data
 
-all:	ServeurAchat Client CreationBD
+all:	$(DATA_DEPENDENCIES) ServeurAchat Client CreationBD
 
 ServeurAchat:	$(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o
 	echo "Creation ServeurAchat"
-	g++ $(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o -o ServeurAchat -lpthread
+	g++ $(SERV)/ServeurAchat.cpp $(SOCK)/LibSocket.o $(OVESP)/OVESP_S.o -o ServeurAchat -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lpthread
 
 $(SOCK)/LibSocket.o:	$(SOCK)/LibSocket.h $(SOCK)/LibSocket.cpp
 	echo "Creation LibSocket.o"
@@ -21,7 +23,7 @@ $(SOCK)/LibSocket.o:	$(SOCK)/LibSocket.h $(SOCK)/LibSocket.cpp
 
 $(OVESP)/OVESP_S.o:	$(OVESP)/OVESP_S.h $(OVESP)/OVESP_S.cpp
 	echo "Creation OVESP_S.o"
-	g++ $(OVESP)/OVESP_S.cpp -o $(OVESP)/OVESP_S.o -c
+	g++ $(OVESP)/OVESP_S.cpp -o $(OVESP)/OVESP_S.o $(DATA_DEPENDENCIES) -c -I/usr/include/mysql -m64 -L/usr/lib64/mysql
 
 
 
@@ -58,6 +60,10 @@ $(DATA)/Exception.o:	$(DATA)/Exception.h $(DATA)/Exception.cpp
 	echo "Creation Exception.o"
 	g++ $(DATA)/Exception.cpp -o $(DATA)/Exception.o -c
 
+$(DATA)/DataBaseException.o:	$(DATA)/DataBaseException.h $(DATA)/DataBaseException.cpp
+	echo "Creation DataBaseException.o"
+	g++ $(DATA)/DataBaseException.cpp -o $(DATA)/DataBaseException.o -c
+
 
 
 
@@ -70,10 +76,8 @@ CreationBD:	$(BD)/CreationBD.cpp
 
 clean:
 	echo "Suppression des fichiers .o"
-	rm $(OVESP)/*.o
-	rm $(SOCK)/*.o
-	rm $(CLI)/*.o
-	rm $(DATA)/*.o
+	find . -name "*.o" -type f -exec rm -f {} +
+	
 
 clobber:
 	echo "Suppression des fichiers executables"

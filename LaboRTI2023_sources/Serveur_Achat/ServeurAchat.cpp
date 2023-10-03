@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <mysql.h>
 
 #include "../LibSocket/LibSocket.h"
 #include "../OVESProtocol/OVESP_S.h"
@@ -14,10 +15,14 @@ void HandlerSIGINT(int s);
 void* FctThreadClient(void* p);
 void TraitementClient(int sService);
 bool areClientsInQueue(void);
+bool ConnectDB(MYSQL *connexion);
 
 
 #define NB_THREADS_POOL_MAX 2
 #define TAILLE_FILE_ATT 10
+
+MYSQL *connexion;
+pthread_mutex_t mutexConnexionBD;
 
 int TabSocket[TAILLE_FILE_ATT];
 pthread_mutex_t mutexTabSocket;
@@ -37,6 +42,8 @@ int main(int argc, char* argv[])
     }
 
     //initialisation
+    pthread_mutex_init(&mutexConnexionBD, NULL);
+
     pthread_mutex_init(&mutexTabSocket,NULL);
     pthread_cond_init(&condTabSocket,NULL);
     pthread_t th;
@@ -55,6 +62,13 @@ int main(int argc, char* argv[])
     if (sigaction(SIGINT,&A,NULL) == -1)
     {
         perror("Erreur de sigaction");
+        exit(1);
+    }
+
+    //Initialisation de la connexion à la BD
+    if(!ConnectDB(connexion))
+    {
+        perror("Erreur de connexion à la base de données...\n");
         exit(1);
     }
    
@@ -190,7 +204,11 @@ void TraitementClient(int sService)
 
         //savoir qui recois quoi
         printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
-        onContinue = OVESP_Decode(requete, reponse, sService);
+
+        pthread_mutex_lock(&mutexConnexionBD);
+        onContinue = OVESP_Decode(requete, reponse, sService, connexion);
+        pthread_mutex_unlock(&mutexConnexionBD);
+
 
         //on renvoi la reponse au client
         if((nbEcrits = Send(sService, reponse, sizeof(reponse))) == -1)
@@ -204,6 +222,16 @@ void TraitementClient(int sService)
         if(!onContinue)
             printf("\t[THREAD %p] Fin de connexion de la socket %d\n", pthread_self(), sService);
     }
+}
+
+bool ConnectDB(MYSQL *connexion)
+{
+    connexion = mysql_init(NULL);
+    if (mysql_real_connect(connexion, "localhost", "Student", "PassStudent1_", "PourStudent", 0, 0, 0) == NULL)
+    {
+        return false;
+    }
+    return true;
 }
 
 //signale pour couper les processus
