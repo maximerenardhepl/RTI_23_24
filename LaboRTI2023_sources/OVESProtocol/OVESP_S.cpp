@@ -13,6 +13,7 @@ void retire(int socket);
 //questionne la bd pour voir si present
 bool verif_Log(const char* user,const char* password);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
+string buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
 
 bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
@@ -85,7 +86,31 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 
     if(strcmp(token, "ACHAT") == 0)
     {
+        if(!estPresent(socket))
+        {
+            sprintf(reponse, "ACHAT#KO#-1");
+            return false;
+        }
+        else
+        {
+            int idArticle = atoi(strtok(NULL, delim));
+            int qte = atoi(strtok(NULL, delim));
 
+            try
+            {
+                string msgConfirm = buyArticleOnDB(idArticle, qte, conn);
+                sprintf(reponse, "ACHAT#OK#%s", msgConfirm);
+            }
+            catch(DataBaseException e)
+            {
+                sprintf(reponse, "ACHAT#KO#%d", e.getCode());
+            }
+            catch(AchatArticleException e)
+            {
+                sprintf(reponse, "ACHAT#KO#%d#%s", e.getCode(), e.getMessage());
+            }
+        }
+        return true;
     }
 
     if(strcmp(token, "CADDIE") == 0)
@@ -151,6 +176,50 @@ Article getArticleOnDB(int idArticle, MYSQL *conn)
 
             Article art(id, intitule, stock, image, prix);
             return art;
+        }
+    }
+}
+
+string buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
+{
+    char requete[256];
+    sprintf(requete, "select stock from articles where id = %d", idArticle);
+
+    if(mysql_query(conn, requete) != 0)
+    {
+        //Construction et envoi du message d'erreur...
+        string msg = "Erreur de mysql_query() : ";
+        msg += mysql_error(conn);
+
+        throw DataBaseException(msg, DataBaseException::QUERY_ERROR);
+    }
+    else
+    {
+        MYSQL_RES* resultat;
+        if(mysql_store_result(conn) == NULL)
+        {
+            //Construction et envoi du message d'erreur...
+            string msg = "Erreur de mysql_store_result() : "; 
+            msg += mysql_error(conn);
+
+            throw DataBaseException(msg, DataBaseException::EMPTY_RESULT_SET);
+        }
+        else
+        {
+            MYSQL_ROW tuple;
+            tuple = mysql_fetch_row(resultat);
+
+            int stockReel = atoi(tuple[0]);
+            if(stockReel < quantite)
+            {
+                //Construction et envoi du message d'erreur...
+                string msg = "Impossible d'acheter l'article! Le stock (" << stock << ") pour cet article est insuffisant";
+                throw AchatArticleException(msg, AchatArticleException::INSUFFICIENT_STOCK);
+            }
+            else
+            {
+                //réaliser une requete pour décrémenter le stock de l'article de la quantite demandée.
+            }
         }
     }
 }

@@ -335,7 +335,17 @@ void WindowClient::on_pushButtonPrecedent_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonAcheter_clicked()
 {
+    try
+    {
+        string msgConfirm = OVESP_Achat(articleEnCours.getId(), w->getQuantite());
+        w->dialogueMessage("Achat confirmé", msgConfirm.c_str());
 
+        //Envoyer requete Caddie pour actualiser le caddie du client dans l'interface graphique (le Caddie est gardé à jour dans le thread coté serveur s'occupant du client)
+    }
+    catch(Exception& e)
+    {
+        w->dialogueErreur("Erreur - Achat d'article", e.getMessage().c_str());
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,7 @@
 #include "../LibSocket/LibSocket.h"
 #include "../Data/Article.h"
 #include "../Data/DataBaseException.h"
+#include "../Data/AchatArticleException.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ void OVESP_Logout(int socket);
 
 //ce charge de construire les requete pour envoyer au serveur (place une entete)
 Article OVESP_Consult(int idArticle, int socket);
-void OVESP_Achat();
+string OVESP_Achat(int idArticle, int quantite);
 void OVESP_Caddie();
 void OVESP_Confirm();
 

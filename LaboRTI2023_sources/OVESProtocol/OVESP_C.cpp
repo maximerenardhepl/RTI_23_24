@@ -84,9 +84,41 @@ Article OVESP_Consult(int idArticle, int socket)
     return resArticle;
 }
 
-void OVESP_Achat()
+string OVESP_Achat(int idArticle, int quantite)
 {
+    char requete[200], reponse[200];
+    int nbEcrits, nbLus;
 
+    sprintf(requete, "ACHAT#%d#%d", idArticle, quantite);
+    Echange(requete, reponse);
+
+    const char* delim = "#";
+    char* token = strtok(reponse, delim);
+    token = strtok(NULL, delim);
+
+    string msgConfirm;
+    if(strcmp(token, "KO") == 0)
+    {
+        int errCode = atoi(strtok(NULL, delim));
+
+        string message;
+        if(errCode == DataBaseException::QUERY_ERROR) {
+            message = "Une erreur est survenue lors de l'envoi de la requete...Veuillez reessayer!";
+        }
+        else if(errCode == DataBaseException::EMPTY_RESULT_SET) {
+            message = "Aucun article correspondant a votre demande n'a ete trouve!";
+        }
+        else if(errCode == AchatArticleException::INSUFFICIENT_STOCK)
+        {
+            message = to_string(strtok(NULL, delim)); //Récupération du message d'erreur créé par le serveur.
+        }
+        throw Exception(message);
+    }
+    else
+    {
+        msgConfirm = to_string(strtok(NULL, delim));
+    }
+    return msgConfirm;
 }
 
 void OVESP_Caddie()
