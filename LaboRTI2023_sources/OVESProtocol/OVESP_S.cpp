@@ -57,9 +57,11 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 
     if(strcmp(token, "CONSULT") == 0)
     {
-        if(estPresent(socket))
+        if(!estPresent(socket))
         {
-
+            sprintf(reponse, "CONSULT#KO#-1");
+            return false; //OVESP_Decode va renvoyer false -> le thread s'occupant du client va arreter sa boucle et donc arreter se s'occuper du client...
+                            //car erreur anormale -> un client non present dans le vecteur des clients connectes n'est pas censé pouvoir communiquer avec le serveur car aucun thread n'est censé lui avoir été attribué.
         }
         else
         {
@@ -68,14 +70,17 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             try 
             {
                 Article art = getArticleOnDB(idArticle, conn);
+                sprintf(reponse, "CONSULT#OK#%d#%s#%d#%s#%ld", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
             }
-            catch(DataBaseException e) 
+            catch(DataBaseException e)
             {
-                string msg = "Erreur de recuperation de l'article :\nCode d'erreur : " + to_string(e.getCode()) + "\tMessage d'erreur : " + e.getMessage() + "\n";
+                string msg = "Catch DataBaseException :\nCode d'erreur : " + to_string(e.getCode()) + "\tMessage d'erreur : " + e.getMessage() + "\n";
                 cout << msg;
-            }
-            
+
+                sprintf(reponse, "CONSULT#KO#%d", e.getCode());
+            } 
         }
+        return true;
     }
 
     if(strcmp(token, "ACHAT") == 0)

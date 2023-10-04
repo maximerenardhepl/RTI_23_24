@@ -2,9 +2,16 @@
 #include "ui_windowclient.h"
 #include <QMessageBox>
 #include <string>
+
+#include "../Data/Article.h"
+#include "../Data/Exception.h"
+#include "../OVESProtocol/OVESP_C.h"
+
 using namespace std;
 
 extern WindowClient *w;
+
+Article articleEnCours;
 
 #define REPERTOIRE_IMAGES "images/"
 
@@ -30,8 +37,8 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
     // Exemples à supprimer
-    setArticle("pommes",5.53,18,"pommes.jpg");
-    ajouteArticleTablePanier("cerises",8.96,2);
+    /*setArticle("pommes",5.53,18,"pommes.jpg");
+    ajouteArticleTablePanier("cerises",8.96,2);*/
 }
 
 WindowClient::~WindowClient()
@@ -285,13 +292,39 @@ void WindowClient::on_pushButtonLogout_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSuivant_clicked()
 {
-
+    if(articleEnCours.getId() == 21)
+    {
+        articleEnCours.setId(1);
+    }
+    
+    try
+    {
+        Article art = OVESP_Consult(articleEnCours.getId()+1, 0);
+        w->setArticle(art.getIntitule().c_str(), art.getPrix(), art.getQte(), art.getImage().c_str());
+    }
+    catch(Exception& e)
+    {
+        w->dialogueErreur("Erreur - Consultation d'article", e.getMessage().c_str());
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
-
+    if(articleEnCours.getId() == 1)
+    {
+        articleEnCours.setId(22);
+    }
+    
+    try
+    {
+        Article art = OVESP_Consult(articleEnCours.getId()-1, 0);
+        w->setArticle(art.getIntitule().c_str(), art.getPrix(), art.getQte(), art.getImage().c_str());
+    }
+    catch(Exception& e)
+    {
+        w->dialogueErreur("Erreur - Consultation d'article", e.getMessage().c_str());
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

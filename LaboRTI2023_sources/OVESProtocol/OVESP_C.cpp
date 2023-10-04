@@ -57,9 +57,19 @@ Article OVESP_Consult(int idArticle, int socket)
     token = strtok(NULL, delim);
 
     Article resArticle;
-    if(atoi(token) != 0)
+    if(strcmp(token, "KO") == 0)
     {
         //Lancer une exception pour traiter l'erreur survenue dans l'envoi de la requete
+        int errCode = atoi(strtok(NULL, delim));
+
+        string message;
+        if(errCode == DataBaseException::QUERY_ERROR) {
+            message = "Une erreur est survenue lors de l'envoi de la requete...Veuillez reessayer!";
+        }
+        else if(errCode == DataBaseException::EMPTY_RESULT_SET) {
+            message = "Aucun article correspondant a votre demande n'a ete trouve!";
+        }
+        throw Exception(message);
     }
     else
     {

@@ -9,6 +9,7 @@
 #include <string>
 #include "../LibSocket/LibSocket.h"
 #include "../Data/Article.h"
+#include "../Data/DataBaseException.h"
 
 using namespace std;
 

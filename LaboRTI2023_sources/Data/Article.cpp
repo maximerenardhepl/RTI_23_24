@@ -1,6 +1,6 @@
 #include "Article.h"
 
-Article::Article() : Article(0, "", 0, "", 0.0) { }
+Article::Article() : Article(1, "default", 0, "default", 0.0) { }
 
 Article::Article(int id, string intitule, int qte, string img, float prix)
 {

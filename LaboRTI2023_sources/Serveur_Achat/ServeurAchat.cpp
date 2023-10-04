@@ -132,14 +132,13 @@ int main(int argc, char* argv[])
 void* FctThreadClient(void* p)
 {
     int Ssocket=0;
-    bool isClientsWaiting = false;
 
     while(1)
     {
         pthread_mutex_lock(&mutexTabSocket);
 
             //ce réveille après un condsignal
-            while((isClientsWaiting = areClientsInQueue()) == false) //Tant qu'il n'y a pas de clients en attente...on endort le thread.
+            while(!areClientsInQueue()) //Tant qu'il n'y a pas de clients en attente...on endort le thread.
                 pthread_cond_wait(&condTabSocket,&mutexTabSocket);
 
             Ssocket = TabSocket[indiceLecture];
@@ -247,7 +246,7 @@ void HandlerSIGINT(int s)
     }
         
     pthread_mutex_unlock(&mutexTabSocket);
-    //SMOP_Close();
+    OVESP_Close();
     
     exit(0);
 }

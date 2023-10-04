@@ -1,9 +1,9 @@
 .SILENT:
 
-CLI=ClientQt
-depClient=$(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o $(SOCK)/LibSocket.o $(OVESP)/OVESP_C.o $(DATA)/Article.o $(DATA)/Exception.o
-
 DATA_DEPENDENCIES=$(DATA)/Article.o $(DATA)/Exception.o $(DATA)/DataBaseException.o
+
+CLI=ClientQt
+depClient=$(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o $(SOCK)/LibSocket.o $(OVESP)/OVESP_C.o $(DATA_DEPENDENCIES)
 
 SERV=Serveur_Achat
 OVESP=OVESProtocol
@@ -30,7 +30,7 @@ $(OVESP)/OVESP_S.o:	$(OVESP)/OVESP_S.h $(OVESP)/OVESP_S.cpp
 
 Client:	$(depClient)
 	echo "Creation Client"
-	g++ -Wno-unused-parameter -o Client $(DATA)/Article.o $(DATA)/Exception.o $(SOCK)/LibSocket.o $(OVESP)/OVESP_C.o $(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o  /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so -lpthread
+	g++ -Wno-unused-parameter -o Client $(depClient)  /usr/lib64/libQt5Widgets.so /usr/lib64/libQt5Gui.so /usr/lib64/libQt5Core.so /usr/lib64/libGL.so -lpthread
 
 $(OVESP)/OVESP_C.o:	$(OVESP)/OVESP_C.h $(OVESP)/OVESP_C.cpp
 	echo "Creation OVESP_C.o"
