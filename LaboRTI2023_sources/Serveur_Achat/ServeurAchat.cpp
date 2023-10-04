@@ -246,6 +246,7 @@ void HandlerSIGINT(int s)
     }
         
     pthread_mutex_unlock(&mutexTabSocket);
+    mysql_close(connexion);
     OVESP_Close();
     
     exit(0);

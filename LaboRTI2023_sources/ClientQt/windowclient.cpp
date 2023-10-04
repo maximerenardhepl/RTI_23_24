@@ -280,12 +280,19 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
-  printf("login = %s\n", getNom());
-  printf("password : %s\n", getMotDePasse());
-
-  OVESP_Login(getNom(),getMotDePasse(), socketC);
-
-
+      try
+      {
+          //ovesp peut trow une exception
+          if(OVESP_Login(getNom(),getMotDePasse(), socketC,isNouveauClientChecked()) == true)
+          {
+            //bien connecter acces a l'app
+            loginOK();
+          }
+      }
+      catch(Exception& e)
+      {
+          w->dialogueErreur("mauvais identifiant", e.getMessage().c_str());
+      }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

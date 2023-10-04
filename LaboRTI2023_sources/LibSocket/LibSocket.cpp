@@ -155,12 +155,6 @@ int ClientSocket(char* ipServeur,int portServeur)
         close(s);
         return -1;
     }
-    
-    printf("=========== Informations à propos du serveur pour une connexion ===========\n");
-    printf("Descripteur du socket client = %d\n", s);
-    printf("Adresse et port du serveur = %p\n", (void *)results->ai_addr);
-    printf("Taille de la structure = %zu\n", results->ai_addrlen);
-    printf("=====================================================================\n");
 
     // Fait appel à connect() pour se connecter au serveur
 

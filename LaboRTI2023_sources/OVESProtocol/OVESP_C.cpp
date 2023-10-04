@@ -4,13 +4,14 @@
 void Echange(char* requete, char* reponse, int socket);
 
 
-bool OVESP_Login(const char* user,const char* password, int socket)
+bool OVESP_Login(const char* user,const char* password, int socket, int newclient)
 {
     char requete[200],reponse[200];
     bool onContinue = true;
 
     // ***** Construction de la requete *********************
     sprintf(requete,"LOGIN#%s#%s",user,password);
+    printf("%s",requete);
 
     // ***** Envoi requete + réception réponse **************
     Echange(requete,reponse, socket);
@@ -19,15 +20,19 @@ bool OVESP_Login(const char* user,const char* password, int socket)
     char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
     ptr = strtok(NULL,"#");
 
+    //si c'est newclient est = a 1 alors jenvoie une requete au serveur et je dit d'ajouter dans la bd
+
     if (strcmp(ptr,"ok") == 0) 
     {
         //connexion réussie
         printf("connexion réussie.\n");
+        return true;
     }
     else
     {
         printf("erreur de login");
         onContinue = false;
+        throw Exception("erreur de login");
     }
     return onContinue;
 }

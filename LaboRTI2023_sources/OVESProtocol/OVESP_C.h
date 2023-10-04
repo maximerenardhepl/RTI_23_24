@@ -14,7 +14,7 @@
 using namespace std;
 
 //connecte deconnect du client
-bool OVESP_Login(const char* user,const char* password, int socket);
+bool OVESP_Login(const char* user,const char* password, int socket, int newclient);
 void OVESP_Logout(int socket);
 
 //ce charge de construire les requete pour envoyer au serveur (place une entete)
