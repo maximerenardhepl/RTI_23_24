@@ -11,11 +11,13 @@ using namespace std;
 
 extern WindowClient *w;
 
+int socketC = 0;
+
 Article articleEnCours;
 
 #define REPERTOIRE_IMAGES "images/"
 
-WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
+WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
 {
     ui->setupUi(this);
 
@@ -36,9 +38,7 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     ui->pushButtonPayer->setText("Confirmer achat");
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
-    // Exemples à supprimer
-    /*setArticle("pommes",5.53,18,"pommes.jpg");
-    ajouteArticleTablePanier("cerises",8.96,2);*/
+    socketC = sClient;
 }
 
 WindowClient::~WindowClient()
@@ -280,6 +280,11 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
+  printf("login = %s\n", getNom());
+  printf("password : %s\n", getMotDePasse());
+
+  OVESP_Login(getNom(),getMotDePasse(), socketC);
+
 
 }
 
@@ -299,7 +304,7 @@ void WindowClient::on_pushButtonSuivant_clicked()
     
     try
     {
-        Article art = OVESP_Consult(articleEnCours.getId()+1, 0);
+        Article art = OVESP_Consult(articleEnCours.getId()+1, socketC);
         w->setArticle(art.getIntitule().c_str(), art.getPrix(), art.getQte(), art.getImage().c_str());
     }
     catch(Exception& e)
@@ -318,7 +323,7 @@ void WindowClient::on_pushButtonPrecedent_clicked()
     
     try
     {
-        Article art = OVESP_Consult(articleEnCours.getId()-1, 0);
+        Article art = OVESP_Consult(articleEnCours.getId()-1, socketC);
         w->setArticle(art.getIntitule().c_str(), art.getPrix(), art.getQte(), art.getImage().c_str());
     }
     catch(Exception& e)

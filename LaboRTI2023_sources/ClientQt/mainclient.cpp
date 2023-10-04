@@ -10,11 +10,11 @@
 
 #include <QApplication>
 
+int sClient = 0;
+
 WindowClient *w;
 
 void HandlerSIGINT(int);
-
-int sClient = 0;
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-
     // Connexion sur le serveur 
     if ((sClient = ClientSocket(argv[1],atoi(argv[2]))) == -1)
     {
@@ -49,7 +48,9 @@ int main(int argc, char *argv[])
     printf("Connecte sur le serveur.\n");
 
     QApplication a(argc, argv);
-    w = new WindowClient();
+
+    //crée le client en lui passant le socket
+    w = new WindowClient(sClient);
     w->show();
     return a.exec();    
 }

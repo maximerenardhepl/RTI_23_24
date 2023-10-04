@@ -12,7 +12,7 @@ class WindowClient : public QMainWindow
     Q_OBJECT
 
 public:
-    WindowClient(QWidget *parent = nullptr);
+    WindowClient(int Socket, QWidget *parent = nullptr);
     ~WindowClient();
 
     // Fonctions utiles (ne pas modifier)
