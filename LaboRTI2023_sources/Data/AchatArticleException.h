@@ -1,6 +1,8 @@
 #ifndef ACHATARTICLEEXCEPTION_H
 #define ACHATARTICLEEXCEPTION_H
 
+#include "Exception.h"
+
 class AchatArticleException : public Exception
 {
     private:

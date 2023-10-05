@@ -16,6 +16,7 @@ void* FctThreadClient(void* p);
 void TraitementClient(int sService);
 bool areClientsInQueue(void);
 bool ConnectDB(MYSQL *connexion);
+void AchatToCaddie(char* reponse);
 
 
 #define NB_THREADS_POOL_MAX 2
@@ -85,7 +86,6 @@ int main(int argc, char* argv[])
         pthread_create(&th, NULL, FctThreadClient, NULL);
     }
 
-
     //lancement de la boucle du serveur
     int sService = 0;
     char ipClient[50];
@@ -95,32 +95,24 @@ int main(int argc, char* argv[])
         {
             pthread_mutex_lock(&mutexTabSocket);
 
-            //retour début du tableau si place libre dans la file.
-            /*if (indiceEcriture == (TAILLE_FILE_ATT-1) && TabSocket[0] == -1)
+            if(TabSocket[indiceEcriture] == -1) //Vérif si l'element courant de la file d'attente est libre.
             {
-                indiceEcriture = 0;
-            }
-            else //Pour les autres cases...
-            {*/
-                if(TabSocket[indiceEcriture] == -1) //Vérif si l'element courant de la file d'attente est libre.
+                TabSocket[indiceEcriture] = sService;
+                if(indiceEcriture == (TAILLE_FILE_ATT - 1) /*&& TabSocket[0] == -1*/)
                 {
-                    TabSocket[indiceEcriture] = sService;
-                    if(indiceEcriture == (TAILLE_FILE_ATT - 1) /*&& TabSocket[0] == -1*/)
-                    {
-                        indiceEcriture = 0;
-                    }
-                    else
-                    {
-                       indiceEcriture++;
-                    }
-                    pthread_cond_signal(&condTabSocket);
+                    indiceEcriture = 0;
                 }
                 else
                 {
-                    //File remplie -> alerter le client et fermer le client.
-                    close(sService);
+                    indiceEcriture++;
                 }
-            //}
+                pthread_cond_signal(&condTabSocket);
+            }
+            else
+            {
+                //File remplie -> alerter le client et fermer le client.
+                close(sService);
+            }
 
             pthread_mutex_unlock(&mutexTabSocket);
         }
@@ -208,6 +200,8 @@ void TraitementClient(int sService)
         onContinue = OVESP_Decode(requete, reponse, sService, connexion);
         pthread_mutex_unlock(&mutexConnexionBD);
 
+        //Vérifie si la reponse est un ACHAT -> MAJ du Caddie.
+        AchatToCaddie(reponse);
 
         //on renvoi la reponse au client
         if((nbEcrits = Send(sService, reponse, sizeof(reponse))) == -1)
@@ -233,6 +227,11 @@ bool ConnectDB(MYSQL *connexion)
     return true;
 }
 
+void AchatToCaddie(char* reponse)
+{
+    
+}
+
 //signale pour couper les processus
 void HandlerSIGINT(int s)
 {
@@ -246,6 +245,7 @@ void HandlerSIGINT(int s)
     }
         
     pthread_mutex_unlock(&mutexTabSocket);
+    mysql_close(connexion);
     OVESP_Close();
     
     exit(0);

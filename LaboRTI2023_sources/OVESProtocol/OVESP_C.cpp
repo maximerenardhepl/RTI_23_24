@@ -4,13 +4,14 @@
 void Echange(char* requete, char* reponse, int socket);
 
 
-bool OVESP_Login(const char* user,const char* password, int socket)
+bool OVESP_Login(const char* user,const char* password, int socket, int newclient)
 {
     char requete[200],reponse[200];
     bool onContinue = true;
 
     // ***** Construction de la requete *********************
     sprintf(requete,"LOGIN#%s#%s",user,password);
+    printf("%s",requete);
 
     // ***** Envoi requete + réception réponse **************
     Echange(requete,reponse, socket);
@@ -19,15 +20,19 @@ bool OVESP_Login(const char* user,const char* password, int socket)
     char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
     ptr = strtok(NULL,"#");
 
+    //si c'est newclient est = a 1 alors jenvoie une requete au serveur et je dit d'ajouter dans la bd
+
     if (strcmp(ptr,"ok") == 0) 
     {
         //connexion réussie
         printf("connexion réussie.\n");
+        return true;
     }
     else
     {
         printf("erreur de login");
         onContinue = false;
+        throw Exception("erreur de login");
     }
     return onContinue;
 }
@@ -84,19 +89,19 @@ Article OVESP_Consult(int idArticle, int socket)
     return resArticle;
 }
 
-string OVESP_Achat(int idArticle, int quantite)
+Article OVESP_Achat(int idArticle, int quantite, int socket)
 {
     char requete[200], reponse[200];
     int nbEcrits, nbLus;
 
     sprintf(requete, "ACHAT#%d#%d", idArticle, quantite);
-    Echange(requete, reponse);
+    Echange(requete, reponse, socket);
 
     const char* delim = "#";
     char* token = strtok(reponse, delim);
     token = strtok(NULL, delim);
 
-    string msgConfirm;
+    Article resArticle;
     if(strcmp(token, "KO") == 0)
     {
         int errCode = atoi(strtok(NULL, delim));
@@ -110,15 +115,21 @@ string OVESP_Achat(int idArticle, int quantite)
         }
         else if(errCode == AchatArticleException::INSUFFICIENT_STOCK)
         {
-            message = to_string(strtok(NULL, delim)); //Récupération du message d'erreur créé par le serveur.
+            message = strtok(NULL, delim); //Récupération du message d'erreur créé par le serveur.
         }
         throw Exception(message);
     }
     else
     {
-        msgConfirm = to_string(strtok(NULL, delim));
+        int id = atoi(strtok(NULL, delim));
+        string intitule = strtok(NULL, delim);
+        int stock = atoi(strtok(NULL, delim));
+        string image = strtok(NULL, delim);
+        float prix = atof(strtok(NULL, delim));
+
+        resArticle = Article(id, intitule, stock, image, prix);
     }
-    return msgConfirm;
+    return resArticle;
 }
 
 void OVESP_Caddie()

@@ -1,6 +1,6 @@
 .SILENT:
 
-DATA_DEPENDENCIES=$(DATA)/Article.o $(DATA)/Exception.o $(DATA)/DataBaseException.o
+DATA_DEPENDENCIES=$(DATA)/Article.o $(DATA)/Exception.o $(DATA)/DataBaseException.o $(DATA)/AchatArticleException.o
 
 CLI=ClientQt
 depClient=$(CLI)/mainclient.o $(CLI)/windowclient.o $(CLI)/moc_windowclient.o $(SOCK)/LibSocket.o $(OVESP)/OVESP_C.o $(DATA_DEPENDENCIES)
@@ -63,6 +63,10 @@ $(DATA)/Exception.o:	$(DATA)/Exception.h $(DATA)/Exception.cpp
 $(DATA)/DataBaseException.o:	$(DATA)/DataBaseException.h $(DATA)/DataBaseException.cpp
 	echo "Creation DataBaseException.o"
 	g++ $(DATA)/DataBaseException.cpp -o $(DATA)/DataBaseException.o -c
+
+$(DATA)/AchatArticleException.o:	$(DATA)/AchatArticleException.h $(DATA)/AchatArticleException.cpp
+	echo "Creation AchatArticleException.o"
+	g++ $(DATA)/AchatArticleException.cpp -o $(DATA)/AchatArticleException.o -c
 
 
 

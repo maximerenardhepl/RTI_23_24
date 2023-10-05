@@ -11,9 +11,10 @@ bool ajoute(int socket);
 void retire(int socket);
 
 //questionne la bd pour voir si present
-bool verif_Log(const char* user,const char* password);
+bool verif_Log(const char* user,const char* pass,MYSQL *conn);
+bool insert_new_client(char name, char pass,MYSQL *conn);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
-string buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
+Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
 
 bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
@@ -21,19 +22,33 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
     const char *delim = "#";
     char* token = strtok(requete, delim);
 
-    if (strcmp(token,"LOGIN") == 0)
+    int i = 0;
+    char *p = token;
+    while(*p != '\0')
+    {
+        i++;
+        p++;
+    }
+    printf("token = %s\n", token);
+    printf("Taille du token: %d\n", i);
+
+    ////////////////////////////////////////////////////////////
+
+    if(strcmp(token,"LOGIN") == 0)
     {
         //si le client est déja loger
+        printf("Requete LOGIN detectee dans le OVESP_Decode");
         if(estPresent(socket))
         {
             sprintf(reponse,"LOGIN#ko#Client déjà loggé !");
         }
         else
         {
-            char user[200];
-            char password[200];
+            char* user = strtok(NULL, delim);
+            char* password = strtok(NULL, delim);
+
             //on verif si il existe (quil est deja inscrit)
-            if(verif_Log(user,password))
+            if(verif_Log(user,password,conn) != false)
             {
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
@@ -48,13 +63,15 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
         return true;
     }
 
-    if (strcmp(token,"LOGOUT") == 0)
+    ////////////////////////////////////////////////////////////
+
+    if(strcmp(token,"LOGOUT") == 0)
     {
         retire(socket);
         sprintf(reponse,"LOGOUT#ok");
     }
 
-
+    ////////////////////////////////////////////////////////////
 
     if(strcmp(token, "CONSULT") == 0)
     {
@@ -98,8 +115,8 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 
             try
             {
-                string msgConfirm = buyArticleOnDB(idArticle, qte, conn);
-                sprintf(reponse, "ACHAT#OK#%s", msgConfirm);
+                Article art = buyArticleOnDB(idArticle, qte, conn);
+                sprintf(reponse, "ACHAT#OK#%d#%s#%d#%s#%ld", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
             }
             catch(DataBaseException e)
             {
@@ -111,11 +128,6 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             }
         }
         return true;
-    }
-
-    if(strcmp(token, "CADDIE") == 0)
-    {
-
     }
 
     if(strcmp(token, "CONFIRM") == 0)
@@ -130,10 +142,27 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 //Fonctions d'accès à la base de données:
 
 //regarde dans la bd si le compte existe bien
-bool verif_Log(const char* user,const char* password)
+bool verif_Log(const char* user,const char* pass,MYSQL *conn)
 {
     //question la bd si le client existe retourne true ou false
-    return true;
+    if(mysql_query(conn, "select * from clients where login = user;") != 0)
+    {
+        mysql_error(conn);
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+bool insert_new_client(char name, char pass, MYSQL *conn)
+{
+    char requete[100];
+    sprintf(requete, "INSERT INTO clients (login, password) VALUES ('%s', '%s');", name, pass);
+    
+    return mysql_query(conn, requete);
+
 }
 
 
@@ -180,10 +209,10 @@ Article getArticleOnDB(int idArticle, MYSQL *conn)
     }
 }
 
-string buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
+Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
 {
     char requete[256];
-    sprintf(requete, "select stock from articles where id = %d", idArticle);
+    sprintf(requete, "select * from articles where id = %d", idArticle);
 
     if(mysql_query(conn, requete) != 0)
     {
@@ -209,16 +238,35 @@ string buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
             MYSQL_ROW tuple;
             tuple = mysql_fetch_row(resultat);
 
-            int stockReel = atoi(tuple[0]);
+            int id = atoi(tuple[0]);
+            string intitule = tuple[1];
+            int stockReel = atoi(tuple[2]);
+            string image = tuple[3];
+            float prix = atof(tuple[4]);
+
             if(stockReel < quantite)
             {
                 //Construction et envoi du message d'erreur...
-                string msg = "Impossible d'acheter l'article! Le stock (" << stock << ") pour cet article est insuffisant";
+                string msg = "Impossible d'acheter l'article! Le stock (" + to_string(stockReel) + ") pour cet article est insuffisant";
                 throw AchatArticleException(msg, AchatArticleException::INSUFFICIENT_STOCK);
             }
             else
             {
-                //réaliser une requete pour décrémenter le stock de l'article de la quantite demandée.
+                //Envoi d'une requete pour décrémenter le stock de l'article de la quantite demandée dans la BD.
+                int nouveauStock = stockReel - quantite;
+                sprintf(requete, "update articles set stock = %d where id = %d", nouveauStock, idArticle);
+
+                if(mysql_query(conn, requete) != 0)
+                {
+                    //Construction et envoi du message d'erreur...
+                    string msg = "Erreur de mysql_query() : ";
+                    msg += mysql_error(conn);
+
+                    throw DataBaseException(msg, DataBaseException::QUERY_ERROR);
+                }
+
+                Article art(id, intitule, quantite, image, prix);
+                return art;
             }
         }
     }

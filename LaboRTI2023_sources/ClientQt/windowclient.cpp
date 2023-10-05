@@ -39,6 +39,8 @@ WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), u
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
     socketC = sClient;
+
+    loginOK();
 }
 
 WindowClient::~WindowClient()
@@ -280,12 +282,19 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
-  printf("login = %s\n", getNom());
-  printf("password : %s\n", getMotDePasse());
-
-  OVESP_Login(getNom(),getMotDePasse(), socketC);
-
-
+      try
+      {
+          //ovesp peut trow une exception
+          if(OVESP_Login(getNom(),getMotDePasse(), socketC,isNouveauClientChecked()) == true)
+          {
+            //bien connecter acces a l'app
+            loginOK();
+          }
+      }
+      catch(Exception& e)
+      {
+          w->dialogueErreur("mauvais identifiant", e.getMessage().c_str());
+      }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -337,10 +346,16 @@ void WindowClient::on_pushButtonAcheter_clicked()
 {
     try
     {
-        string msgConfirm = OVESP_Achat(articleEnCours.getId(), w->getQuantite());
-        w->dialogueMessage("Achat confirmé", msgConfirm.c_str());
+        Article art = OVESP_Achat(articleEnCours.getId(), w->getQuantite(), socketC);
+        w->ajouteArticleTablePanier(art.getIntitule().c_str(), art.getPrix(), art.getQte());
 
-        //Envoyer requete Caddie pour actualiser le caddie du client dans l'interface graphique (le Caddie est gardé à jour dans le thread coté serveur s'occupant du client)
+        string msgConfirm = "Votre commande de ";
+        msgConfirm += art.getQte();
+        msgConfirm += " ";
+        msgConfirm += art.getIntitule();
+        msgConfirm += " a bien ete validee!";
+         
+        w->dialogueMessage("Achat confirmé", msgConfirm.c_str());
     }
     catch(Exception& e)
     {

@@ -155,12 +155,6 @@ int ClientSocket(char* ipServeur,int portServeur)
         close(s);
         return -1;
     }
-    
-    printf("=========== Informations à propos du serveur pour une connexion ===========\n");
-    printf("Descripteur du socket client = %d\n", s);
-    printf("Adresse et port du serveur = %p\n", (void *)results->ai_addr);
-    printf("Taille de la structure = %zu\n", results->ai_addrlen);
-    printf("=====================================================================\n");
 
     // Fait appel à connect() pour se connecter au serveur
 
@@ -204,32 +198,24 @@ int Send(int sSocket, char* data, int taille)
     }
     else
     {
-        //if (taille > TAILLE_MAX)
-        //{
-        //    printf("Trame trop grande\n");
-        //    return -1;
-        //}
-        //else
-        //{
-            // Copie de l'en-tête dans la trame
-            memcpy(trame, EnTete.c_str(), 4);
-            
-            // Copie des données dans la trame
-            memcpy(trame + 4, data, taille);
+        // Copie de l'en-tête dans la trame
+        memcpy(trame, EnTete.c_str(), 4);
+        
+        // Copie des données dans la trame
+        memcpy(trame + 4, data, taille);
 
-            R = write(sSocket, trame, taille + 4);
+        R = write(sSocket, trame, taille + 4);
 
-            if (R < 0)
-            {
-                printf("Erreur lors de l'envoi du message\n");
-                return -1;
-            }
-            else
-            {
-                printf("Message envoyé avec succès (%d octets)\n", R);
-                return R;
-            }
-        //}
+        if (R < 0)
+        {
+            printf("Erreur lors de l'envoi du message\n");
+            return -1;
+        }
+        else
+        {
+            printf("Message envoyé avec succès (%d octets)\n", R);
+            return R;
+        }
     }
 }
 
@@ -238,17 +224,15 @@ int Send(int sSocket, char* data, int taille)
 //process :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int Receive(int sSocket,char* data)
+int Receive(int sSocket, char* data)
 {
-    if(data == NULL) 
+    if(data == NULL)
     {
         //Le buffer doit etre initialisé
         return -1;
     }
-    else 
+    else
     {
-        sleep(30);
-
         char nbBytesStr[2];
         int nbBytes = 0; //Va contenir la valeur correspondant à la taille réelle de la charge utile du paquet de bytes.
         int nbCarLus = 0;
@@ -262,17 +246,24 @@ int Receive(int sSocket,char* data)
                 return nbCarLus;
             }
 
-            nbBytes += nbBytesStr[0] * pow(10, j); //Actualisation de la valeur de nbBytes
+            nbBytes += atoi(nbBytesStr) * pow(10, j); //Actualisation de la valeur de nbBytes
         }
         
+        //char* chaine = (char*) malloc(nbBytes * sizeof(char));
+
+        nbCarLus = read(sSocket, data, nbBytes);
+        //*data = chaine;
+
         //verif si le char a la capaciter d'accuillir les données (taille)
-        if(sizeof(data) >= nbBytes)
+        string dataToStr = to_string(*data);
+        if(dataToStr.size() >= nbBytes)
         {
             return (nbCarLus = read(sSocket, data, nbBytes));
         }
         else
         {
             //Taille du buffer de stockage (ici data) insuffisante.
+            perror("Erreur Receive! La chaine de caracteres receptrice est trop petite...");
             return -1;
         }
     }
