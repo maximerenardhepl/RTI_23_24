@@ -248,23 +248,21 @@ int Receive(int sSocket, char* data)
 
             nbBytes += atoi(nbBytesStr) * pow(10, j); //Actualisation de la valeur de nbBytes
         }
-        
-        //char* chaine = (char*) malloc(nbBytes * sizeof(char));
 
-        nbCarLus = read(sSocket, data, nbBytes);
-        //*data = chaine;
+        //nbCarLus = read(sSocket, data, nbBytes);
 
         //verif si le char a la capaciter d'accuillir les données (taille)
         string dataToStr = to_string(*data);
-        if(dataToStr.size() >= nbBytes)
-        {
+        printf("\ntaille de dataToStr = %d\n", dataToStr.size());
+        //if(dataToStr.size() >= nbBytes)
+        //{
             return (nbCarLus = read(sSocket, data, nbBytes));
-        }
+        /*}
         else
         {
             //Taille du buffer de stockage (ici data) insuffisante.
             perror("Erreur Receive! La chaine de caracteres receptrice est trop petite...");
             return -1;
-        }
+        }*/
     }
 }

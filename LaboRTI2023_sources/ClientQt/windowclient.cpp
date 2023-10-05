@@ -354,7 +354,7 @@ void WindowClient::on_pushButtonAcheter_clicked()
         msgConfirm += " ";
         msgConfirm += art.getIntitule();
         msgConfirm += " a bien ete validee!";
-         
+
         w->dialogueMessage("Achat confirmé", msgConfirm.c_str());
     }
     catch(Exception& e)
