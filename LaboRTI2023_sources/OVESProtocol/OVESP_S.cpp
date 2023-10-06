@@ -11,8 +11,8 @@ bool ajoute(int socket);
 void retire(int socket);
 
 //questionne la bd pour voir si present
-bool verif_Log(const char* user,const char* pass,MYSQL *conn);
-bool insert_new_client(char name, char pass,MYSQL *conn);
+bool verif_Log(char* user,char* pass,MYSQL *conn);
+bool insert_new_client(char* name, char* pass,MYSQL *conn);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
@@ -48,20 +48,27 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             char* user = strtok(NULL, delim);
             char* password = strtok(NULL, delim);
 
-            printf("Test client pas encore present");
+            printf("Test client pas encore present\n");
 
             //on verif si il existe (quil est deja inscrit)
-            if(verif_Log(user,password,conn) != false)
+            if(verif_Log(user,password,conn) == true)
             {
+
+                printf("Verif log OK - test1 \n");
+
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
             }
             else
             {
+                printf("Verif log pas OK - test2\n");
+
                 //client n'existe pas et n'est pas déja logger
                 sprintf(reponse,"LOGIN#ko#Mauvais identifiants !");
             }
+
+            printf("BONJOUR TA GROSSE MERE\n");
         }
         return true;
     }
@@ -147,12 +154,15 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 //Fonctions d'accès à la base de données:
 
 //regarde dans la bd si le compte existe bien
-bool verif_Log(const char* user,const char* pass,MYSQL *conn)
+bool verif_Log(char* user,char* pass,MYSQL *conn)
 {
     //question la bd si le client existe retourne true ou false
-    if(mysql_query(conn, "select * from clients where login = user;") != 0)
+    char requete[200];
+    sprintf(requete, "select * from clients where login = %s and password = %s;", user, pass);
+    
+    if(mysql_query(conn, requete) != 0)
     {
-        mysql_error(conn);
+        //mysql_error(conn);
         return false;
     }
     else
@@ -161,7 +171,7 @@ bool verif_Log(const char* user,const char* pass,MYSQL *conn)
     }
 }
 
-bool insert_new_client(char name, char pass, MYSQL *conn)
+bool insert_new_client(char* name, char* pass, MYSQL *conn)
 {
     char requete[100];
     sprintf(requete, "INSERT INTO clients (login, password) VALUES ('%s', '%s');", name, pass);
