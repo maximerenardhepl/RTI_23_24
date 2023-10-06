@@ -12,7 +12,6 @@ void retire(int socket);
 
 //questionne la bd pour voir si present
 bool verif_Log(const char* user,const char* pass,MYSQL *conn);
-bool insert_new_client(char name, char pass,MYSQL *conn);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
@@ -22,22 +21,12 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
     const char *delim = "#";
     char* token = strtok(requete, delim);
 
-    int i = 0;
-    char *p = token;
-    while(*p != '\0')
-    {
-        i++;
-        p++;
-    }
-    printf("token = %s\n", token);
-    printf("Taille du token: %d\n", i);
-
     ////////////////////////////////////////////////////////////
 
     if(strcmp(token,"LOGIN") == 0)
     {
         //si le client est déja loger
-        printf("Requete LOGIN detectee dans le OVESP_Decode");
+        printf("OVESP_S: login decode a recu les id\n");
         if(estPresent(socket))
         {
             sprintf(reponse,"LOGIN#ko#Client déjà loggé !");
@@ -48,8 +37,10 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             char* password = strtok(NULL, delim);
 
             //on verif si il existe (quil est deja inscrit)
+            printf("OVESP_S: verifie si le client existe déja\n");
             if(verif_Log(user,password,conn) != false)
             {
+                printf("OVESP_S : le client n'e\n");
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
@@ -61,6 +52,25 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             }
         }
         return true;
+    }
+
+    ///////////////////////////////////////////////
+
+    if(strcmp(token,"REGISTER") == 0)
+    {
+        printf("OVESP_S: register decode register un nouveau client");
+
+        char* user = strtok(NULL, delim);
+        char* password = strtok(NULL, delim);
+
+        char requete[100];
+        printf("OVESP_C resgister decode: nouveau client dans la bd %s, %s",user,password);
+        sprintf(requete, "INSERT INTO clients (login, password) VALUES ('%s', '%s');", user, password);
+        
+        mysql_query(conn, requete);
+
+        sprintf(reponse,"LOGIN#ok#Client inscrit !");
+
     }
 
     ////////////////////////////////////////////////////////////
@@ -152,18 +162,14 @@ bool verif_Log(const char* user,const char* pass,MYSQL *conn)
     }
     else
     {
+        printf("OVESP_S : verif log : le client nexiste pas\n");
         return true;
     }
 }
 
-bool insert_new_client(char name, char pass, MYSQL *conn)
-{
-    char requete[100];
-    sprintf(requete, "INSERT INTO clients (login, password) VALUES ('%s', '%s');", name, pass);
-    
-    return mysql_query(conn, requete);
 
-}
+
+
 
 
 //Process : Récupère les informations de l'article en base de données (retour sous forme d'objet Article)

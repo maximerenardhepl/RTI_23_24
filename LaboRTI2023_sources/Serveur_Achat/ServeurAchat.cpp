@@ -177,7 +177,7 @@ void TraitementClient(int sService)
     while(onContinue)
     {
         //recois le message
-        printf("\t[THREAD %p] Attente d'une requete...\n", pthread_self());
+        //printf("\t[THREAD %p] Attente d'une requete...\n", pthread_self());
         if((nbLus = Receive(sService, requete)) == -1)
         {
             perror("Erreur de Receive");
@@ -194,9 +194,10 @@ void TraitementClient(int sService)
         }
 
         //savoir qui recois quoi
-        printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
+        //printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
 
         pthread_mutex_lock(&mutexConnexionBD);
+        printf("SERVEUR ACHAT: appelle decode pour traiter la requete\n");
         onContinue = OVESP_Decode(requete, reponse, sService, connexion);
         pthread_mutex_unlock(&mutexConnexionBD);
 

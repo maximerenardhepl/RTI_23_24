@@ -9,32 +9,35 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
     char requete[200],reponse[200];
     bool onContinue = true;
 
-    // ***** Construction de la requete *********************
-    sprintf(requete,"LOGIN#%s#%s",user,password);
-    printf("%s",requete);
-
-    // ***** Envoi requete + réception réponse **************
-    Echange(requete,reponse, socket);
-
-    // ***** Parsing de la réponse **************************
-    char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
-    ptr = strtok(NULL,"#");
-
     //si c'est newclient est = a 1 alors jenvoie une requete au serveur et je dit d'ajouter dans la bd
-
-    if (strcmp(ptr,"ok") == 0) 
+    if(newclient == 1)
     {
-        //connexion réussie
-        printf("connexion réussie.\n");
-        return true;
+        sprintf(requete,"REGISTER#%s#%s",user,password);
     }
     else
     {
-        printf("erreur de login");
-        onContinue = false;
-        throw Exception("erreur de login");
+        sprintf(requete,"LOGIN#%s#%s",user,password);
+
+        // ***** Envoi requete + réception réponse **************
+        printf("OVESP_C: envoi les id dans la requete au serveur\n");
+        Echange(requete,reponse, socket);
+
+        // ***** Parsing de la réponse **************************
+        char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
+        ptr = strtok(NULL,"#");
+
+        if (strcmp(ptr,"ok") == 0) 
+        {
+            //connexion réussie
+            printf("connexion réussie.\n");
+            return true;
+        }
+        else
+        {
+            printf("erreur de login");
+            throw Exception("erreur de login");
+        }
     }
-    return onContinue;
 }
 
 void OVESP_Logout(int socket)

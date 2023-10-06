@@ -40,7 +40,7 @@ WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), u
 
     socketC = sClient;
 
-    loginOK();
+    //loginOK();
 }
 
 WindowClient::~WindowClient()
@@ -273,7 +273,6 @@ void WindowClient::dialogueErreur(const char* titre,const char* message)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::closeEvent(QCloseEvent *event)
 {
-
   exit(0);
 }
 
@@ -282,19 +281,21 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
-      try
-      {
-          //ovesp peut trow une exception
-          if(OVESP_Login(getNom(),getMotDePasse(), socketC,isNouveauClientChecked()) == true)
-          {
-            //bien connecter acces a l'app
-            loginOK();
-          }
-      }
-      catch(Exception& e)
-      {
-          w->dialogueErreur("mauvais identifiant", e.getMessage().c_str());
-      }
+    try
+    {
+      printf("WINDOW CLIENT: recolter les id\n");
+        //ovesp peut trow une exception
+        if(OVESP_Login(getNom(),getMotDePasse(), socketC,isNouveauClientChecked()) == true)
+        {
+          printf("login ok\n");
+          //bien connecter acces a l'app
+          loginOK();
+        }
+    }
+    catch(Exception& e)
+    {
+        w->dialogueErreur("mauvais identifiant", e.getMessage().c_str());
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
