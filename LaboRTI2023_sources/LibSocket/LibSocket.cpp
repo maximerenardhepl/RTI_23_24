@@ -239,12 +239,16 @@ int Receive(int sSocket, char* data)
 
         //Lecture des 4 premiers octets contenant la taille de la réelle charge utile du paquet de bytes.
         //Exemple : Charge utile = "Hello World" -> alors le vrai message écrit sur le pipe sera : "0011Hello World"
+        
+        printf("LibSocket : Fonction Receive : Début...\n");
+
         for(int i = 0, j = 3; i < 4; i++, j--)
         {
             if((nbCarLus = read(sSocket, nbBytesStr, 1)) <= 0) //Si une erreur se produit lors de la lecture on retourne la valeur retournée par read()
             {
                 return nbCarLus;
             }
+            printf("LibSocket: caractere lu : %s\n", nbBytesStr);
 
             nbBytes += atoi(nbBytesStr) * pow(10, j); //Actualisation de la valeur de nbBytes
         }
@@ -252,10 +256,14 @@ int Receive(int sSocket, char* data)
         //nbCarLus = read(sSocket, data, nbBytes);
 
         //verif si le char a la capaciter d'accuillir les données (taille)
-        string dataToStr = to_string(*data);
-        printf("\ntaille de dataToStr = %d\n", dataToStr.size());
+        
+        //string dataToStr = to_string(*data);
+        //printf("\ntaille de dataToStr = %d\n", dataToStr.size());
+        
+        
         //if(dataToStr.size() >= nbBytes)
         //{
+            printf("LibSocket: Debug avant read de la trame reelle...\n");
             return (nbCarLus = read(sSocket, data, nbBytes));
         /*}
         else

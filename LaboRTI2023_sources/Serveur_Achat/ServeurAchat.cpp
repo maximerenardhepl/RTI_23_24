@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
         perror("Erreur de connexion à la base de données...\n");
         exit(1);
     }
+    printf("Connexion a la base de donnees reussie!\n");
    
     //je passe un tableau d'argument avec donc l'ip et le port
     if((sEcoute = ServerSocket(atoi(argv[1]))) == -1)
@@ -197,6 +198,7 @@ void TraitementClient(int sService)
         printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
 
         pthread_mutex_lock(&mutexConnexionBD);
+        printf("TraitementClient : Debug passage après pthread_mutex_lock(mutexConnexionBD) et avant OVESP_Decode(...)\n");
         onContinue = OVESP_Decode(requete, reponse, sService, connexion);
         pthread_mutex_unlock(&mutexConnexionBD);
 
@@ -229,7 +231,7 @@ bool ConnectDB(MYSQL *connexion)
 
 void AchatToCaddie(char* reponse)
 {
-    
+
 }
 
 //signale pour couper les processus

@@ -40,7 +40,7 @@ WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), u
 
     socketC = sClient;
 
-    loginOK();
+    //loginOK();
 }
 
 WindowClient::~WindowClient()
