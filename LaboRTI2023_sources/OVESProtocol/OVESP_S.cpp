@@ -25,13 +25,8 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 
     ////////////////////////////////////////////////////////////
 
-    printf("CECI EST UN TEST\n");
-
     char test[30];
     strcpy(test, token);
-
-    printf("Token dans OVESP_Decode = %s\n", token);
-    printf("Token dans variable test = %s\n", test);
 
     if(strcmp(test, "LOGIN") == 0)
     {
@@ -46,13 +41,13 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             char* user = strtok(NULL, delim);
             char* password = strtok(NULL, delim);
 
-            printf("Test client pas encore present");
+            
 
             //on verif si il existe (quil est deja inscrit)
             printf("OVESP_S: verifie si le client existe déja\n");
             if(verif_Log(user,password,conn) != false)
             {
-                printf("OVESP_S : le client n'e\n");
+                printf("OVESP_S : le client n'existe pas\n");
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
@@ -70,7 +65,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 
     if(strcmp(token,"REGISTER") == 0)
     {
-        printf("OVESP_S: register decode register un nouveau client");
+        printf("OVESP_S: register decode un nouveau client\n");
 
         char* user = strtok(NULL, delim);
         char* password = strtok(NULL, delim);
@@ -167,9 +162,12 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 bool verif_Log(const char* user,const char* pass,MYSQL *conn)
 {
     //question la bd si le client existe retourne true ou false
-    if(mysql_query(conn, "select * from clients where login = user;") != 0)
+    printf("rentre dans verif log");
+    char requete[200];
+    sprintf(requete,"select * from clients where login = %s AND password = %s;",user,pass);
+
+    if(mysql_query(conn, requete) != 0)
     {
-        mysql_error(conn);
         return false;
     }
     else
