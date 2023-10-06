@@ -15,7 +15,7 @@ void HandlerSIGINT(int s);
 void* FctThreadClient(void* p);
 void TraitementClient(int sService);
 bool areClientsInQueue(void);
-bool ConnectDB(MYSQL *connexion);
+MYSQL* ConnectDB(MYSQL *connexion);
 void AchatToCaddie(char* reponse);
 
 
@@ -67,13 +67,14 @@ int main(int argc, char* argv[])
     }
 
     //Initialisation de la connexion à la BD
-    if(!ConnectDB(connexion))
+    if((connexion = ConnectDB(connexion)) == NULL)
     {
         perror("Erreur de connexion à la base de données...\n");
         exit(1);
     }
     printf("Connexion a la base de donnees reussie!\n");
-   
+
+
     //je passe un tableau d'argument avec donc l'ip et le port
     if((sEcoute = ServerSocket(atoi(argv[1]))) == -1)
     {
@@ -178,7 +179,7 @@ void TraitementClient(int sService)
     while(onContinue)
     {
         //recois le message
-        printf("\t[THREAD %p] Attente d'une requete...\n", pthread_self());
+        //printf("\t[THREAD %p] Attente d'une requete...\n", pthread_self());
         if((nbLus = Receive(sService, requete)) == -1)
         {
             perror("Erreur de Receive");
@@ -195,18 +196,21 @@ void TraitementClient(int sService)
         }
 
         //savoir qui recois quoi
-        printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
+        //printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
 
         pthread_mutex_lock(&mutexConnexionBD);
-        printf("TraitementClient : Debug passage après pthread_mutex_lock(mutexConnexionBD) et avant OVESP_Decode(...)\n");
+
+        printf("Requete recue - socket %d : %s\n", sService, requete);
         onContinue = OVESP_Decode(requete, reponse, sService, connexion);
+        printf("Reponse envoyee au client: %s\n", reponse);
+        
         pthread_mutex_unlock(&mutexConnexionBD);
 
         //Vérifie si la reponse est un ACHAT -> MAJ du Caddie.
         AchatToCaddie(reponse);
 
         //on renvoi la reponse au client
-        if((nbEcrits = Send(sService, reponse, sizeof(reponse))) == -1)
+        if((nbEcrits = Send(sService, reponse, strlen(reponse))) == -1)
         {
             perror("Erreur de Send");
             close(sService);
@@ -219,14 +223,11 @@ void TraitementClient(int sService)
     }
 }
 
-bool ConnectDB(MYSQL *connexion)
+MYSQL* ConnectDB(MYSQL *connexion)
 {
     connexion = mysql_init(NULL);
-    if (mysql_real_connect(connexion, "localhost", "Student", "PassStudent1_", "PourStudent", 0, 0, 0) == NULL)
-    {
-        return false;
-    }
-    return true;
+    mysql_real_connect(connexion, "localhost", "Student", "PassStudent1_", "PourStudent", 0, 0, 0);
+    return connexion;
 }
 
 void AchatToCaddie(char* reponse)

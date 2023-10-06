@@ -11,11 +11,19 @@ Article::Article(int id, string intitule, int qte, string img, float prix)
     setPrix(prix);
 }
 
+Article::Article(const Article& art)
+{
+    this->setId(art.getId());
+    this->setIntitule(art.getIntitule());
+    this->setQte(art.getQte());
+    this->setImage(art.getImage());
+    this->setPrix(art.getPrix());
+}
 
 
 void Article::setId(int id)
 {
-    if(id < 1)
+    if(id < 0)
     {
         throw Exception("Id d'article invalide!");
     }
@@ -60,12 +68,12 @@ void Article::setPrix(float prix)
 
 
 
-int Article::getId() { return id; }
+int Article::getId() const { return id; }
 
-string Article::getIntitule() { return intitule; }
+string Article::getIntitule() const { return intitule; }
 
-int Article::getQte() { return quantite; }
+int Article::getQte() const { return quantite; }
 
-string Article::getImage() { return image; }
+string Article::getImage() const { return image; }
 
-float Article::getPrix() { return prix; }
+float Article::getPrix() const { return prix; }

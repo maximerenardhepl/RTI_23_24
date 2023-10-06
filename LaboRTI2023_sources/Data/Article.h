@@ -21,6 +21,7 @@ class Article
         //Constructeurs
         Article();
         Article(int id, string intitule, int qte, string img, float prix);
+        Article(const Article& art);
 
         //Setters
         void setId(int id);
@@ -31,11 +32,11 @@ class Article
 
 
         //Getters
-        int getId();
-        string getIntitule();
-        int getQte();
-        string getImage();
-        float getPrix();
+        int getId() const;
+        string getIntitule() const;
+        int getQte() const;
+        string getImage() const;
+        float getPrix() const;
 };
 
 #endif

@@ -9,30 +9,35 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
     char requete[200],reponse[200];
     bool onContinue = true;
 
-    // ***** Construction de la requete *********************
-    sprintf(requete,"LOGIN#%s#%s",user,password);
+    //si c'est newclient est = a 1 alors jenvoie une requete au serveur et je dit d'ajouter dans la bd
+    if(newclient == 1) {
+        sprintf(requete,"REGISTER#%s#%s",user,password);
+    }
+    else {
+        sprintf(requete,"LOGIN#%s#%s",user,password);
+    }
 
     // ***** Envoi requete + réception réponse **************
+    printf("Nouvelle requete: %s\n", requete);
     Echange(requete,reponse, socket);
+    printf("Reponse recue: %s\n", reponse);
 
     // ***** Parsing de la réponse **************************
     char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
     ptr = strtok(NULL,"#");
 
-    //si c'est newclient est = a 1 alors jenvoie une requete au serveur et je dit d'ajouter dans la bd
-
     if (strcmp(ptr,"ok") == 0) 
     {
-        //connexion réussie
-        printf("OVESP_Login Client :  Retour requete : OK -> Connexion réussie\n");
+        printf("OVESP_Login: Connexion réussie!\n");
         return true;
     }
     else
     {
-        printf("OVESP_Login Client : Retour requete : KO -> Erreur de login");
-        throw Exception("erreur de login");
+        printf("OVESP_Login: Erreur de login\n");
+        throw Exception("Erreur de login!");
     }
-    return onContinue;
+
+    return true;
 }
 
 void OVESP_Logout(int socket)
@@ -53,7 +58,10 @@ Article OVESP_Consult(int idArticle, int socket)
     int nbEcrits, nbLus;
 
     sprintf(requete, "CONSULT#%d", idArticle);
+
+    printf("Nouvelle requete: %s\n", requete);
     Echange(requete, reponse, socket);
+    printf("Reponse recue: %s\n", reponse);
 
     const char *delim = "#";
     char* token = strtok(reponse, delim);
@@ -93,7 +101,10 @@ Article OVESP_Achat(int idArticle, int quantite, int socket)
     int nbEcrits, nbLus;
 
     sprintf(requete, "ACHAT#%d#%d", idArticle, quantite);
+
+    printf("Nouvelle requete: %s\n", requete);
     Echange(requete, reponse, socket);
+    printf("Reponse recue: %s\n", reponse);
 
     const char* delim = "#";
     char* token = strtok(reponse, delim);
@@ -143,8 +154,6 @@ void OVESP_Confirm()
 void Echange(char* requete, char* reponse, int socket)
 {
     int nbEcrits, nbLus;
-
-    printf("Client : fonction Echange : requete = %s\n", requete);
 
     if((nbEcrits = Send(socket, requete, strlen(requete) )) == -1)
     {

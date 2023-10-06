@@ -273,7 +273,6 @@ void WindowClient::dialogueErreur(const char* titre,const char* message)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::closeEvent(QCloseEvent *event)
 {
-
   exit(0);
 }
 
@@ -282,19 +281,23 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
-      try
-      {
-          //ovesp peut trow une exception
-          if(OVESP_Login(getNom(),getMotDePasse(), socketC,isNouveauClientChecked()) == true)
-          {
-            //bien connecter acces a l'app
-            loginOK();
-          }
-      }
-      catch(Exception& e)
-      {
-          w->dialogueErreur("mauvais identifiant", e.getMessage().c_str());
-      }
+    try
+    {
+        //OVESP_Login lance une exception en cas d'erreur du Login.
+        if(OVESP_Login(getNom(),getMotDePasse(), socketC, isNouveauClientChecked()) == true)
+        {
+          //Bien connecté -> acces aux différentes fonctionnalités.
+          loginOK();
+          setNom("");
+          setMotDePasse("");
+        }
+    }
+    catch(Exception& e)
+    {
+        setNom("");
+        setMotDePasse("");
+        w->dialogueErreur("Erreur - Login", e.getMessage().c_str());
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -308,12 +311,19 @@ void WindowClient::on_pushButtonSuivant_clicked()
 {
     if(articleEnCours.getId() == 21)
     {
-        articleEnCours.setId(1);
+        articleEnCours.setId(0);
     }
     
     try
     {
         Article art = OVESP_Consult(articleEnCours.getId()+1, socketC);
+
+        articleEnCours.setId(art.getId());
+        articleEnCours.setIntitule(art.getIntitule());
+        articleEnCours.setQte(art.getQte());
+        articleEnCours.setImage(art.getImage());
+        articleEnCours.setPrix(art.getPrix());
+
         w->setArticle(art.getIntitule().c_str(), art.getPrix(), art.getQte(), art.getImage().c_str());
     }
     catch(Exception& e)
@@ -333,6 +343,13 @@ void WindowClient::on_pushButtonPrecedent_clicked()
     try
     {
         Article art = OVESP_Consult(articleEnCours.getId()-1, socketC);
+
+        articleEnCours.setId(art.getId());
+        articleEnCours.setIntitule(art.getIntitule());
+        articleEnCours.setQte(art.getQte());
+        articleEnCours.setImage(art.getImage());
+        articleEnCours.setPrix(art.getPrix());
+
         w->setArticle(art.getIntitule().c_str(), art.getPrix(), art.getQte(), art.getImage().c_str());
     }
     catch(Exception& e)

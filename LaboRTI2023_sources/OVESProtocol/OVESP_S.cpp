@@ -11,34 +11,21 @@ bool ajoute(int socket);
 void retire(int socket);
 
 //questionne la bd pour voir si present
-bool verif_Log(char* user,char* pass,MYSQL *conn);
-bool insert_new_client(char* name, char* pass,MYSQL *conn);
+bool verif_Log(char* user, char* pass,MYSQL *conn);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
 
 bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 {
-    printf("OVESP_Decode Serveur : Debut de la fonction....\n");
-
     const char *delim = "#";
     char* token = strtok(requete, delim);
 
-    char test[30];
-    strcpy(test, token);
-
-    printf("Token dans OVESP_Decode = %s\n", token);
-    printf("Token dans variable test = %s\n", test);
-
     ////////////////////////////////////////////////////////////
 
-    printf("CECI EST UN TEST\n");
-
-    if(strcmp(test, "LOGIN") == 0)
+    if(strcmp(token, "LOGIN") == 0)
     {
         //si le client est déja loger
-        printf("Requete LOGIN detectee dans le OVESP_Decode\n");
-
         if(estPresent(socket))
         {
             sprintf(reponse,"LOGIN#ko#Client déjà loggé !");
@@ -48,32 +35,38 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             char* user = strtok(NULL, delim);
             char* password = strtok(NULL, delim);
 
-            printf("Test client pas encore present\n");
-
             //on verif si il existe (quil est deja inscrit)
-            if(verif_Log(user,password,conn) == true)
+            if(verif_Log(user, password, conn) == true)
             {
-
-                printf("Verif log OK - test1 \n");
-
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
             }
             else
             {
-                printf("Verif log pas OK - test2\n");
-
                 //client n'existe pas et n'est pas déja logger
                 sprintf(reponse,"LOGIN#ko#Mauvais identifiants !");
             }
-
-            printf("BONJOUR TA GROSSE MERE\n");
         }
         return true;
     }
 
-    printf("CECI EST UN TEST 2\n");
+    ///////////////////////////////////////////////
+
+    if(strcmp(token,"REGISTER") == 0)
+    {
+        char* user = strtok(NULL, delim);
+        char* password = strtok(NULL, delim);
+
+        char requete[100];
+        sprintf(requete, "INSERT INTO clients (login, password) VALUES ('%s', '%s');", user, password);
+        
+        mysql_query(conn, requete);
+        ajoute(socket);
+
+        sprintf(reponse,"LOGIN#ok#Client inscrit !");
+
+    }
 
     ////////////////////////////////////////////////////////////
 
@@ -100,7 +93,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             try 
             {
                 Article art = getArticleOnDB(idArticle, conn);
-                sprintf(reponse, "CONSULT#OK#%d#%s#%d#%s#%ld", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
+                sprintf(reponse, "CONSULT#OK#%d#%s#%d#%s#%lf", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
             }
             catch(DataBaseException e)
             {
@@ -128,7 +121,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             try
             {
                 Article art = buyArticleOnDB(idArticle, qte, conn);
-                sprintf(reponse, "ACHAT#OK#%d#%s#%d#%s#%ld", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
+                sprintf(reponse, "ACHAT#OK#%d#%s#%d#%s#%lf", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
             }
             catch(DataBaseException e)
             {
@@ -154,32 +147,23 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 //Fonctions d'accès à la base de données:
 
 //regarde dans la bd si le compte existe bien
-bool verif_Log(char* user,char* pass,MYSQL *conn)
+bool verif_Log(char* user,char* pass, MYSQL *conn)
 {
     //question la bd si le client existe retourne true ou false
     char requete[200];
-    sprintf(requete, "select * from clients where login = %s and password = %s;", user, pass);
+    sprintf(requete, "select * from clients where login like '%s' and password like '%s';", user, pass);
     
     if(mysql_query(conn, requete) != 0)
     {
-        //mysql_error(conn);
+        printf("Erreur de mysql_query: %s\n", mysql_error(conn));
         return false;
     }
     else
     {
+        printf("OVESP_S: verif log: Le client existe et les identifiants sont corrects!\n");
         return true;
     }
 }
-
-bool insert_new_client(char* name, char* pass, MYSQL *conn)
-{
-    char requete[100];
-    sprintf(requete, "INSERT INTO clients (login, password) VALUES ('%s', '%s');", name, pass);
-    
-    return mysql_query(conn, requete);
-
-}
-
 
 //Process : Récupère les informations de l'article en base de données (retour sous forme d'objet Article)
 Article getArticleOnDB(int idArticle, MYSQL *conn)
@@ -212,11 +196,15 @@ Article getArticleOnDB(int idArticle, MYSQL *conn)
             MYSQL_ROW tuple;
             tuple = mysql_fetch_row(resultat);
 
+            
             int id = atoi(tuple[0]);
-            string intitule = tuple[1];
-            int stock = atoi(tuple[2]);
-            string image = tuple[3];
-            float prix = atof(tuple[4]);
+            string intitule(tuple[1]);
+            float prix = atof(tuple[2]);
+            int stock = atoi(tuple[3]);
+            string image(tuple[4]);
+
+            printf("Resultat de mysql_fetch_row() : \nid = %d\nintitule = %s\nstock = %d\nimage = %s\nprix = %lf\n", id, intitule, stock, image, prix);
+            printf("Resultat de mysql_fetch_row() : \nid = %s\nintitule = %s\nprix = %s\nstock = %s\nimage = %s\n", tuple[0], tuple[1], tuple[2], tuple[3], tuple[4]);
 
             Article art(id, intitule, stock, image, prix);
             return art;
