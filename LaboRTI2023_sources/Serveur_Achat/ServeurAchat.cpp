@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
         perror("Erreur de connexion à la base de données...\n");
         exit(1);
     }
+    printf("Connexion a la base de donnees reussie!\n");
    
     //je passe un tableau d'argument avec donc l'ip et le port
     if((sEcoute = ServerSocket(atoi(argv[1]))) == -1)
@@ -230,7 +231,7 @@ bool ConnectDB(MYSQL *connexion)
 
 void AchatToCaddie(char* reponse)
 {
-    
+
 }
 
 //signale pour couper les processus

@@ -18,12 +18,22 @@ Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
 bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
 {
+    printf("OVESP_Decode Serveur : Debut de la fonction....\n");
+
     const char *delim = "#";
     char* token = strtok(requete, delim);
 
     ////////////////////////////////////////////////////////////
 
-    if(strcmp(token,"LOGIN") == 0)
+    printf("CECI EST UN TEST\n");
+
+    char test[30];
+    strcpy(test, token);
+
+    printf("Token dans OVESP_Decode = %s\n", token);
+    printf("Token dans variable test = %s\n", test);
+
+    if(strcmp(test, "LOGIN") == 0)
     {
         //si le client est déja loger
         printf("OVESP_S: login decode a recu les id\n");
@@ -35,6 +45,8 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
         {
             char* user = strtok(NULL, delim);
             char* password = strtok(NULL, delim);
+
+            printf("Test client pas encore present");
 
             //on verif si il existe (quil est deja inscrit)
             printf("OVESP_S: verifie si le client existe déja\n");

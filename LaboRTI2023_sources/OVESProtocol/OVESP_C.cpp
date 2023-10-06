@@ -38,6 +38,7 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
             throw Exception("erreur de login");
         }
     }
+    return 1;
 }
 
 void OVESP_Logout(int socket)
@@ -149,6 +150,8 @@ void Echange(char* requete, char* reponse, int socket)
 {
     int nbEcrits, nbLus;
 
+    printf("Client : fonction Echange : requete = %s\n", requete);
+
     if((nbEcrits = Send(socket, requete, strlen(requete) )) == -1)
     {
         perror("Erreur de Send");
@@ -158,14 +161,14 @@ void Echange(char* requete, char* reponse, int socket)
 
     if((nbLus = Receive(socket, reponse)) == -1)
     {
-        perror("Erreur de Receive");
+        perror("Client : Fonction Echange : Erreur de Receive");
         close(socket);
         exit(1);
     }
 
     if(nbLus == 0)
     {
-        printf("Serveur arrete, pas de reponse reçue...\n");
+        printf("Client : Fonction Echange : Le serveur s'est arrete, pas de reponse reçue...\n");
         close(socket);
         exit(1);
     }
