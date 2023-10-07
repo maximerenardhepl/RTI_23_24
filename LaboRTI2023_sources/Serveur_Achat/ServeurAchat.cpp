@@ -210,6 +210,8 @@ void TraitementClient(int sService)
         AchatToCaddie(reponse);
 
         //on renvoi la reponse au client
+        printf("Avant Send() -> strlen(reponse) = %d\n", strlen(reponse));
+
         if((nbEcrits = Send(sService, reponse, strlen(reponse))) == -1)
         {
             perror("Erreur de Send");

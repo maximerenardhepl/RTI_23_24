@@ -35,18 +35,20 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             char* user = strtok(NULL, delim);
             char* password = strtok(NULL, delim);
 
-            //on verif si il existe (quil est deja inscrit)
-            if(verif_Log(user, password, conn) == true)
+            try
             {
+                verif_Log(user, password, conn);
+
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
             }
-            else
+            catch(DataBaseException& e)
             {
-                //client n'existe pas et n'est pas déja logger
-                sprintf(reponse,"LOGIN#ko#Mauvais identifiants !");
+                sprintf(reponse, "LOGIN#ko#Mauvais identifiants !");
             }
+            //on verif si il existe (quil est deja inscrit)
+            
         }
         return true;
     }
@@ -155,13 +157,30 @@ bool verif_Log(char* user,char* pass, MYSQL *conn)
     
     if(mysql_query(conn, requete) != 0)
     {
-        printf("Erreur de mysql_query: %s\n", mysql_error(conn));
-        return false;
+        //Construction et envoi du message d'erreur...
+        string msg = "Erreur de mysql_query() : ";
+        msg += mysql_error(conn);
+
+        throw DataBaseException(msg, DataBaseException::QUERY_ERROR);
     }
     else
     {
-        printf("OVESP_S: verif log: Le client existe et les identifiants sont corrects!\n");
-        return true;
+        MYSQL_RES* resultat;
+        if((resultat = mysql_store_result(conn)) == NULL)
+        {
+            //Construction et envoi du message d'erreur...
+            string msg = "Erreur de mysql_store_result() : "; 
+            msg += mysql_error(conn);
+
+            throw DataBaseException(msg, DataBaseException::EMPTY_RESULT_SET);
+        }
+        else
+        {
+            MYSQL_ROW tuple;
+            tuple = mysql_fetch_row(resultat);
+            printf("OVESP_S: verif log: Le client existe et les identifiants sont corrects!\n");
+            return true;
+        }
     }
 }
 
