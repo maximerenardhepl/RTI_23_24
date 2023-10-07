@@ -29,21 +29,19 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
         if(estPresent(socket))
         {
             sprintf(reponse,"LOGIN#ko#Client déjà loggé !");
+            printf("ça merde la\n");
         }
         else
         {
             char* user = strtok(NULL, delim);
             char* password = strtok(NULL, delim);
 
-            try
-            {
-                verif_Log(user, password, conn);
-
+            if(verif_Log(user, password, conn) == 1)
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
             }
-            catch(DataBaseException& e)
+            else
             {
                 sprintf(reponse, "LOGIN#ko#Mauvais identifiants !");
             }

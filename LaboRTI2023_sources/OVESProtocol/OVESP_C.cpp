@@ -10,10 +10,12 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
     bool onContinue = true;
 
     //si c'est newclient est = a 1 alors jenvoie une requete au serveur et je dit d'ajouter dans la bd
-    if(newclient == 1) {
+    if(newclient == 1) 
+    {
         sprintf(requete,"REGISTER#%s#%s",user,password);
     }
-    else {
+    else 
+    {
         sprintf(requete,"LOGIN#%s#%s",user,password);
     }
 
@@ -26,7 +28,9 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
     char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
     ptr = strtok(NULL,"#");
 
-    if (strcmp(ptr,"ok") == 0) 
+    
+
+    if (strcmp(ptr,"ok") == 1) 
     {
         printf("OVESP_Login: Connexion réussie!\n");
         return true;
