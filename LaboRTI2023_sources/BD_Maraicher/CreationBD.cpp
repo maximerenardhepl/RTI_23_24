@@ -52,7 +52,7 @@ int main(int argc,char *argv[])
 
   printf("Creation de la table clients...\n");
   mysql_query(connexion, "drop table clients;");
-  mysql_query(connexion, "create table clients (id INT(4) auto_increment primary key, login varchar(50) not null, password varchar(255) not null);");
+  mysql_query(connexion, "create table clients (id INT(4) auto_increment primary key, login varchar(50) not null, password varchar(255) not null, unique(login));");
 
   // Ajout de tuples dans la table UNIX_FINAL
   printf("Ajout de 21 articles la table articles...\n");

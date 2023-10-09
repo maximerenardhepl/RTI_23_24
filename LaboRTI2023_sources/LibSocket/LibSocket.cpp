@@ -156,7 +156,6 @@ int ClientSocket(char* ipServeur,int portServeur)
 
     // Fait appel à connect() pour se connecter au serveur
 
-    printf("connect client\n");
     if (connect(s, results->ai_addr, results->ai_addrlen) < 0) 
     {
         perror("Erreur de connect()\n");
@@ -164,8 +163,6 @@ int ClientSocket(char* ipServeur,int portServeur)
         close(s);
         return -1;
     }
-
-    printf("Connexion réussie !\n");
 
     freeaddrinfo(results);
 
@@ -185,11 +182,7 @@ int Send(int sSocket, char* data, int taille)
 
     // ajoute a l'en-tête avec des zéros à gauche puis le reste
     string tempo = to_string(taille);
-    printf("tempo = %s\n", tempo.c_str());
-
     string EnTete = string(4 - tempo.length(), '0') + tempo;
-
-    printf("Dans fonction Send: EnTete = %s\n", EnTete.c_str());
 
     char trame[TAILLE_MAX + 4];
 
@@ -206,8 +199,6 @@ int Send(int sSocket, char* data, int taille)
         // Copie des données dans la trame
         memcpy(trame + 4, data, taille);
         trame[taille+4] = '\0';
-
-        printf("Trame = %s\n", trame);
 
         R = write(sSocket, trame, taille + 4);
 

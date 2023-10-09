@@ -9,6 +9,7 @@ int nbClients = 0;
 bool estPresent(int socket);
 bool ajoute(int socket);
 void retire(int socket);
+void afficheVecClients(const char* enTete);
 
 //questionne la bd pour voir si present
 bool verif_Log(char* user, char* pass,MYSQL *conn);
@@ -29,25 +30,23 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
         if(estPresent(socket))
         {
             sprintf(reponse,"LOGIN#ko#Client déjà loggé !");
-            printf("ça merde la\n");
         }
         else
         {
             char* user = strtok(NULL, delim);
             char* password = strtok(NULL, delim);
 
-            if(verif_Log(user, password, conn) == 1)
+            try
             {
-                //alors on ajout dans la file des cliens
+                verif_Log(user, password, conn);
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
+
             }
-            else
+            catch(DataBaseException& e)
             {
                 sprintf(reponse, "LOGIN#ko#Mauvais identifiants !");
-            }
-            //on verif si il existe (quil est deja inscrit)
-            
+            }    
         }
         return true;
     }
@@ -122,7 +121,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             try
             {
                 Article art = buyArticleOnDB(idArticle, qte, conn);
-                sprintf(reponse, "ACHAT#OK#%d#%s#%d#%s#%lf", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
+                sprintf(reponse, "ACHAT#OK#%d#%s#%d#%s#%lf", art.getId(), art.getIntitule().c_str(), art.getQte(), art.getImage().c_str(), art.getPrix());
             }
             catch(DataBaseException e)
             {
@@ -177,10 +176,21 @@ bool verif_Log(char* user,char* pass, MYSQL *conn)
         {
             MYSQL_ROW tuple;
             tuple = mysql_fetch_row(resultat);
-            printf("OVESP_S: verif log: Le client existe et les identifiants sont corrects!\n");
-            return true;
+            if(tuple != NULL)
+            {
+                printf("OVESP_S: verif log: Le client existe et les identifiants sont corrects!\n");
+                return true;
+            }
+            else
+            {
+                string msg = "Erreur de mysql_store_result() : "; 
+                msg += mysql_error(conn);
+
+                throw DataBaseException(msg, DataBaseException::EMPTY_RESULT_SET);
+            }            
         }
     }
+    return false;
 }
 
 //Process : Récupère les informations de l'article en base de données (retour sous forme d'objet Article)
@@ -222,7 +232,6 @@ Article getArticleOnDB(int idArticle, MYSQL *conn)
             string image(tuple[4]);
 
             Article art(id, intitule, stock, image, prix);
-            art.Affiche();
             return art;
         }
     }
@@ -231,7 +240,7 @@ Article getArticleOnDB(int idArticle, MYSQL *conn)
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
 {
     char requete[256];
-    sprintf(requete, "select * from articles where id = %d", idArticle);
+    sprintf(requete, "select * from articles where id = %d;", idArticle);
 
     if(mysql_query(conn, requete) != 0)
     {
@@ -244,10 +253,10 @@ Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
     else
     {
         MYSQL_RES* resultat;
-        if(mysql_store_result(conn) == NULL)
+        if((resultat = mysql_store_result(conn)) == NULL)
         {
             //Construction et envoi du message d'erreur...
-            string msg = "Erreur de mysql_store_result() : "; 
+            string msg = "Erreur de mysql_store_result() : ";
             msg += mysql_error(conn);
 
             throw DataBaseException(msg, DataBaseException::EMPTY_RESULT_SET);
@@ -259,9 +268,9 @@ Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
 
             int id = atoi(tuple[0]);
             string intitule = tuple[1];
-            int stockReel = atoi(tuple[2]);
-            string image = tuple[3];
-            float prix = atof(tuple[4]);
+            float prix = atoi(tuple[2]);
+            int stockReel = atof(tuple[3]);
+            string image = tuple[4];
 
             if(stockReel < quantite)
             {
@@ -316,6 +325,8 @@ bool estPresent(int socket)
 //permert lajout d'un client(socket) dans le vecteur global
 bool ajoute(int socket)
 {
+    printf("Trace: passage fct retire() / socket = %d\n", socket);
+
     bool estAjoute = false;
 
     pthread_mutex_lock(&mutexClients);
@@ -326,6 +337,8 @@ bool ajoute(int socket)
 
             estAjoute = true;
         }
+        afficheVecClients("ajoute");
+
     pthread_mutex_unlock(&mutexClients);
     return estAjoute;
 }
@@ -333,20 +346,42 @@ bool ajoute(int socket)
 //permet de retirer un client(socket) dans le vecteur global
 void retire(int socket)
 {
-    int pos = estPresent(socket);
-    if (pos == -1) 
-    {
-        return;
-    }
+    printf("Trace: passage fct retire() / socket = %d\n", socket);
 
     pthread_mutex_lock(&mutexClients);
-        for (int i=pos ; i<=nbClients-2 ; i++)
+        bool found = false;
+        int i;
+        for(i = 0; i < NB_MAX_CLIENTS && !found; i++)
         {
-            clients[i] = clients[i+1];
+            if(clients[i] == socket)
+            {
+                found = true;
+            }
         }
-        nbClients--;
-    pthread_mutex_unlock(&mutexClients);
 
+        if(found)
+        {
+            i--; //car i a été incrémenté après avoir passé found à "true" et donc avant de sortir de la boucle.
+            while(i < (nbClients-1) )
+            {
+                clients[i] = clients[i+1];
+                i++;
+            }
+            nbClients--;
+        }
+        afficheVecClients("retire");
+        
+    pthread_mutex_unlock(&mutexClients);
+}
+
+void afficheVecClients(const char* enTete)
+{
+    printf("---Affichage Clients connectes (sockets) dans fct %s---\n", enTete);
+    for(int i = 0; i < NB_MAX_CLIENTS; i++)
+    {
+        printf("%d\t", clients[i]);
+    }
+    printf("\n--------------------------------------------\n");
 }
 
 //permet de close tout les sockets si le serveur plante

@@ -286,8 +286,15 @@ void WindowClient::on_pushButtonLogin_clicked()
         {
           //Bien connecté -> acces aux différentes fonctionnalités.
           loginOK();
+          
+          char msg[150];
+          sprintf(msg, "Bienvenue %s! Vous etes maintenant bien connecte et pouvez proceder a vos achats!", getNom());
+          
+          w->dialogueMessage("Connexion etablie", msg);
           setNom("");
           setMotDePasse("");
+
+          on_pushButtonSuivant_clicked();
         }
     }
     catch(Exception& e)
@@ -303,6 +310,7 @@ void WindowClient::on_pushButtonLogout_clicked()
 {
     OVESP_Logout(socketC);
     logoutOK();
+    articleEnCours.setId(0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -315,7 +323,6 @@ void WindowClient::on_pushButtonSuivant_clicked()
     
     try
     {
-        //cout << "ID Article en cours = " << (articleEnCours.getId() + 1) << endl;
         Article art = OVESP_Consult(articleEnCours.getId()+1, socketC);
 
         articleEnCours.setId(art.getId());
