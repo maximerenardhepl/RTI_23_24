@@ -37,6 +37,8 @@ class Article
         int getQte() const;
         string getImage() const;
         float getPrix() const;
+
+        void Affiche();
 };
 
 #endif

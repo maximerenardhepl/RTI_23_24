@@ -15,7 +15,7 @@ int socketC = 0;
 
 Article articleEnCours;
 
-#define REPERTOIRE_IMAGES "images/"
+#define REPERTOIRE_IMAGES "ClientQt/images/"
 
 WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
 {
@@ -39,8 +39,6 @@ WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), u
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
     socketC = sClient;
-
-    //loginOK();
 }
 
 WindowClient::~WindowClient()
@@ -317,6 +315,7 @@ void WindowClient::on_pushButtonSuivant_clicked()
     
     try
     {
+        //cout << "ID Article en cours = " << (articleEnCours.getId() + 1) << endl;
         Article art = OVESP_Consult(articleEnCours.getId()+1, socketC);
 
         articleEnCours.setId(art.getId());

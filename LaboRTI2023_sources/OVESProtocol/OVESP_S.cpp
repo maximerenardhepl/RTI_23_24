@@ -37,6 +37,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             char* password = strtok(NULL, delim);
 
             if(verif_Log(user, password, conn) == 1)
+            {
                 //alors on ajout dans la file des cliens
                 sprintf(reponse,"LOGIN#ok");
                 ajoute(socket);
@@ -93,7 +94,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
             try 
             {
                 Article art = getArticleOnDB(idArticle, conn);
-                sprintf(reponse, "CONSULT#OK#%d#%s#%d#%s#%lf", art.getId(), art.getIntitule(), art.getQte(), art.getImage(), art.getPrix());
+                sprintf(reponse, "CONSULT#OK#%d#%s#%d#%s#%lf", art.getId(), art.getIntitule().c_str(), art.getQte(), art.getImage().c_str(), art.getPrix());
             }
             catch(DataBaseException e)
             {
@@ -202,7 +203,7 @@ Article getArticleOnDB(int idArticle, MYSQL *conn)
         if( (resultat = mysql_store_result(conn)) == NULL)
         {
             //Construction et envoi du message d'erreur...
-            string msg = "Erreur de mysql_store_result() : "; 
+            string msg = "Erreur de mysql_store_result() : ";
             msg += mysql_error(conn);
 
             throw DataBaseException(msg, DataBaseException::EMPTY_RESULT_SET);
@@ -220,10 +221,8 @@ Article getArticleOnDB(int idArticle, MYSQL *conn)
             int stock = atoi(tuple[3]);
             string image(tuple[4]);
 
-            printf("Resultat de mysql_fetch_row() : \nid = %d\nintitule = %s\nstock = %d\nimage = %s\nprix = %lf\n", id, intitule, stock, image, prix);
-            printf("Resultat de mysql_fetch_row() : \nid = %s\nintitule = %s\nprix = %s\nstock = %s\nimage = %s\n", tuple[0], tuple[1], tuple[2], tuple[3], tuple[4]);
-
             Article art(id, intitule, stock, image, prix);
+            art.Affiche();
             return art;
         }
     }

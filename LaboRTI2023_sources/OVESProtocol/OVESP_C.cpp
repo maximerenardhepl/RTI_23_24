@@ -30,7 +30,7 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
 
     
 
-    if (strcmp(ptr,"ok") == 1) 
+    if (strcmp(ptr,"ok") == 0)
     {
         printf("OVESP_Login: Connexion réussie!\n");
         return true;
@@ -93,6 +93,8 @@ Article OVESP_Consult(int idArticle, int socket)
         int stock = atoi(strtok(NULL, delim));
         string image = strtok(NULL, delim);
         float prix = atof(strtok(NULL, delim));
+
+        printf("prix = %lf\n", prix);
 
         resArticle = Article(id, intitule, stock, image, prix);
     }

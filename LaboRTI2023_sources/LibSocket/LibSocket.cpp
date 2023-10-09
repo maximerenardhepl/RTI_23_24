@@ -264,6 +264,7 @@ int Receive(int sSocket, char* data)
         //if(dataToStr.size() >= nbBytes)
         //{
             nbCarLus = read(sSocket, data, nbBytes);
+            data[nbCarLus] = '\0';
             printf("Message lu avec succès (%d octets)\n", nbCarLus);
             return nbCarLus;
         /*}

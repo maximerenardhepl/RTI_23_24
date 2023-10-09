@@ -1,6 +1,6 @@
 #include "Article.h"
 
-Article::Article() : Article(1, "default", 0, "default", 0.0) { }
+Article::Article() : Article(0, "default", 0, "default", 0.0) { }
 
 Article::Article(int id, string intitule, int qte, string img, float prix)
 {
@@ -77,3 +77,15 @@ int Article::getQte() const { return quantite; }
 string Article::getImage() const { return image; }
 
 float Article::getPrix() const { return prix; }
+
+
+void Article::Affiche()
+{
+    cout << "---------------Affichage Article---------------" << endl;
+    cout << "Id = " << getId() << endl;
+    cout << "Intitule = " << getIntitule() << endl;
+    cout << "Qte = " << getQte() << endl;
+    cout << "Image = " << getImage() << endl;
+    cout << "Prix = " << getPrix() << endl;
+    cout << "-----------------------------------------------" << endl;
+}
