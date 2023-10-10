@@ -271,7 +271,7 @@ void WindowClient::dialogueErreur(const char* titre,const char* message)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::closeEvent(QCloseEvent *event)
 {
-  exit(0);
+    exit(0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,13 +373,13 @@ void WindowClient::on_pushButtonAcheter_clicked()
         Article art = OVESP_Achat(articleEnCours.getId(), w->getQuantite(), socketC);
         w->ajouteArticleTablePanier(art.getIntitule().c_str(), art.getPrix(), art.getQte());
 
-        string msgConfirm = "Votre commande de ";
-        msgConfirm += art.getQte();
+        /*string msgConfirm = "Votre commande de ";
+        msgConfirm += to_string(art.getQte());
         msgConfirm += " ";
         msgConfirm += art.getIntitule();
         msgConfirm += " a bien ete validee!";
 
-        w->dialogueMessage("Achat confirmé", msgConfirm.c_str());
+        w->dialogueMessage("Achat confirmé", msgConfirm.c_str());*/
     }
     catch(Exception& e)
     {
