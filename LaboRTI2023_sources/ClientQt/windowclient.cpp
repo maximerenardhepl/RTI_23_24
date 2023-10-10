@@ -11,9 +11,16 @@ using namespace std;
 
 extern WindowClient *w;
 
+#define NB_ARTICLE 21
+
 int socketC = 0;
 
 Article articleEnCours;
+Article* panier[NB_ARTICLE];
+
+void InitPanier(Article* panier[]);
+bool ajouteArticlePanier(Article& nouveauArt);
+void majTablePanier();
 
 #define REPERTOIRE_IMAGES "ClientQt/images/"
 
@@ -39,6 +46,7 @@ WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), u
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
     socketC = sClient;
+    InitPanier(panier);
 }
 
 WindowClient::~WindowClient()
@@ -351,6 +359,7 @@ void WindowClient::on_pushButtonPrecedent_clicked()
     {
         Article art = OVESP_Consult(articleEnCours.getId()-1, socketC);
 
+        //Maj de l'objet articleEnCours qui représente l'article qui est affiche à l'écran actuellement pour l'utilisateur
         articleEnCours.setId(art.getId());
         articleEnCours.setIntitule(art.getIntitule());
         articleEnCours.setQte(art.getQte());
@@ -371,7 +380,8 @@ void WindowClient::on_pushButtonAcheter_clicked()
     try
     {
         Article art = OVESP_Achat(articleEnCours.getId(), w->getQuantite(), socketC);
-        w->ajouteArticleTablePanier(art.getIntitule().c_str(), art.getPrix(), art.getQte());
+        ajouteArticlePanier(art);
+        //w->ajouteArticleTablePanier(art.getIntitule().c_str(), art.getPrix(), art.getQte());
 
         /*string msgConfirm = "Votre commande de ";
         msgConfirm += to_string(art.getQte());
@@ -390,17 +400,87 @@ void WindowClient::on_pushButtonAcheter_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
+    Article art;
+    
+    getIndiceArticleSelectionne();
 
+    //OVESP_Cancel(socketC);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonViderPanier_clicked()
 {
-
+    //fonction qui va vider le panier du serveur comme du client et réincrémenter le stock
+    OVESP_Cancel_All(socketC, panier);
+    
+    videTablePanier();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPayer_clicked()
 {
 
+}
+
+////////////:
+
+void InitPanier(Article* panier[])
+{   
+    //init le panier du client 
+    for(int i=0; i < NB_ARTICLE; i++)
+    {
+        panier[i] = NULL;
+    }
+}
+
+bool ajouteArticlePanier(Article& nouveauArt)
+{
+    bool found = false;
+    int i = 0;
+
+    //Vérifie si cet article qu'on veut ajouter n'est par hasard pas déjà présent dans le vecteur d'articles...
+    while(i < NB_ARTICLE && panier[i] != NULL && !found)
+    {
+        if(panier[i]->getId() == nouveauArt.getId()) {
+            found = true;
+        }
+        else {
+            i++;
+        }
+    }
+
+    if(i < NB_ARTICLE) //Dans ce cas la boucle s'est arrete soit parce qu'on a trouvé le meme article deja existant soit
+                        //parce qu'on est simplement tombé sur une case du vecteur contenant NULL donc pas d'article.
+    {
+        if(found)
+        {
+            //On a trouvé le meme article deja existant -> on incremente simplement la quantite.
+            int qteActuelle = panier[i]->getQte();
+            int nouvelleQte = qteActuelle + nouveauArt.getQte();
+            panier[i]->setQte(nouvelleQte);
+        }
+        else
+        {
+            //On a trouvé une place libre dans le vecteur pour ajouter ce nouvel article.
+            panier[i] = new Article(nouveauArt);
+        }
+
+        //A partir d'ici, on a forcement modifie le tableau d'articles -> donc maj de l'interface graphique!
+        majTablePanier();
+        return true;
+    }
+    else
+    {
+        //On a pas trouvé d'espace disponible pour stocker l'article -> on return false (l'ajout ne s'est pas bien passé)
+        return false;
+    }
+}
+
+void majTablePanier()
+{
+    w->videTablePanier();
+    for(int i=0; i < NB_ARTICLE && panier[i] != NULL; i++)
+    {
+        w->ajouteArticleTablePanier(panier[i]->getIntitule().c_str(), panier[i]->getPrix(), panier[i]->getQte());
+    }
 }

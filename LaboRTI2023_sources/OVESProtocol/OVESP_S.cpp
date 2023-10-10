@@ -2,6 +2,8 @@
 
 pthread_mutex_t mutexClients = PTHREAD_MUTEX_INITIALIZER;
 
+#define NB_ARTICLE 21
+
 int clients[NB_MAX_CLIENTS];
 int nbClients = 0;
 
@@ -17,7 +19,7 @@ Article getArticleOnDB(int idArticle, MYSQL* conn);
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
 
-bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
+bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article* panier)
 {
     const char *delim = "#";
     char* token = strtok(requete, delim);
@@ -74,6 +76,52 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn)
     {
         retire(socket);
         sprintf(reponse,"LOGOUT#ok");
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    if(strcmp(token,"CANCEL") == 0)
+    {
+
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    if(strcmp(token,"CANCELALL") == 0)
+    {   
+        printf("CANCELALL\n");
+        Article Art;
+        int S=0;
+        MYSQL_RES* resultat;
+        MYSQL_ROW tuple;
+        
+        //reincremente la BD
+        Article* pdebut = panier;
+        printf("traitement panier\n");
+        for(int i=0 ; i < NB_ARTICLE && panier->getId() != 0 ; i++, panier++)
+        {
+            //savoir combien il y a d'article
+            sprintf(requete, "select stock from articles where id = %d;",panier->getId());
+            mysql_query(conn, requete);
+            resultat = mysql_store_result(conn);
+            tuple = mysql_fetch_row(resultat);
+
+            S = atoi(tuple[0]) + panier->getQte();
+
+            //insert le nombre correcte d'article
+            sprintf(requete, "update articles set stock = %d where intitule = %s;",S , panier->getIntitule());
+            mysql_query(conn, requete);             
+        }
+
+        panier = pdebut;
+        //vide le panier du serveur 
+        printf("vide la panier du serveur\n");
+        for(int i=0 ; i < NB_ARTICLE ; i++, panier++)
+        {
+            *panier = Art;
+        }
+
+        sprintf(reponse, "CANCELALL#ok");
     }
 
     ////////////////////////////////////////////////////////////

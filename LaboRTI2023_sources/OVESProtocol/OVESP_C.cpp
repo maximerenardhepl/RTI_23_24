@@ -1,5 +1,7 @@
 #include "OVESP_C.h"
 
+#define NB_ARTICLE 21
+
 //ce charge d'envoyer et receptionner les paquets
 void Echange(char* requete, char* reponse, int socket);
 
@@ -27,8 +29,6 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
     // ***** Parsing de la réponse **************************
     char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
     ptr = strtok(NULL,"#");
-
-    
 
     if (strcmp(ptr,"ok") == 0)
     {
@@ -149,7 +149,7 @@ Article OVESP_Achat(int idArticle, int quantite, int socket)
 
 void OVESP_Caddie()
 {
-
+    
 }
 
 void OVESP_Confirm()
@@ -181,5 +181,32 @@ void Echange(char* requete, char* reponse, int socket)
         close(socket);
         exit(1);
     }
+}
+
+void OVESP_Cancel(int socket)
+{
+    char requete[200], reponse[200];
+
+}
+
+void OVESP_Cancel_All(int socket, Article* panier[])
+{
+    char requete[200], reponse[200];
+
+    //reset le panier du client 
+    for(int i=0 ; i < NB_ARTICLE ; i++)
+    {
+        if(panier[i] != NULL)
+        {
+            delete panier[i];
+            panier[i] = NULL;
+        }
+    }
+    
+    sprintf(requete, "CANCELALL");
+
+    //envoie une requete serveur pour vider le panier coter serveur et réincrémente la bd
+    printf("Nouvelle requete: %s\n", requete);
+    Echange(requete, reponse, socket);  
 }
 
