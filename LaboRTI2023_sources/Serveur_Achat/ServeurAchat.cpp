@@ -20,7 +20,7 @@ void TraitementClient(int sService);
 bool areClientsInQueue(void);
 MYSQL* ConnectDB(MYSQL *connexion);
 void AchatToCaddie(char* reponse);
-void InitPanier(Article* panier);
+void InitPanier(Article* panier[]);
 
 
 #define NB_THREADS_POOL_MAX 2
@@ -180,7 +180,8 @@ void TraitementClient(int sService)
     char requete[200], reponse[200];
     bool onContinue = true;
     int nbLus, nbEcrits;
-    Article panier[21];
+
+    Article* panier[21];
     InitPanier(panier);
 
     while(onContinue)
@@ -244,13 +245,12 @@ void AchatToCaddie(char* reponse)
 
 }
 
-void InitPanier(Article* panier)
-{   //init le panier du client 
-    Article Art;
-    
+void InitPanier(Article* panier[])
+{
+    //init le panier du client
     for(int i=0 ; i < NB_ARTICLE ; i++)
     {
-        panier[i] = Art;
+        panier[i] = NULL;
     }
 }
 

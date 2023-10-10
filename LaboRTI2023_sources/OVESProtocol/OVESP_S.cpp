@@ -13,13 +13,16 @@ bool ajoute(int socket);
 void retire(int socket);
 void afficheVecClients(const char* enTete);
 
+//Gestion du panier des clients.
+bool ajouteArticlePanier(Article* panier[], Article& nouveauArt);
+
 //questionne la bd pour voir si present
 bool verif_Log(char* user, char* pass,MYSQL *conn);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
 
 
-bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article* panier)
+bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article* panier[])
 {
     const char *delim = "#";
     char* token = strtok(requete, delim);
@@ -169,6 +172,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
             try
             {
                 Article art = buyArticleOnDB(idArticle, qte, conn);
+                ajouteArticlePanier(panier, art);
                 sprintf(reponse, "ACHAT#OK#%d#%s#%d#%s#%lf", art.getId(), art.getIntitule().c_str(), art.getQte(), art.getImage().c_str(), art.getPrix());
             }
             catch(DataBaseException e)
@@ -190,6 +194,54 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
     return true;
 }
+
+
+
+//Fonctions de gestion du panier du client.
+bool ajouteArticlePanier(Article* panier[], Article& nouveauArt)
+{
+    bool found = false;
+    int i = 0;
+
+    //Vérifie si cet article qu'on veut ajouter n'est par hasard pas déjà présent dans le vecteur d'articles...
+    while(i < NB_ARTICLE && panier[i] != NULL && !found)
+    {
+        if(panier[i]->getId() == nouveauArt.getId()) {
+            found = true;
+        }
+        else {
+            i++;
+        }
+    }
+
+    if(i < NB_ARTICLE) //Dans ce cas la boucle s'est arrete soit parce qu'on a trouvé le meme article deja existant soit
+                        //parce qu'on est simplement tombé sur une case du vecteur contenant NULL donc pas d'article.
+    {
+        if(found)
+        {
+            //On a trouvé le meme article deja existant -> on incremente simplement la quantite.
+            int qteActuelle = panier[i]->getQte();
+            int nouvelleQte = qteActuelle + nouveauArt.getQte();
+            panier[i]->setQte(nouvelleQte);
+        }
+        else
+        {
+            //On a trouvé une place libre dans le vecteur pour ajouter ce nouvel article.
+            panier[i] = new Article(nouveauArt);
+        }
+        return true;
+    }
+    else
+    {
+        //On a pas trouvé d'espace disponible pour stocker l'article -> on return false (l'ajout ne s'est pas bien passé)
+        return false;
+    }
+}
+
+
+
+
+
 
 
 //Fonctions d'accès à la base de données:
