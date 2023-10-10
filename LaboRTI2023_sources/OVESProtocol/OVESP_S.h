@@ -16,7 +16,7 @@
 using namespace std;
 
 //prend la requete du client et la décortique
-bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL *conn);
+bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL *conn, Article* panier);
 
 //ferme tout les socket si serveur crash
 void OVESP_Close();

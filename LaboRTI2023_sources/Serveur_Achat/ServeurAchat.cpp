@@ -6,10 +6,13 @@
 #include <unistd.h>
 #include <mysql.h>
 
+#include "../Data/Article.h"
 #include "../LibSocket/LibSocket.h"
 #include "../OVESProtocol/OVESP_S.h"
 
 using namespace std;
+
+#define NB_ARTICLE 21
 
 void HandlerSIGINT(int s);
 void* FctThreadClient(void* p);
@@ -17,6 +20,7 @@ void TraitementClient(int sService);
 bool areClientsInQueue(void);
 MYSQL* ConnectDB(MYSQL *connexion);
 void AchatToCaddie(char* reponse);
+void InitPanier(Article* panier);
 
 
 #define NB_THREADS_POOL_MAX 2
@@ -43,6 +47,7 @@ int main(int argc, char* argv[])
     }
 
     //initialisation
+    
     pthread_mutex_init(&mutexConnexionBD, NULL);
 
     pthread_mutex_init(&mutexTabSocket,NULL);
@@ -175,6 +180,8 @@ void TraitementClient(int sService)
     char requete[200], reponse[200];
     bool onContinue = true;
     int nbLus, nbEcrits;
+    Article panier[21];
+    InitPanier(panier);
 
     while(onContinue)
     {
@@ -201,7 +208,7 @@ void TraitementClient(int sService)
         pthread_mutex_lock(&mutexConnexionBD);
 
         printf("Requete recue - socket %d : %s\n", sService, requete);
-        onContinue = OVESP_Decode(requete, reponse, sService, connexion);
+        onContinue = OVESP_Decode(requete, reponse, sService, connexion, panier);
         printf("Reponse envoyee au client: %s\n", reponse);
         
         pthread_mutex_unlock(&mutexConnexionBD);
@@ -237,6 +244,16 @@ void AchatToCaddie(char* reponse)
 
 }
 
+void InitPanier(Article* panier)
+{   //init le panier du client 
+    Article Art;
+    
+    for(int i=0 ; i < NB_ARTICLE ; i++)
+    {
+        panier[i] = Art;
+    }
+}
+
 //signale pour couper les processus
 void HandlerSIGINT(int s)
 {
@@ -255,4 +272,6 @@ void HandlerSIGINT(int s)
     
     exit(0);
 }
+
+
 

@@ -11,9 +11,14 @@ using namespace std;
 
 extern WindowClient *w;
 
+#define NB_ARTICLE 21
+
 int socketC = 0;
 
 Article articleEnCours;
+Article panier[21];
+
+void InitPanier(Article* panier);
 
 #define REPERTOIRE_IMAGES "ClientQt/images/"
 
@@ -39,6 +44,7 @@ WindowClient::WindowClient(int sClient,QWidget *parent) : QMainWindow(parent), u
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
     socketC = sClient;
+    InitPanier(panier);
 }
 
 WindowClient::~WindowClient()
@@ -390,17 +396,36 @@ void WindowClient::on_pushButtonAcheter_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
+    Article art;
+    
+    getIndiceArticleSelectionne();
 
+    //OVESP_Cancel(socketC);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonViderPanier_clicked()
 {
-
+    //fonction qui va vider le panier du serveur comme du client et réincrémenter le stock
+    OVESP_Cancel_All(socketC, panier);
+    
+    videTablePanier();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPayer_clicked()
 {
 
+}
+
+////////////:
+
+void InitPanier(Article* panier)
+{   //init le panier du client 
+    Article Art;
+    
+    for(int i=0 ; i < NB_ARTICLE ; i++)
+    {
+        panier[i] = Art;
+    }
 }
