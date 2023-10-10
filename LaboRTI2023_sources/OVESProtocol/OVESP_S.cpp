@@ -98,7 +98,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
         //reincremente la BD
         
         printf("============= 3 boucle pour remttre en stock\n");
-        for(int i=0 ; i < NB_ARTICLE && panier[i]->getId() != 0 ; i++)
+        for(int i=0 ; i < NB_ARTICLE && panier[i] != NULL ; i++)
         {
             //savoir combien il y a d'article
             sprintf(requete, "select stock from articles where id = %d;",panier[i]->getId());
@@ -107,6 +107,8 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
             tuple = mysql_fetch_row(resultat);
 
             S = atoi(tuple[0]) + panier[i]->getQte();
+
+            printf("retour stock %d \n",S);
 
             //insert le nombre correcte d'article
             sprintf(requete, "update articles set stock = %d where intitule = %s;",S , panier[i]->getIntitule());

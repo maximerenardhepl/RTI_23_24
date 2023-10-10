@@ -20,7 +20,7 @@ void TraitementClient(int sService);
 bool areClientsInQueue(void);
 MYSQL* ConnectDB(MYSQL *connexion);
 void AchatToCaddie(char* reponse);
-void InitPanier(Article* panier);
+void InitPanier(Article* panier[]);
 
 
 #define NB_THREADS_POOL_MAX 2
@@ -217,7 +217,7 @@ void TraitementClient(int sService)
         AchatToCaddie(reponse);
 
         //on renvoi la reponse au client
-        printf("Avant Send() -> strlen(reponse) = %d\n", strlen(reponse));
+        //printf("Avant Send() -> strlen(reponse) = %d\n", strlen(reponse));
 
         if((nbEcrits = Send(sService, reponse, strlen(reponse))) == -1)
         {
@@ -244,13 +244,13 @@ void AchatToCaddie(char* reponse)
 
 }
 
-void InitPanier(Article* panier)
+void InitPanier(Article* panier[])
 {   //init le panier du client 
     Article Art;
     
     for(int i=0 ; i < NB_ARTICLE ; i++)
     {
-        panier[i] = Art;
+        panier[i] = NULL;
     }
 }
 
