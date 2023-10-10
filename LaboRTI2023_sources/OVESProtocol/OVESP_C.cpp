@@ -183,15 +183,27 @@ void Echange(char* requete, char* reponse, int socket)
     }
 }
 
-void OVESP_Cancel(int socket,Article* panier[])
+void OVESP_Cancel(int socket,Article* panier[], int IndArt)
 {
     char requete[200], reponse[200];
+
+    //passe lid pour trouver larticle et la quantiter pour reincrementer la bd
+    sprintf(requete, "CANCEL#%d#%d#%d",panier[IndArt]->getId(),panier[IndArt]->getQte(),IndArt);
+
+    //supprimer du panier et recompacter les elements
+    delete panier[IndArt];
+    for (int i = IndArt; i < NB_ARTICLE - 1; i++) 
+    {
+        panier[i] = panier[i + 1];
+    }
+
+    Echange(requete, reponse, socket);
 
 }
 
 void OVESP_Cancel_All(int socket,Article* panier[])
 {
-    printf("============= 1 debut de cancel all\n");
+    //printf("============= 1 debut de cancel all\n");
     char requete[200], reponse[200];
 
     //reset le panier du client 
@@ -200,7 +212,7 @@ void OVESP_Cancel_All(int socket,Article* panier[])
             delete panier[i];
             panier[i] = NULL;
     }
-    printf("============= 1.1\n");
+    //printf("============= 1.1\n");
     sprintf(requete, "CANCELALL");
 
     //envoie une requete serveur pour vider le panier coter serveur et réincrémente la bd

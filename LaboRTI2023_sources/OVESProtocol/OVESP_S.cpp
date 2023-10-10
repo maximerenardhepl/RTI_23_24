@@ -85,14 +85,53 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
     if(strcmp(token,"CANCEL") == 0)
     {
+        //création des 
+        char* i = strtok(NULL, delim);
+        char* q = strtok(NULL, delim);
+        char* I = strtok(NULL, delim);
+        MYSQL_RES* resultat;
+        MYSQL_ROW tuple;
 
+        int id = atoi(i);
+        int quantite = atoi(q);
+        int IndArt = atoi(I);
+        int S=0;
+
+        printf("===============%d--%d--%d==============",id,quantite,IndArt);
+        sprintf(requete, "select stock from articles where id = %d;",panier[IndArt]->getId());
+        mysql_query(conn, requete);
+        resultat = mysql_store_result(conn);
+        tuple = mysql_fetch_row(resultat);
+
+        S = atoi(tuple[0]) + quantite;
+        //supprimer de notre caddie grace a indice article
+        delete panier[IndArt];
+    
+        //recompacter notre panier        
+        for (int i = IndArt; i < NB_ARTICLE - 1; i++)
+        {
+            panier[i] = panier[i + 1];
+        }
+        
+        //doit réincrémenter dans la bd sur l'article
+        printf("QQQQQQQQQQQQQQQQQq %d",quantite);
+
+        
+
+        sprintf(requete, "update articles set stock = %d where id = %d;",S , id);
+
+        if(mysql_query(conn, requete) != 0)
+        {
+            printf("erreur bd cancel\n");
+        }
+        return 1;
     }
 
     ////////////////////////////////////////////////////////////
 
     if(strcmp(token,"CANCELALL") == 0)
     {   
-        printf("============= 2 cancel all serveur\n");
+        //printf("============= 2 cancel all serveur\n");
         Article Art;
         int S=0;
         MYSQL_RES* resultat;
@@ -100,7 +139,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
         
         //reincremente la BD
         
-        printf("============= 3 boucle pour remttre en stock\n");
+        //printf("============= 3 boucle pour remttre en stock\n");
         for(int i=0 ; i < NB_ARTICLE && panier[i] != NULL ; i++)
         {
             //savoir combien il y a d'article
@@ -118,11 +157,11 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
             if(mysql_query(conn, requete) != 0)
             {
-                printf("erreur bd\n");
+                printf("erreur bd cancel all\n");
             }             
         }
 
-        printf("============= 4 vide le panier \n");
+        //printf("============= 4 vide le panier \n");
        
         //vide le panier du serveur 
         printf("vide la panier du serveur\n");
@@ -130,7 +169,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
         {
             panier[i] = NULL;
         }
-        printf("============= 5 fin de cancelall serveur\n");
+        //printf("============= 5 fin de cancelall serveur\n");
         sprintf(reponse, "CANCELALL#ok");
         return true;
     }
@@ -245,12 +284,6 @@ bool ajouteArticlePanier(Article* panier[], Article& nouveauArt)
         return false;
     }
 }
-
-
-
-
-
-
 
 //Fonctions d'accès à la base de données:
 

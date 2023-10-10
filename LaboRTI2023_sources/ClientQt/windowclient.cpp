@@ -400,11 +400,17 @@ void WindowClient::on_pushButtonAcheter_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
-    Article art;
+  if(getIndiceArticleSelectionne() == -1)
+  {
+    printf("faut appuyer");
+  }
+  else
+  {
+    OVESP_Cancel(socketC, panier, getIndiceArticleSelectionne());
+    majTablePanier();
+  }
     
-    getIndiceArticleSelectionne();
 
-    //OVESP_Cancel(socketC, panier);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
