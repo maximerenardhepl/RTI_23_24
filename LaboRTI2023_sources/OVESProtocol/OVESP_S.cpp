@@ -20,6 +20,7 @@ bool ajouteArticlePanier(Article* panier[], Article& nouveauArt);
 bool verif_Log(char* user, char* pass,MYSQL *conn);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
+void createInvoiceOnDB(Article* panier[]);
 
 
 bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article* panier[])
@@ -91,7 +92,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
     ////////////////////////////////////////////////////////////
 
     if(strcmp(token,"CANCELALL") == 0)
-    {   
+    {
         printf("============= 2 cancel all serveur\n");
         Article Art;
         int S=0;
@@ -126,8 +127,9 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
        
         //vide le panier du serveur 
         printf("vide la panier du serveur\n");
-        for(int i=0 ; i < NB_ARTICLE ; i++)
+        for(int i=0 ; i < NB_ARTICLE && panier[i] != NULL; i++)
         {
+            delete panier[i];
             panier[i] = NULL;
         }
         printf("============= 5 fin de cancelall serveur\n");
@@ -197,7 +199,23 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
     if(strcmp(token, "CONFIRM") == 0)
     {
-
+        if(!estPresent(socket))
+        {
+            sprintf(reponse, "CONFIRM#KO#-1");
+            return false;
+        }
+        else
+        {
+            try
+            {
+                createInvoiceOnDB(panier);
+                sprintf("CONFIRM#OK");
+            }
+            catch(DataBaseException& e)
+            {
+                sprintf(reponse, "CONFIRM#KO#%d", e.getCode());
+            }
+        }
     }
 
     return true;
@@ -406,6 +424,12 @@ Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
             }
         }
     }
+}
+
+void createInvoiceOnDB(Article* panier[])
+{
+    char requete[256];
+    sprintf(requete, "insert into factures() values();")
 }
 
 //////////////////////////////////////////////////////////

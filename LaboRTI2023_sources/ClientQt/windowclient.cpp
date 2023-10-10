@@ -15,6 +15,8 @@ extern WindowClient *w;
 
 int socketC = 0;
 
+string loginClient;
+
 Article articleEnCours;
 Article* panier[NB_ARTICLE];
 

@@ -152,9 +152,36 @@ void OVESP_Caddie()
     
 }
 
-void OVESP_Confirm()
+bool OVESP_Confirm(string login)
 {
+    char requete[200], reponse[200];
+    int nbEcrits, nbLus;
 
+    sprintf(requete, "CONFIRM");
+
+    //printf("Nouvelle requete: %s\n", requete);
+    Echange(requete, reponse, socket);
+    //printf("Reponse recue: %s\n", reponse);
+
+    const char* delim = "#";
+    char* token = strtok(reponse, delim);
+    token = strtok(NULL, delim);
+
+    if(strcmp(token, "KO") == 0)
+    {
+        int errCode = atoi(strtok(NULL, delim));
+
+        string message;
+        if(errCode == DataBaseException::QUERY_ERROR) {
+            message = "Une erreur est survenue lors de l'envoi de la requete...Veuillez reessayer!";
+        }
+        else if(errCode == DataBaseException::EMPTY_RESULT_SET) {
+            message = "Aucun article correspondant a votre demande n'a ete trouve!";
+        }
+
+        throw Exception(message);
+    }
+    return true;
 }
 
 void Echange(char* requete, char* reponse, int socket)
@@ -197,8 +224,8 @@ void OVESP_Cancel_All(int socket,Article* panier[])
     //reset le panier du client 
     for(int i=0 ; i < NB_ARTICLE && panier[i] != NULL; i++)
     {
-            delete panier[i];
-            panier[i] = NULL;
+        delete panier[i];
+        panier[i] = NULL;
     }
     printf("============= 1.1\n");
     sprintf(requete, "CANCELALL");
