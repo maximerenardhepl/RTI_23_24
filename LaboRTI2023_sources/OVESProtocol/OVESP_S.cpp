@@ -111,11 +111,15 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
             S = atoi(tuple[0]) + panier[i]->getQte();
 
-            printf("retour stock %d \n",S);
+            //printf("retour stock %d \n",S);
 
             //insert le nombre correcte d'article
-            sprintf(requete, "update articles set stock = %d where intitule = %s;",S , panier[i]->getIntitule());
-            mysql_query(conn, requete);             
+            sprintf(requete, "update articles set stock = %d where id = %d;",S , panier[i]->getId());
+
+            if(mysql_query(conn, requete) != 0)
+            {
+                printf("erreur bd\n");
+            }             
         }
 
         printf("============= 4 vide le panier \n");
