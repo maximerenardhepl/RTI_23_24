@@ -22,9 +22,9 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
     }
 
     // ***** Envoi requete + réception réponse **************
-    printf("Nouvelle requete: %s\n", requete);
+    //printf("Nouvelle requete: %s\n", requete);
     Echange(requete,reponse, socket);
-    printf("Reponse recue: %s\n", reponse);
+    //printf("Reponse recue: %s\n", reponse);
 
     // ***** Parsing de la réponse **************************
     char *ptr = strtok(reponse,"#"); // entête = LOGIN (normalement...)
@@ -32,12 +32,12 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
 
     if (strcmp(ptr,"ok") == 0)
     {
-        printf("OVESP_Login: Connexion réussie!\n");
+        //printf("OVESP_Login: Connexion réussie!\n");
         return true;
     }
     else
     {
-        printf("OVESP_Login: Erreur de login\n");
+        //printf("OVESP_Login: Erreur de login\n");
         throw Exception("Erreur de login!");
     }
 
@@ -63,9 +63,9 @@ Article OVESP_Consult(int idArticle, int socket)
 
     sprintf(requete, "CONSULT#%d", idArticle);
 
-    printf("Nouvelle requete: %s\n", requete);
+    //printf("Nouvelle requete: %s\n", requete);
     Echange(requete, reponse, socket);
-    printf("Reponse recue: %s\n", reponse);
+    //printf("Reponse recue: %s\n", reponse);
 
     const char *delim = "#";
     char* token = strtok(reponse, delim);
@@ -94,7 +94,7 @@ Article OVESP_Consult(int idArticle, int socket)
         string image = strtok(NULL, delim);
         float prix = atof(strtok(NULL, delim));
 
-        printf("prix = %lf\n", prix);
+        //printf("prix = %lf\n", prix);
 
         resArticle = Article(id, intitule, stock, image, prix);
     }
@@ -108,9 +108,9 @@ Article OVESP_Achat(int idArticle, int quantite, int socket)
 
     sprintf(requete, "ACHAT#%d#%d", idArticle, quantite);
 
-    printf("Nouvelle requete: %s\n", requete);
+    //printf("Nouvelle requete: %s\n", requete);
     Echange(requete, reponse, socket);
-    printf("Reponse recue: %s\n", reponse);
+    //printf("Reponse recue: %s\n", reponse);
 
     const char* delim = "#";
     char* token = strtok(reponse, delim);
@@ -177,36 +177,34 @@ void Echange(char* requete, char* reponse, int socket)
 
     if(nbLus == 0)
     {
-        printf("Client : Fonction Echange : Le serveur s'est arrete, pas de reponse reçue...\n");
+        //printf("Client : Fonction Echange : Le serveur s'est arrete, pas de reponse reçue...\n");
         close(socket);
         exit(1);
     }
 }
 
-void OVESP_Cancel(int socket)
+void OVESP_Cancel(int socket,Article* panier[])
 {
     char requete[200], reponse[200];
 
 }
 
-void OVESP_Cancel_All(int socket, Article* panier[])
+void OVESP_Cancel_All(int socket,Article* panier[])
 {
+    printf("============= 1 debut de cancel all\n");
     char requete[200], reponse[200];
 
     //reset le panier du client 
-    for(int i=0 ; i < NB_ARTICLE ; i++)
+    for(int i=0 ; i < NB_ARTICLE && panier[i] != NULL; i++)
     {
-        if(panier[i] != NULL)
-        {
             delete panier[i];
             panier[i] = NULL;
-        }
     }
-    
+    printf("============= 1.1\n");
     sprintf(requete, "CANCELALL");
 
     //envoie une requete serveur pour vider le panier coter serveur et réincrémente la bd
-    printf("Nouvelle requete: %s\n", requete);
-    Echange(requete, reponse, socket);  
+    //printf("Nouvelle requete: %s\n", requete);
+    Echange(requete, reponse, socket);    
 }
 

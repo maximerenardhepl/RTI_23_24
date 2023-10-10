@@ -180,7 +180,6 @@ void TraitementClient(int sService)
     char requete[200], reponse[200];
     bool onContinue = true;
     int nbLus, nbEcrits;
-
     Article* panier[21];
     InitPanier(panier);
 
@@ -218,7 +217,7 @@ void TraitementClient(int sService)
         AchatToCaddie(reponse);
 
         //on renvoi la reponse au client
-        printf("Avant Send() -> strlen(reponse) = %d\n", strlen(reponse));
+        //printf("Avant Send() -> strlen(reponse) = %d\n", strlen(reponse));
 
         if((nbEcrits = Send(sService, reponse, strlen(reponse))) == -1)
         {

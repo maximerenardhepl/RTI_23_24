@@ -23,7 +23,7 @@ Article OVESP_Consult(int idArticle, int socket);
 Article OVESP_Achat(int idArticle, int quantite, int socket);
 void OVESP_Caddie();
 void OVESP_Confirm();
-void OVESP_Cancel(int socket);
-void OVESP_Cancel_All(int socket, Article* panier[]);
+void OVESP_Cancel(int socket,Article* panier[]);
+void OVESP_Cancel_All(int socket,Article* panier[]);
 
 #endif

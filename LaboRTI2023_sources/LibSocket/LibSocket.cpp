@@ -29,7 +29,7 @@ int ServerSocket(int port)
     int s;
 
     // Affiche le pid du processus
-    printf("pid = %d\n", getpid());
+    //printf("pid = %d\n", getpid());
 
     // Crée la socket, retourne 0 en cas d'échec
     if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -37,7 +37,7 @@ int ServerSocket(int port)
         return -1;
     }
 
-    printf("socket creee = %d\n", s);
+    //printf("socket creee = %d\n", s);
 
     // Construit l'adresse réseau de la socket par appel à getaddrinfo()
     struct addrinfo hints;
@@ -65,7 +65,7 @@ int ServerSocket(int port)
     }
 
     freeaddrinfo(results);
-    printf("bind() reussi !\n");
+    //printf("bind() reussi !\n");
 
     //retourn le socket d'écoute
     return s;
@@ -96,10 +96,10 @@ int Accept(int sEcoute,char *ipClient)
     int sService = 0;
     if((sService = accept(sEcoute, &adrClient, &adrClientLen)) == -1)
     {
-        printf("erreur de accept niveau serveur\n");
+        //printf("erreur de accept niveau serveur\n");
         return -1;
     }
-    printf("accept() reussi !\n");
+    //printf("accept() reussi !\n");
 
 
     if(ipClient != NULL)
@@ -135,7 +135,7 @@ int ClientSocket(char* ipServeur,int portServeur)
         return -1; // Retourne une valeur d'erreur (-1) au lieu de 0
     }
 
-    printf("Descripteur du socket client : %d\n", s);
+    //printf("Descripteur du socket client : %d\n", s);
 
     struct addrinfo hints;
     struct addrinfo *results;
@@ -188,7 +188,7 @@ int Send(int sSocket, char* data, int taille)
 
     if (data == NULL)
     {
-        printf("Aucune donnée à envoyer\n");
+        //printf("Aucune donnée à envoyer\n");
         return -1;
     }
     else
@@ -204,12 +204,12 @@ int Send(int sSocket, char* data, int taille)
 
         if (R < 0)
         {
-            printf("Erreur lors de l'envoi du message\n");
+            //printf("Erreur lors de l'envoi du message\n");
             return -1;
         }
         else
         {
-            printf("Message envoyé avec succès (%d octets)\n", R);
+            //printf("Message envoyé avec succès (%d octets)\n", R);
             return R;
         }
     }
@@ -256,7 +256,7 @@ int Receive(int sSocket, char* data)
         //{
             nbCarLus = read(sSocket, data, nbBytes);
             data[nbCarLus] = '\0';
-            printf("Message lu avec succès (%d octets)\n", nbCarLus);
+            //printf("Message lu avec succès (%d octets)\n", nbCarLus);
             return nbCarLus;
         /*}
         else

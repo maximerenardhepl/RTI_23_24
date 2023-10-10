@@ -92,39 +92,43 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
     if(strcmp(token,"CANCELALL") == 0)
     {   
-        printf("CANCELALL\n");
+        printf("============= 2 cancel all serveur\n");
         Article Art;
         int S=0;
         MYSQL_RES* resultat;
         MYSQL_ROW tuple;
         
         //reincremente la BD
-        Article* pdebut = panier;
-        printf("traitement panier\n");
-        for(int i=0 ; i < NB_ARTICLE && panier->getId() != 0 ; i++, panier++)
+        
+        printf("============= 3 boucle pour remttre en stock\n");
+        for(int i=0 ; i < NB_ARTICLE && panier[i] != NULL ; i++)
         {
             //savoir combien il y a d'article
-            sprintf(requete, "select stock from articles where id = %d;",panier->getId());
+            sprintf(requete, "select stock from articles where id = %d;",panier[i]->getId());
             mysql_query(conn, requete);
             resultat = mysql_store_result(conn);
             tuple = mysql_fetch_row(resultat);
 
-            S = atoi(tuple[0]) + panier->getQte();
+            S = atoi(tuple[0]) + panier[i]->getQte();
+
+            printf("retour stock %d \n",S);
 
             //insert le nombre correcte d'article
-            sprintf(requete, "update articles set stock = %d where intitule = %s;",S , panier->getIntitule());
+            sprintf(requete, "update articles set stock = %d where intitule = %s;",S , panier[i]->getIntitule());
             mysql_query(conn, requete);             
         }
 
-        panier = pdebut;
+        printf("============= 4 vide le panier \n");
+       
         //vide le panier du serveur 
         printf("vide la panier du serveur\n");
-        for(int i=0 ; i < NB_ARTICLE ; i++, panier++)
+        for(int i=0 ; i < NB_ARTICLE ; i++)
         {
-            *panier = Art;
+            panier[i] = NULL;
         }
-
+        printf("============= 5 fin de cancelall serveur\n");
         sprintf(reponse, "CANCELALL#ok");
+        return true;
     }
 
     ////////////////////////////////////////////////////////////
@@ -278,7 +282,7 @@ bool verif_Log(char* user,char* pass, MYSQL *conn)
             tuple = mysql_fetch_row(resultat);
             if(tuple != NULL)
             {
-                printf("OVESP_S: verif log: Le client existe et les identifiants sont corrects!\n");
+                //printf("OVESP_S: verif log: Le client existe et les identifiants sont corrects!\n");
                 return true;
             }
             else
