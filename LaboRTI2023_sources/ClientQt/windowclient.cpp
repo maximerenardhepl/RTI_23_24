@@ -16,7 +16,7 @@ extern WindowClient *w;
 int socketC = 0;
 
 Article articleEnCours;
-Article panier[21];
+Article* panier[21];
 
 void InitPanier(Article* panier);
 
@@ -400,7 +400,7 @@ void WindowClient::on_pushButtonSupprimer_clicked()
     
     getIndiceArticleSelectionne();
 
-    //OVESP_Cancel(socketC);
+    //OVESP_Cancel(socketC, panier);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -418,7 +418,7 @@ void WindowClient::on_pushButtonPayer_clicked()
 
 }
 
-////////////:
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void InitPanier(Article* panier)
 {   //init le panier du client 

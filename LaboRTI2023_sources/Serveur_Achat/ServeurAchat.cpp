@@ -180,7 +180,7 @@ void TraitementClient(int sService)
     char requete[200], reponse[200];
     bool onContinue = true;
     int nbLus, nbEcrits;
-    Article panier[21];
+    Article* panier[21];
     InitPanier(panier);
 
     while(onContinue)
