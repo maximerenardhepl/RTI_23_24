@@ -194,10 +194,14 @@ void OVESP_Cancel_All(int socket,Article* panier[])
     printf("============= 1 debut de cancel all\n");
     char requete[200], reponse[200];
 
-    //reset le panier du client
+    //reset le panier du client 
     for(int i=0 ; i < NB_ARTICLE ; i++)
     {
-        panier[i] = NULL;
+        if(panier[i] != NULL)
+        {
+            delete panier[i];
+            panier[i] = NULL;
+        }
     }
     printf("============= 1.1\n");
     sprintf(requete, "CANCELALL");
