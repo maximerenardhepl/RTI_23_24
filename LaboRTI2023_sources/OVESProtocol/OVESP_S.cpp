@@ -20,8 +20,11 @@ bool ajouteArticlePanier(Article* panier[], Article& nouveauArt);
 bool verif_Log(char* user, char* pass,MYSQL *conn);
 Article getArticleOnDB(int idArticle, MYSQL* conn);
 Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn);
-void createInvoiceOnDB(Article* panier[]);
+void createInvoiceOnDB(Article* panier[], char* login, MYSQL* conn);
 
+//Fonctions utiles
+float calculeMontantFacture(Article* panier[]);
+string getCurrentDate();
 
 bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article* panier[])
 {
@@ -86,14 +89,53 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
     if(strcmp(token,"CANCEL") == 0)
     {
+        //création des 
+        char* i = strtok(NULL, delim);
+        char* q = strtok(NULL, delim);
+        char* I = strtok(NULL, delim);
+        MYSQL_RES* resultat;
+        MYSQL_ROW tuple;
 
+        int id = atoi(i);
+        int quantite = atoi(q);
+        int IndArt = atoi(I);
+        int S=0;
+
+        printf("===============%d--%d--%d==============",id,quantite,IndArt);
+        sprintf(requete, "select stock from articles where id = %d;",panier[IndArt]->getId());
+        mysql_query(conn, requete);
+        resultat = mysql_store_result(conn);
+        tuple = mysql_fetch_row(resultat);
+
+        S = atoi(tuple[0]) + quantite;
+        //supprimer de notre caddie grace a indice article
+        delete panier[IndArt];
+    
+        //recompacter notre panier        
+        for (int i = IndArt; i < NB_ARTICLE - 1; i++)
+        {
+            panier[i] = panier[i + 1];
+        }
+        
+        //doit réincrémenter dans la bd sur l'article
+        printf("QQQQQQQQQQQQQQQQQq %d",quantite);
+
+        
+
+        sprintf(requete, "update articles set stock = %d where id = %d;",S , id);
+
+        if(mysql_query(conn, requete) != 0)
+        {
+            printf("erreur bd cancel\n");
+        }
+        return 1;
     }
 
     ////////////////////////////////////////////////////////////
 
     if(strcmp(token,"CANCELALL") == 0)
-    {
-        printf("============= 2 cancel all serveur\n");
+    {   
+        //printf("============= 2 cancel all serveur\n");
         Article Art;
         int S=0;
         MYSQL_RES* resultat;
@@ -101,7 +143,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
         
         //reincremente la BD
         
-        printf("============= 3 boucle pour remttre en stock\n");
+        //printf("============= 3 boucle pour remttre en stock\n");
         for(int i=0 ; i < NB_ARTICLE && panier[i] != NULL ; i++)
         {
             //savoir combien il y a d'article
@@ -119,11 +161,11 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
 
             if(mysql_query(conn, requete) != 0)
             {
-                printf("erreur bd\n");
+                printf("erreur bd cancel all\n");
             }             
         }
 
-        printf("============= 4 vide le panier \n");
+        //printf("============= 4 vide le panier \n");
        
         //vide le panier du serveur 
         printf("vide la panier du serveur\n");
@@ -132,7 +174,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
             delete panier[i];
             panier[i] = NULL;
         }
-        printf("============= 5 fin de cancelall serveur\n");
+        //printf("============= 5 fin de cancelall serveur\n");
         sprintf(reponse, "CANCELALL#ok");
         return true;
     }
@@ -206,10 +248,12 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
         }
         else
         {
+            char* login = strtok(NULL, delim);
+
             try
             {
-                createInvoiceOnDB(panier);
-                sprintf("CONFIRM#OK");
+                createInvoiceOnDB(panier, login, conn);
+                sprintf(reponse, "CONFIRM#OK");
             }
             catch(DataBaseException& e)
             {
@@ -263,12 +307,6 @@ bool ajouteArticlePanier(Article* panier[], Article& nouveauArt)
         return false;
     }
 }
-
-
-
-
-
-
 
 //Fonctions d'accès à la base de données:
 
@@ -426,10 +464,107 @@ Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
     }
 }
 
-void createInvoiceOnDB(Article* panier[])
+void createInvoiceOnDB(Article* panier[], char* login, MYSQL* conn)
 {
     char requete[256];
-    sprintf(requete, "insert into factures() values();")
+    sprintf(requete, "select id from clients where login like '%s';", login);
+
+    if(mysql_query(conn, requete) != 0)
+    {
+        //Construction et envoi du message d'erreur...
+        string msg = "Erreur de mysql_query() : ";
+        msg += mysql_error(conn);
+
+        throw DataBaseException(msg, DataBaseException::QUERY_ERROR);
+    }
+    else
+    {
+        MYSQL_RES* resultat;
+        if((resultat = mysql_store_result(conn)) == NULL)
+        {
+            //Construction et envoi du message d'erreur...
+            string msg = "Erreur de mysql_store_result() : ";
+            msg += mysql_error(conn);
+
+            throw DataBaseException(msg, DataBaseException::EMPTY_RESULT_SET);
+        }
+        else
+        {
+            MYSQL_ROW tuple;
+            tuple = mysql_fetch_row(resultat);
+
+            int idClient = atoi(tuple[0]);
+            float montantTotal = calculeMontantFacture(panier);
+            string date = getCurrentDate();
+            string idFacture = to_string(idClient) + "-" + date;
+
+            sprintf(requete, "insert into factures(id, idClient, date, montant, paye) values('%s', %d, '%s', %f, false);", idFacture.c_str(), idClient, date.c_str(), montantTotal);
+            if(mysql_query(conn, requete) != 0)
+            {
+                //Construction et envoi du message d'erreur...
+                string msg = "Erreur de mysql_query() : ";
+                msg += mysql_error(conn);
+
+                throw DataBaseException(msg, DataBaseException::QUERY_ERROR);
+            }
+            //debug
+            puts(requete);
+
+            int idArticle, quantite;
+            for(int i=0; i < NB_ARTICLE && panier[i] != NULL; i++)
+            {
+                idArticle = panier[i]->getId();
+                quantite = panier[i]->getQte();
+
+                sprintf(requete, "insert into ventes(idFacture, idArticle, quantite) values('%s', %d, %d);", idFacture.c_str(), idArticle, quantite);
+
+                //debug
+                puts(requete);
+
+                if(mysql_query(conn, requete) != 0)
+                {
+                    //Construction et envoi du message d'erreur...
+                    string msg = "Erreur de mysql_query() : ";
+                    msg += mysql_error(conn);
+
+                    throw DataBaseException(msg, DataBaseException::QUERY_ERROR);
+                }
+
+                delete panier[i];
+                panier[i] = NULL;
+            }
+        }
+    }
+}
+
+float calculeMontantFacture(Article* panier[])
+{
+    float montant = 0;
+    for(int i=0; i<NB_ARTICLE && panier[i] != NULL; i++)
+    {
+        montant += (panier[i]->getPrix() * panier[i]->getQte());
+    }
+    return montant;
+}
+
+string getCurrentDate()
+{
+    time_t t = time(0);
+    tm* now = localtime(&t);
+
+    // Créer un objet stringstream pour formater la date
+    stringstream ss;
+    
+    // Formater la date en une chaîne de caractères -> "YYYY-MM-DD HH:MM:SS"
+    ss << (now->tm_year + 1900) << '-'
+       << (now->tm_mon + 1) << '-'
+       << now->tm_mday << ' '
+       << now->tm_hour << ':'
+       << now->tm_min << ':'
+       << now->tm_sec;
+    
+    string date_str = ss.str();
+    return date_str;
 }
 
 //////////////////////////////////////////////////////////

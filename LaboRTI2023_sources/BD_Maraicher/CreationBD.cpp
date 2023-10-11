@@ -46,21 +46,23 @@ int main(int argc,char *argv[])
   mysql_real_connect(connexion,"localhost","Student","PassStudent1_","PourStudent",0,0,0);
 
   // Creation d'une table UNIX_FINAL
-  printf("Creation de la table articles...\n");
+  
+  mysql_query(connexion, "drop table ventes;");
+  mysql_query(connexion, "drop table factures;");
+  mysql_query(connexion, "drop table clients;");
   mysql_query(connexion,"drop table articles;"); // au cas ou elle existerait deja
+
+  printf("Creation de la table articles...\n");
   mysql_query(connexion,"create table articles (id INT(4) auto_increment primary key, intitule varchar(20),prix FLOAT(4),stock INT(4),image varchar(20));");
 
   printf("Creation de la table clients...\n");
-  mysql_query(connexion, "drop table clients;");
   mysql_query(connexion, "create table clients (id INT(4) auto_increment primary key, login varchar(50) not null, password varchar(255) not null, unique(login));");
 
   printf("Creation de la table factures...\n");
-  mysql_query(connexion, "drop table factures;");
-  mysql_query(connexion, "create table factures (id INT(4) auto_increment primary key, idClient INT(4), date DATE, montant FLOAT(4), paye BOOLEAN, FOREIGN KEY (idClient) REFERENCES clients(id));");
+  mysql_query(connexion, "create table factures (id varchar(50) primary key, idClient INT(4), date DATE, montant FLOAT(4), paye BOOLEAN, FOREIGN KEY (idClient) REFERENCES clients(id));");
 
   printf("Creation de la table ventes...\n");
-  mysql_query(connexion, "drop table ventes;");
-  mysql_query(connexion, "create table ventes (idFacture INT(4), idArticle INT(4), quantite INT(4), PRIMARY KEY(idFacture, idArticle));");
+  mysql_query(connexion, "create table ventes (idFacture varchar(50), idArticle INT(4), quantite INT(4), PRIMARY KEY(idFacture, idArticle), FOREIGN KEY (idFacture) REFERENCES factures(id), FOREIGN KEY (idArticle) REFERENCES articles(id));");
 
   // Ajout de tuples dans la table UNIX_FINAL
   printf("Ajout de 21 articles la table articles...\n");

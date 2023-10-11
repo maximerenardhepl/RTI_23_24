@@ -3,6 +3,9 @@
 #include <QMessageBox>
 #include <string>
 
+#include <sys/socket.h>
+#include <unistd.h>
+
 #include "../Data/Article.h"
 #include "../Data/Exception.h"
 #include "../OVESProtocol/OVESP_C.h"
@@ -281,6 +284,8 @@ void WindowClient::dialogueErreur(const char* titre,const char* message)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::closeEvent(QCloseEvent *event)
 {
+    on_pushButtonLogout_clicked();
+    //close(socketC);
     exit(0);
 }
 
@@ -296,6 +301,7 @@ void WindowClient::on_pushButtonLogin_clicked()
         {
           //Bien connecté -> acces aux différentes fonctionnalités.
           loginOK();
+          loginClient = getNom();
           
           char msg[150];
           sprintf(msg, "Bienvenue %s! Vous etes maintenant bien connecte et pouvez proceder a vos achats!", getNom());
@@ -318,8 +324,10 @@ void WindowClient::on_pushButtonLogin_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogout_clicked()
 {
+    on_pushButtonViderPanier_clicked();
     OVESP_Logout(socketC);
     logoutOK();
+    loginClient = "";
     articleEnCours.setId(0);
 }
 
@@ -383,6 +391,10 @@ void WindowClient::on_pushButtonAcheter_clicked()
     {
         Article art = OVESP_Achat(articleEnCours.getId(), w->getQuantite(), socketC);
         ajouteArticlePanier(art);
+
+        int nouveauStock = (articleEnCours.getQte() - w->getQuantite());
+        w->setArticle(art.getIntitule().c_str(), art.getPrix(), nouveauStock, art.getImage().c_str());
+        
         //w->ajouteArticleTablePanier(art.getIntitule().c_str(), art.getPrix(), art.getQte());
 
         /*string msgConfirm = "Votre commande de ";
@@ -402,11 +414,17 @@ void WindowClient::on_pushButtonAcheter_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
-    Article art;
+  if(getIndiceArticleSelectionne() == -1)
+  {
+    printf("faut appuyer");
+  }
+  else
+  {
+    OVESP_Cancel(socketC, panier, getIndiceArticleSelectionne());
+    majTablePanier();
+  }
     
-    getIndiceArticleSelectionne();
 
-    //OVESP_Cancel(socketC, panier);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,14 +432,31 @@ void WindowClient::on_pushButtonViderPanier_clicked()
 {
     //fonction qui va vider le panier du serveur comme du client et réincrémenter le stock
     OVESP_Cancel_All(socketC, panier);
-    
-    videTablePanier();
+
+    majTablePanier();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPayer_clicked()
 {
-
+    try
+    {
+        if(OVESP_Confirm(loginClient, socketC) == true)
+        {
+            //On vide complètement le panier en mémoire...
+            for(int i=0; i < NB_ARTICLE && panier[i] != NULL; i++)
+            {
+                delete panier[i];
+                panier[i] = NULL;
+            }
+            majTablePanier();
+            w->dialogueMessage("Confirmation Achat", "Une facture detaillee a bien ete cree pour votre commande!\nMerci de consulter vos factures et de procéder au paiement.");
+        }
+    }
+    catch(Exception& e)
+    {
+        w->dialogueErreur("Erreur - Confirmation du panier", e.getMessage().c_str());
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

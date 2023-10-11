@@ -9,6 +9,9 @@
 #include <pthread.h>
 #include <string.h>
 #include <mysql.h>
+#include <ctime>
+#include <sstream>
+
 #include "../Data/DataBaseException.h"
 #include "../Data/AchatArticleException.h"
 #include "../Data/Article.h"

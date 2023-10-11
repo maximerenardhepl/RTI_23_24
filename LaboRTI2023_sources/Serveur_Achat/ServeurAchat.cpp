@@ -19,7 +19,6 @@ void* FctThreadClient(void* p);
 void TraitementClient(int sService);
 bool areClientsInQueue(void);
 MYSQL* ConnectDB(MYSQL *connexion);
-void AchatToCaddie(char* reponse);
 void InitPanier(Article* panier[]);
 
 
@@ -213,9 +212,6 @@ void TraitementClient(int sService)
         
         pthread_mutex_unlock(&mutexConnexionBD);
 
-        //Vérifie si la reponse est un ACHAT -> MAJ du Caddie.
-        AchatToCaddie(reponse);
-
         //on renvoi la reponse au client
         //printf("Avant Send() -> strlen(reponse) = %d\n", strlen(reponse));
 
@@ -237,11 +233,6 @@ MYSQL* ConnectDB(MYSQL *connexion)
     connexion = mysql_init(NULL);
     mysql_real_connect(connexion, "localhost", "Student", "PassStudent1_", "PourStudent", 0, 0, 0);
     return connexion;
-}
-
-void AchatToCaddie(char* reponse)
-{
-
 }
 
 void InitPanier(Article* panier[])

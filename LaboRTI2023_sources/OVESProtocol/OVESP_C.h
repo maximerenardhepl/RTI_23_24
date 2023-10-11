@@ -22,8 +22,8 @@ void OVESP_Logout(int socket);
 Article OVESP_Consult(int idArticle, int socket);
 Article OVESP_Achat(int idArticle, int quantite, int socket);
 void OVESP_Caddie();
-void OVESP_Confirm();
-void OVESP_Cancel(int socket,Article* panier[]);
+bool OVESP_Confirm(string login, int socket);
+void OVESP_Cancel(int socket,Article* panier[], int art);
 void OVESP_Cancel_All(int socket,Article* panier[]);
 
 #endif
