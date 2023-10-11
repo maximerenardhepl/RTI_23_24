@@ -70,11 +70,15 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
         char requete[100];
         sprintf(requete, "INSERT INTO clients (login, password) VALUES ('%s', '%s');", user, password);
         
-        mysql_query(conn, requete);
-        ajoute(socket);
-
-        sprintf(reponse,"LOGIN#ok#Client inscrit !");
-
+        if(mysql_query(conn, requete) != 0)
+        {
+            sprintf(reponse, "LOGIN#KO#Compte deja existant!");
+        }
+        else
+        {
+            ajoute(socket);
+            sprintf(reponse,"LOGIN#ok#Client inscrit !");
+        }
     }
 
     ////////////////////////////////////////////////////////////

@@ -38,7 +38,8 @@ bool OVESP_Login(const char* user,const char* password, int socket, int newclien
     else
     {
         //printf("OVESP_Login: Erreur de login\n");
-        throw Exception("Erreur de login!");
+        char* msgErreur = strtok(NULL, "#");
+        throw Exception(msgErreur);
     }
 
     return true;
