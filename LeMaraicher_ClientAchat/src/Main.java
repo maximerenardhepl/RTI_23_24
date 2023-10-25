@@ -1,5 +1,14 @@
+import Controleur.Controler;
+import Vues.MainView;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Controler c = new Controler();
+        MainView vuePrincipale = new MainView();
+
+        c.setRefView(vuePrincipale);
+        vuePrincipale.setControler(c);
+
+        vuePrincipale.setVisible(true);
     }
 }
