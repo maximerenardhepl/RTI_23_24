@@ -45,7 +45,7 @@ int ServerSocket(int port)
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_NUMERICSERV;
+    hints.ai_flags = AI_NUMERICSERV | AI_PASSIVE;
 
     char portStr[6];
     sprintf(portStr, "%d", port);

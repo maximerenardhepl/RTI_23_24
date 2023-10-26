@@ -18,6 +18,13 @@ public class MainView extends JFrame{
     private JButton viderLePanierButton;
     private JButton confirmerAchatButton;
     private JTextField textField4;
+    private JPanel mainPanel;
+
+    public MainView() {
+        setContentPane(mainPanel);
+        setSize(800, 450);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
 
     public void setControler(Controler c) {
         confirmerAchatButton.addActionListener(c);
