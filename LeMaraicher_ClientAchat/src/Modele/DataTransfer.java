@@ -1,21 +1,25 @@
 package Modele;
 
-import javax.swing.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class DataTransfer {
     private String configPath = "\\config\\config.txt";
     private Socket s;
 
+    public Socket getSocket() { return s; }
+
     public DataTransfer() {
         try {
             int port;
             if((port = getDefaultPort()) != -1) {
                 System.out.println("port: " + port);
-                s = new Socket("10.59.22.30", port);
+                s = new Socket("192.168.129.21", port);
             }
         }
         catch(IOException e) {
@@ -41,5 +45,56 @@ public class DataTransfer {
             e.printStackTrace();
         }
         return defaultPort;
+    }
+
+    public int send(String data) {
+        if(data.isEmpty()) {
+            return -1;
+        }
+        else {
+            int taille = data.length();
+            String tailleStr = String.valueOf(taille);
+            int nbZero = 4 - tailleStr.length();
+            StringBuilder enTete = new StringBuilder();
+
+            for(int i=0; i < nbZero; i++) {
+                enTete.append('0');
+            }
+            enTete.append(tailleStr);
+
+            StringBuilder request = new StringBuilder(enTete);
+            request.append(data);
+            int tailleReelle = request.length();
+
+            try {
+                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                dos.writeBytes(request.toString());
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+                return -1;
+            }
+            return tailleReelle;
+        }
+    }
+
+    public String receive() {
+        //String reponse;
+        try {
+            DataInputStream dis = new DataInputStream(s.getInputStream());
+
+            byte[] bytes = dis.readAllBytes();
+            String reponse = Arrays.toString(bytes);
+
+            /*int dataLength = 0;
+            for(int i=0, j=3; i < 4; i++, j--) {
+                byte b = dis.readByte();
+                dataLength += (char)b * Math.pow(10, j);
+            }*/
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        //return reponse;
     }
 }

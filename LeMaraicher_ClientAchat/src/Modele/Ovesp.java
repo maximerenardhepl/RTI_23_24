@@ -1,10 +1,6 @@
 package Modele;
 
-import javax.swing.*;
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.util.Properties;
 
 public class Ovesp {
     private String requete;
@@ -19,7 +15,7 @@ public class Ovesp {
     }
 
     public void login() {
-
+        dataTransfer.send("bonjour");
     }
 
     public void logout() {
@@ -32,5 +28,13 @@ public class Ovesp {
 
     public void cancelAll() {
 
+    }
+
+    public void closeConnection() throws IOException {
+        dataTransfer.getSocket().close();
+    }
+
+    private String exchange(String requete) {
+        return "";
     }
 }

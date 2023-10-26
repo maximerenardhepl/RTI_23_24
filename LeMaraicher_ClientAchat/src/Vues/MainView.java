@@ -29,6 +29,12 @@ public class MainView extends JFrame{
     public void setControler(Controler c) {
         confirmerAchatButton.addActionListener(c);
         viderLePanierButton.addActionListener(c);
+        supprimerArticleButton.addActionListener(c);
+        btnAcheter.addActionListener(c);
+        btnSuivant.addActionListener(c);
+        btnPrecedent.addActionListener(c);
+
+        this.addWindowListener(c);
     }
 
     public JButton getBtnPrecedent() {
