@@ -19,7 +19,7 @@ public class DataTransfer {
             int port;
             if((port = getDefaultPort()) != -1) {
                 System.out.println("port: " + port);
-                s = new Socket("192.168.129.21", port);
+                s = new Socket("192.168.0.26", port);
             }
         }
         catch(IOException e) {
@@ -78,23 +78,28 @@ public class DataTransfer {
         }
     }
 
-    public String receive() {
-        //String reponse;
+    public String receive() throws IOException {
+        StringBuilder reponse = new StringBuilder();
+        String charsetName = "UTF-8";
         try {
             DataInputStream dis = new DataInputStream(s.getInputStream());
 
-            byte[] bytes = dis.readAllBytes();
-            String reponse = Arrays.toString(bytes);
-
-            /*int dataLength = 0;
+            int dataLength = 0;
             for(int i=0, j=3; i < 4; i++, j--) {
                 byte b = dis.readByte();
-                dataLength += (char)b * Math.pow(10, j);
-            }*/
+                char c = (char)b;
+                dataLength += Integer.parseInt(String.valueOf(c)) * Math.pow(10, j);
+            }
+            //System.out.println("taille de la charge utile: " + dataLength);
+
+            byte[] bytes = dis.readNBytes(dataLength);
+            reponse.append(new String(bytes, charsetName));
+            //dis.close();
         }
-        catch(IOException e) {
+        catch(IOException | NumberFormatException e) {
             e.printStackTrace();
+            throw e;
         }
-        //return reponse;
+        return reponse.toString();
     }
 }

@@ -1,25 +1,50 @@
 package Modele;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Ovesp {
-    private String requete;
-    private String reponse;
     private DataTransfer dataTransfer;
 
-    private static Ovesp ovesp = new Ovesp();
+    private static final Ovesp ovesp = new Ovesp();
     public static Ovesp getInstance() { return ovesp; }
 
     private Ovesp() {
         dataTransfer = new DataTransfer();
     }
 
-    public void login() {
-        dataTransfer.send("bonjour");
+    public boolean login(String username, String password) throws Exception {
+        String requete = "LOGIN#" + username + "#" + password;
+        String reponse = exchange(requete);
+        System.out.println("Réponse reçue: " + reponse);
+
+        String[] elementsReponse = reponse.split("#");
+        if(elementsReponse[1].equals("ok")) {
+            return true;
+        }
+        else {
+            throw new Exception("Erreur de login!");
+        }
     }
 
-    public void logout() {
+    public boolean register(String username, String password) throws Exception {
+        String requete = "REGISTER#" + username + "#" + password;
+        String reponse = exchange(requete);
+        System.out.println("Réponse reçue: " + reponse);
 
+        String[] elementsReponse = reponse.split("#");
+        if(elementsReponse[1].equals("ok")) {
+            return true;
+        }
+        else {
+            throw new Exception("Erreur de login!");
+        }
+    }
+
+    public void logout() throws IOException {
+        String requete = "LOGOUT";
+        String reponse = exchange(requete);
     }
 
     public void cancel() {
@@ -30,11 +55,39 @@ public class Ovesp {
 
     }
 
-    public void closeConnection() throws IOException {
-        dataTransfer.getSocket().close();
+    public void closeConnection() {
+        try {
+            dataTransfer.getSocket().close();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private String exchange(String requete) {
-        return "";
+    public void reloadProtocol() {
+        if(dataTransfer.getSocket() != null) {
+            closeConnection();
+        }
+        dataTransfer = new DataTransfer();
+    }
+
+    private String exchange(String requete) throws IOException {
+
+        String reponse = "";
+        System.out.println("Requete envoyée: " + requete);
+        if(dataTransfer.send(requete) == -1) {
+            closeConnection();
+        }
+        else {
+            try {
+                reponse = dataTransfer.receive();
+            }
+            catch(IOException e) {
+                closeConnection();
+                throw e;
+            }
+
+        }
+        return reponse;
     }
 }
