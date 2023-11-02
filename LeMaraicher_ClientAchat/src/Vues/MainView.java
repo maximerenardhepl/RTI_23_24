@@ -15,7 +15,7 @@ public class MainView extends JFrame{
     private JTextField LabelPrix;
     private JTextField LabelStock;
     private JSpinner spinner1;
-    private JTextPane bienvueSurLeMaraicherTextPane;
+    private JTextPane bienvenuSurLeMaraicherTextPane;
     private JTable table1;
     private JButton supprimerArticleButton;
     private JButton viderLePanierButton;
