@@ -76,7 +76,7 @@ public class MainView extends JFrame{
     public void SetLabelStock(String newText) {LabelStock.setText(newText);}
     public JPanel getLabelImage() {return LabelImage;}
 
-    public void setLabelImage(JPanel labelImage) {LabelImage = labelImage;}
+    public void SetLabelImage(JPanel labelImage) {LabelImage = labelImage;}
 
 
 }

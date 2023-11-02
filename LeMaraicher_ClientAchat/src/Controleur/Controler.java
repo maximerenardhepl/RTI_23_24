@@ -72,51 +72,27 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 {
                     if(Ovesp.getInstance().getNumArt() == 1)
                     {
-                        Article Art;
-                        //comment lui passer lid ?
-                        try {
-                            Ovesp.getInstance().Consult(Ovesp.getInstance().getNumArt());
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        //afficher dans les champs de l'objet retourner par consult qui seraius une variable membres de mon singleton
-                        Art = Ovesp.getInstance().getArtCourant();
-
-                        refMainView.SetLabelArticle(Art.getIntitule());
-                        refMainView.SetLabelStock(Art.getQuantite());
-                        refMainView.SetLabelPrix(Art.getPrix());
-                        refMainView.S
+                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() + 1);
+                        MiseAJour();
                     }
                     else
                     {
-                        Article Art;
                         Ovesp.getInstance().setNumArt(21);
-
-                        try {
-                            Ovesp.getInstance().Consult(Ovesp.getInstance().getNumArt());
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        //afficher dans les champs de l'objet retourner par consult qui seraius une variable membres de mon singleton
-                        Art = Ovesp.getInstance().getArtCourant();
-
-                        refMainView.SetLabelArticle(Art.getIntitule());
-                        refMainView.SetLabelStock();
-                        refMainView.SetLabelPrix();
+                        MiseAJour();
                     }
-
-
                 }
                 else if(e.getSource() == refMainView.getBtnSuivant())
                 {
-                    Article Art;
-                    //comment lui passer lid ?
-                    //Ovesp.getInstance().Consult();
-
-                    //afficher dans les champs
-                    Art = Ovesp.getInstance().getArtCourant();
-
-                    refMainView.SetLabelArticle(Art.getIntitule());
+                    if(Ovesp.getInstance().getNumArt() == 21)
+                    {
+                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() - 1);
+                        MiseAJour();
+                    }
+                    else
+                    {
+                        Ovesp.getInstance().setNumArt(1);
+                        MiseAJour();
+                    }
                 }
                 else if(e.getSource() == refMainView.getBtnAcheter()) {
 
@@ -182,5 +158,28 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
     @Override
     public void mouseMoved(MouseEvent e) {
         refConnectionView.getLabelNotRegister().setForeground(Color.BLUE);
+    }
+
+    public void MiseAJour()
+    {
+        Article Art;
+
+        try {
+            Ovesp.getInstance().Consult(Ovesp.getInstance().getNumArt());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        //afficher dans les champs de l'objet retourner par consult qui seraius une variable membres de mon singleton
+        Art = Ovesp.getInstance().getArtCourant();
+
+        refMainView.SetLabelArticle(Art.getIntitule());
+
+        String stock = Integer.toString(Art.getQuantite());
+        refMainView.SetLabelStock(stock);
+
+        String prix = Float.toString(Art.getPrix());
+        refMainView.SetLabelPrix(prix);
+
+        //refMainView.SetLabelImage(Art.getImage());
     }
 }
