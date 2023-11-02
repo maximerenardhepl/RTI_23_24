@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.Properties;
 
 public class DataTransfer {
-    private String configPath = "\\config\\config.txt";
+    //private String configPath = "\\config\\config.txt";
+    private String configPath = "\\RTI_23_24\\LeMaraicher_ClientAchat\\config\\config.txt";
     private Socket s;
 
     public Socket getSocket() { return s; }
@@ -19,7 +20,7 @@ public class DataTransfer {
             int port;
             if((port = getDefaultPort()) != -1) {
                 System.out.println("port: " + port);
-                s = new Socket("192.168.0.26", port);
+                s = new Socket("192.168.30.130", port);
             }
         }
         catch(IOException e) {
