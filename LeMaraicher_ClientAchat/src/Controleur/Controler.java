@@ -9,9 +9,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 
-public class Controler extends WindowAdapter implements ActionListener {
+public class Controler extends WindowAdapter implements ActionListener, MouseListener, MouseMotionListener {
     private ConnectionView refConnectionView;
     private MainView refMainView;
+
+    private boolean isViewRegisterDisplayed; //indique si ce qui est affiché sur la vue de Connexion est la vue pour se connecter ou bien la vue pour s'inscrire.
+
+    public Controler() {
+        isViewRegisterDisplayed = false;
+    }
 
     public void setRefView(MainView view) {
         refMainView = view;
@@ -25,7 +31,12 @@ public class Controler extends WindowAdapter implements ActionListener {
             String password = String.copyValueOf(refConnectionView.getTxtFieldPassword().getPassword());
 
             try {
-                if(Ovesp.getInstance().login(username, password)) {
+                boolean isNewClient = false;
+                if(isViewRegisterDisplayed) {
+                    isNewClient = true;
+                }
+
+                if(Ovesp.getInstance().login(username, password, isNewClient)) {
                     refMainView = new MainView();
                     refMainView.setControler(this);
                     refConnectionView.dispose();
@@ -39,6 +50,9 @@ public class Controler extends WindowAdapter implements ActionListener {
         else {
             if(refMainView != null) {
                 if(e.getSource() == refMainView.getMenuDeconnexion()) {
+                    if(isViewRegisterDisplayed) {
+                       isViewRegisterDisplayed = false; //On réinitialise le boolean dans le cas ou la connexion qui vient d'avoir lieu était une inscription...
+                    }
                     try {
                         Ovesp.getInstance().logout();
 
@@ -76,5 +90,52 @@ public class Controler extends WindowAdapter implements ActionListener {
             }
         }
         Ovesp.getInstance().closeConnection();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(e.getSource() == refConnectionView.getLabelNotRegister()) {
+            if(isViewRegisterDisplayed) {
+                refConnectionView.getLabelNotRegister().setText("Pas encore inscrit ?");
+                refConnectionView.getBtnConnexion().setText("Se connecter");
+                isViewRegisterDisplayed = false;
+            }
+            else {
+                refConnectionView.getLabelNotRegister().setText("J'ai déjà un compte");
+                refConnectionView.getBtnConnexion().setText("S'inscrire");
+                isViewRegisterDisplayed = true;
+            }
+
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        refConnectionView.getLabelNotRegister().setForeground(Color.BLACK);
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        refConnectionView.getLabelNotRegister().setForeground(Color.BLUE);
     }
 }

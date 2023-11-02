@@ -3,6 +3,9 @@ package Vues;
 import Controleur.Controler;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 public class ConnectionView extends JFrame {
     private JTextField txtFieldLogin;
@@ -15,6 +18,8 @@ public class ConnectionView extends JFrame {
     public JTextField getTxtFieldLogin() { return txtFieldLogin; }
     public JPasswordField getTxtFieldPassword() { return passwordField; }
 
+    public JLabel getLabelNotRegister() { return labelNotRegister; }
+
     public ConnectionView() {
         setContentPane(mainPanel);
         setSize(450, 300);
@@ -23,7 +28,8 @@ public class ConnectionView extends JFrame {
 
     public void setControler(Controler c) {
         btnConnexion.addActionListener(c);
-        //labelNotRegister.addMouseListener(c);
+        labelNotRegister.addMouseListener(c);
+        labelNotRegister.addMouseMotionListener(c);
         this.addWindowListener(c);
     }
 }

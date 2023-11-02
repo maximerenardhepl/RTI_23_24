@@ -10,26 +10,21 @@ public class Ovesp {
     private static final Ovesp ovesp = new Ovesp();
     public static Ovesp getInstance() { return ovesp; }
 
-    private Ovesp() {
-        dataTransfer = new DataTransfer();
+    public void init() {
+        if(dataTransfer == null) {
+            dataTransfer = new DataTransfer();
+        }
     }
 
-    public boolean login(String username, String password) throws Exception {
-        String requete = "LOGIN#" + username + "#" + password;
-        String reponse = exchange(requete);
-        System.out.println("Réponse reçue: " + reponse);
-
-        String[] elementsReponse = reponse.split("#");
-        if(elementsReponse[1].equals("ok")) {
-            return true;
+    public boolean login(String username, String password, boolean isNewClient) throws Exception {
+        String requete;
+        if(isNewClient) {
+            requete = "REGISTER#" + username + "#" + password;
         }
         else {
-            throw new Exception("Erreur de login!");
+            requete = "LOGIN#" + username + "#" + password;
         }
-    }
 
-    public boolean register(String username, String password) throws Exception {
-        String requete = "REGISTER#" + username + "#" + password;
         String reponse = exchange(requete);
         System.out.println("Réponse reçue: " + reponse);
 

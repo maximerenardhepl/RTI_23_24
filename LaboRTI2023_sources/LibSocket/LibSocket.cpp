@@ -56,6 +56,8 @@ int ServerSocket(int port)
         return -1;
     }
 
+    int value = 1;
+    setsockopt(s,SOL_SOCKET,SO_REUSEADDR,&value,sizeof(int));
     // Fait appel à bind() pour lier la socket à l'adresse réseau
     if (bind(s, results->ai_addr, results->ai_addrlen) < 0) {
         perror("Erreur de bind()\n");
