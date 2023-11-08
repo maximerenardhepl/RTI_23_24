@@ -32,6 +32,8 @@ public class DataTransfer {
         String rootDirectory = System.getProperty("user.dir");
         String completePath = rootDirectory + configPath;
 
+        System.out.println("chemin complet: " + completePath);
+
         int defaultPort = -1;
         try {
             Properties prop = new Properties();
