@@ -9,7 +9,17 @@ public class Ovesp {
 
     private static final Ovesp ovesp = new Ovesp();
     public static Ovesp getInstance() { return ovesp; }
-
+    ////////////////////////////////////////////////////////////////////////////////////
+    private int NumArt = 1;
+    public int getNumArt() {return NumArt;}
+    public void setNumArt(int numArt) {NumArt = numArt;}
+    ////////////////////////////////////////////////////////////////////////////////////
+    private Article ArtCourant;
+    public void setArtCourant(Article artCourant) {ArtCourant = artCourant;}
+    public Article getArtCourant() {
+        return ArtCourant;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////
     public void init() {
         if(dataTransfer == null) {
             dataTransfer = new DataTransfer();
@@ -85,4 +95,67 @@ public class Ovesp {
         }
         return reponse;
     }
+
+    public void Consult(int idArticle) throws Exception {
+
+        Article tempo;
+
+        String requete = "CONSULT#" + idArticle;
+        String reponse = exchange(requete);
+
+        System.out.println("Réponse reçue : " + reponse);
+
+        String[] elementsReponse = reponse.split("#");
+        if (elementsReponse[1].equals("KO"))
+        {
+            int errCode = Integer.parseInt(elementsReponse[2]);
+            String message;
+        }
+        else
+        {
+            int id = Integer.parseInt(elementsReponse[2]);
+            String intitule = elementsReponse[3];
+            int stock = Integer.parseInt(elementsReponse[4]);
+            String image = elementsReponse[5];
+            float prix = Float.parseFloat(elementsReponse[6]);
+
+            tempo = new Article(id, intitule, stock, image, prix);
+
+            //article dans le singleton donc accessible partout
+            ArtCourant = tempo;
+        }
+    }
+
+    //pas test juste fait a la rache
+    public Article Achat(int idArticle, int quantite) throws Exception {
+        String requete = "ACHAT#" + idArticle + "#" + quantite;
+        String reponse = exchange(requete);
+
+        System.out.println("Réponse reçue: " + reponse);
+
+        String[] elementsReponse = reponse.split("#");
+        String token = elementsReponse[1];
+
+        Article resArticle;
+
+        if (token.equals("KO"))
+        {
+            int errCode = Integer.parseInt(elementsReponse[2]);
+            String message;
+        }
+        else
+        {
+            int id = Integer.parseInt(elementsReponse[2]);
+            String intitule = elementsReponse[3];
+            int stock = Integer.parseInt(elementsReponse[4]);
+            String image = elementsReponse[5];
+            float prix = Float.parseFloat(elementsReponse[6]);
+
+            resArticle = new Article(id, intitule, stock, image, prix);
+            return resArticle;
+        }
+        return null;
+    }
+
+
 }

@@ -11,17 +11,21 @@ public class MainView extends JFrame{
     private JButton btnPrecedent;
     private JButton btnSuivant;
     private JButton btnAcheter;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JTextField textField3;
+    private JTextField LabelArticle;
+    private JTextField LabelPrix;
+    private JTextField LabelStock;
     private JSpinner spinner1;
-    private JTextPane bienvueSurLeMaraicherTextPane;
+    private JTextPane bienvenuSurLeMaraicherTextPane;
     private JTable table1;
     private JButton supprimerArticleButton;
     private JButton viderLePanierButton;
     private JButton confirmerAchatButton;
     private JTextField textField4;
     private JPanel mainPanel;
+
+
+
+    private JPanel LabelImage;
 
     public MainView() {
         setContentPane(mainPanel);
@@ -63,4 +67,16 @@ public class MainView extends JFrame{
     public JButton getBtnAcheter() {
         return btnAcheter;
     }
+
+    //methode pour remplir les champs
+    public void SetLabelArticle(String newText) {LabelArticle.setText(newText);}
+
+    //convertir avant de lui passer
+    public void SetLabelPrix(String newText) {LabelPrix.setText(newText);}
+    public void SetLabelStock(String newText) {LabelStock.setText(newText);}
+    public JPanel getLabelImage() {return LabelImage;}
+
+    public void SetLabelImage(JPanel labelImage) {LabelImage = labelImage;}
+
+
 }
