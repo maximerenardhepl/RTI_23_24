@@ -14,18 +14,15 @@ public class MainView extends JFrame{
     private JTextField LabelArticle;
     private JTextField LabelPrix;
     private JTextField LabelStock;
-    private JSpinner spinner1;
-    private JTextPane bienvenuSurLeMaraicherTextPane;
-    private JTable table1;
+    private JSpinner spinnerQteArticle;
+    private JTextPane publicite;
+    private JTable jTablePanier;
     private JButton supprimerArticleButton;
     private JButton viderLePanierButton;
     private JButton confirmerAchatButton;
     private JTextField textField4;
     private JPanel mainPanel;
-
-
-
-    private JPanel LabelImage;
+    private JLabel labelImage;
 
     public MainView() {
         setContentPane(mainPanel);
@@ -68,15 +65,32 @@ public class MainView extends JFrame{
         return btnAcheter;
     }
 
+    public JButton getBtnSupprimerArticle() {
+        return supprimerArticleButton;
+    }
+
+    public JButton getBtnViderPanier() {
+        return viderLePanierButton;
+    }
+
+    public JButton getBtnConfirmerAchat() {
+        return confirmerAchatButton;
+    }
+
+    public JTable getTablePanier() {
+        return jTablePanier;
+    }
+
     //methode pour remplir les champs
     public void SetLabelArticle(String newText) {LabelArticle.setText(newText);}
 
     //convertir avant de lui passer
     public void SetLabelPrix(String newText) {LabelPrix.setText(newText);}
     public void SetLabelStock(String newText) {LabelStock.setText(newText);}
-    public JPanel getLabelImage() {return LabelImage;}
+    public JLabel getLabelImage() {return labelImage;}
 
-    public void SetLabelImage(JPanel labelImage) {LabelImage = labelImage;}
+    public void SetLabelImage(JLabel labelImage) {
+        this.labelImage = labelImage;}
 
 
 }

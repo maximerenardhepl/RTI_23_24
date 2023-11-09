@@ -72,12 +72,12 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 {
                     if(Ovesp.getInstance().getNumArt() == 1)
                     {
-                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() + 1);
+                        Ovesp.getInstance().setNumArt(21);
                         MiseAJour();
                     }
                     else
                     {
-                        Ovesp.getInstance().setNumArt(21);
+                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() - 1);
                         MiseAJour();
                     }
                 }
@@ -85,17 +85,28 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 {
                     if(Ovesp.getInstance().getNumArt() == 21)
                     {
-                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() - 1);
+                        Ovesp.getInstance().setNumArt(1);
                         MiseAJour();
                     }
                     else
                     {
-                        Ovesp.getInstance().setNumArt(1);
+                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() + 1);
                         MiseAJour();
                     }
                 }
                 else if(e.getSource() == refMainView.getBtnAcheter()) {
 
+                }
+                else if(e.getSource() == refMainView.getBtnSupprimerArticle()) {
+                    int artSelectionne = refMainView.getTablePanier().getSelectedRow();
+                    if(artSelectionne != -1) {
+                        try {
+                            Ovesp.getInstance().cancel(artSelectionne);
+                        }
+                        catch(Exception ex) {
+                            JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression d'article", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
             }
         }
@@ -179,7 +190,6 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
 
         String prix = Float.toString(Art.getPrix());
         refMainView.SetLabelPrix(prix);
-
         //refMainView.SetLabelImage(Art.getImage());
     }
 }

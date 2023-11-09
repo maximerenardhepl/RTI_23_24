@@ -1,16 +1,24 @@
 package Modele;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
 public class Ovesp {
     private DataTransfer dataTransfer;
 
+    private int NumArt = 1;
+    private ArrayList<Article> panier;
+
+    private Ovesp() {
+        panier = new ArrayList<>();
+    }
+
     private static final Ovesp ovesp = new Ovesp();
+
     public static Ovesp getInstance() { return ovesp; }
     ////////////////////////////////////////////////////////////////////////////////////
-    private int NumArt = 1;
     public int getNumArt() {return NumArt;}
     public void setNumArt(int numArt) {NumArt = numArt;}
     ////////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +60,15 @@ public class Ovesp {
         String reponse = exchange(requete);
     }
 
-    public void cancel() {
+    public void cancel(int indiceArticleSelectionne) throws Exception {
+        if(indiceArticleSelectionne > 0 && indiceArticleSelectionne < panier.size()) {
+            Article artSelectionne = panier.get(indiceArticleSelectionne);
 
+            String requete = "CANCEL#" + String.valueOf(artSelectionne.getId()) + "#" + String.valueOf(artSelectionne.getQuantite()) + "#" + String.valueOf(indiceArticleSelectionne);
+            exchange(requete);
+
+            panier.remove(indiceArticleSelectionne);
+        }
     }
 
     public void cancelAll() {

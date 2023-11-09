@@ -24,7 +24,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="bf4f" binding="LabelImage" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="bf4f" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -32,12 +32,12 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="460d6" class="javax.swing.JLabel">
+                  <component id="460d6" class="javax.swing.JLabel" binding="labelImage">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Label"/>
+                      <text value=""/>
                     </properties>
                   </component>
                 </children>
@@ -134,7 +134,7 @@
                       <text value="Quantité souhaitée"/>
                     </properties>
                   </component>
-                  <component id="798c9" class="javax.swing.JSpinner" binding="spinner1" default-binding="true">
+                  <component id="798c9" class="javax.swing.JSpinner" binding="spinnerQteArticle" default-binding="true">
                     <constraints>
                       <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -162,17 +162,17 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="915c" class="javax.swing.JTextPane" binding="bienvenuSurLeMaraicherTextPane" default-binding="true">
+          <component id="915c" class="javax.swing.JTextPane" binding="publicite" default-binding="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                <preferred-size width="800" height="150"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="800" height="80"/>
                 <maximum-size width="800" height="150"/>
               </grid>
             </constraints>
             <properties>
               <editable value="false"/>
               <font name="Arial Black" size="26" style="1"/>
-              <text value="Bienvenu sur le maraicher enligne"/>
+              <text value="Bienvenu sur le maraicher en ligne"/>
             </properties>
           </component>
         </children>
@@ -201,7 +201,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="4d6e9" class="javax.swing.JTable" binding="table1" default-binding="true">
+              <component id="4d6e9" class="javax.swing.JTable" binding="jTablePanier" default-binding="true">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="50"/>
