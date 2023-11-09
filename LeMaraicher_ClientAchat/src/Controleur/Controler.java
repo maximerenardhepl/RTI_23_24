@@ -66,35 +66,30 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                         JOptionPane.showMessageDialog(refMainView, "Une erreur inconnue est survenue! Fermeture de la connexion. L'application va s'arrêter.", "Logout - Erreur", JOptionPane.ERROR_MESSAGE);
                         refMainView.dispose();
                     }
-
                 }
-                else if(e.getSource() == refMainView.getBtnPrecedent())
-                {
-                    if(Ovesp.getInstance().getNumArt() == 1)
-                    {
+                else if (e.getSource() == refMainView.getBtnPrecedent()) {
+                    if (Ovesp.getInstance().getNumArt() == 1) {
                         Ovesp.getInstance().setNumArt(21);
                         MiseAJour();
-                    }
-                    else
-                    {
+                    } else {
                         Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() - 1);
                         MiseAJour();
                     }
                 }
-                else if(e.getSource() == refMainView.getBtnSuivant())
-                {
-                    if(Ovesp.getInstance().getNumArt() == 21)
-                    {
+                else if (e.getSource() == refMainView.getBtnSuivant()) {
+                    if (Ovesp.getInstance().getNumArt() == 21) {
                         Ovesp.getInstance().setNumArt(1);
                         MiseAJour();
-                    }
-                    else
-                    {
+                    } else {
                         Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() + 1);
                         MiseAJour();
                     }
                 }
+
                 else if(e.getSource() == refMainView.getBtnAcheter()) {
+
+                    //on récupère l'article courant
+                    Ovesp.getInstance().getNumArt();
 
                 }
                 else if(e.getSource() == refMainView.getBtnSupprimerArticle()) {
