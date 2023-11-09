@@ -85,7 +85,6 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                         MiseAJour();
                     }
                 }
-
                 else if(e.getSource() == refMainView.getBtnAcheter()) {
 
                     //on récupère l'article courant
