@@ -89,7 +89,11 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 else if(e.getSource() == refMainView.getBtnAcheter()) {
 
                     //on récupère l'article courant
-                    Ovesp.getInstance().getNumArt();
+                    try {
+                        Ovesp.getInstance().Achat( Ovesp.getInstance().getNumArt(),refMainView.getSpinnerQteArticle());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
 
                 }
                 else if(e.getSource() == refMainView.getBtnSupprimerArticle()) {
@@ -185,6 +189,6 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
 
         String prix = Float.toString(Art.getPrix());
         refMainView.SetLabelPrix(prix);
-        //refMainView.SetLabelImage(Art.getImage());
+        refMainView.SetLabelImage(Art.getImage());
     }
 }
