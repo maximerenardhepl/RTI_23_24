@@ -68,33 +68,29 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                     }
 
                 }
-                else if(e.getSource() == refMainView.getBtnPrecedent())
-                {
-                    if(Ovesp.getInstance().getNumArt() == 1)
-                    {
-                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() + 1);
-                        MiseAJour();
-                    }
-                    else
-                    {
+                else if (e.getSource() == refMainView.getBtnPrecedent()) {
+                    if (Ovesp.getInstance().getNumArt() == 1) {
                         Ovesp.getInstance().setNumArt(21);
                         MiseAJour();
-                    }
-                }
-                else if(e.getSource() == refMainView.getBtnSuivant())
-                {
-                    if(Ovesp.getInstance().getNumArt() == 21)
-                    {
+                    } else {
                         Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() - 1);
                         MiseAJour();
                     }
-                    else
-                    {
+                }
+                else if (e.getSource() == refMainView.getBtnSuivant()) {
+                    if (Ovesp.getInstance().getNumArt() == 21) {
                         Ovesp.getInstance().setNumArt(1);
+                        MiseAJour();
+                    } else {
+                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() + 1);
                         MiseAJour();
                     }
                 }
+
                 else if(e.getSource() == refMainView.getBtnAcheter()) {
+
+                    //on récupère l'article courant
+                    Ovesp.getInstance().getNumArt();
 
                 }
             }
