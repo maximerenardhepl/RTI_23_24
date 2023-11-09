@@ -88,18 +88,33 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 else if(e.getSource() == refMainView.getBtnAcheter()) {
 
                     //on récupère l'article courant
-                    Ovesp.getInstance().getNumArt();
+                    try {
+                        Ovesp.getInstance().Achat( Ovesp.getInstance().getNumArt(),refMainView.getSpinnerQteArticle());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
 
                 }
                 else if(e.getSource() == refMainView.getBtnSupprimerArticle()) {
-                    int artSelectionne = refMainView.getTablePanier().getSelectedRow();
+                    JTable refJTable = refMainView.getTablePanier();
+                    int artSelectionne = refJTable.getSelectedRow();
                     if(artSelectionne != -1) {
                         try {
                             Ovesp.getInstance().cancel(artSelectionne);
+                            refJTable.remove(artSelectionne);
                         }
                         catch(Exception ex) {
                             JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression d'article", JOptionPane.ERROR_MESSAGE);
                         }
+                    }
+                }
+                else if(e.getSource() == refMainView.getBtnViderPanier()) {
+                    try {
+                        Ovesp.getInstance().cancelAll();
+                        refMainView.getTablePanier().removeAll();
+                    }
+                    catch(Exception ex) {
+                        JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression panier", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -184,6 +199,6 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
 
         String prix = Float.toString(Art.getPrix());
         refMainView.SetLabelPrix(prix);
-        //refMainView.SetLabelImage(Art.getImage());
+        refMainView.SetLabelImage(Art.getImage());
     }
 }

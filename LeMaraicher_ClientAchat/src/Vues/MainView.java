@@ -14,6 +14,11 @@ public class MainView extends JFrame{
     private JTextField LabelArticle;
     private JTextField LabelPrix;
     private JTextField LabelStock;
+
+    public int getSpinnerQteArticle() {
+        return (int)(spinnerQteArticle.getModel().getValue());
+    }
+
     private JSpinner spinnerQteArticle;
     private JTextPane publicite;
     private JTable jTablePanier;
@@ -89,8 +94,13 @@ public class MainView extends JFrame{
     public void SetLabelStock(String newText) {LabelStock.setText(newText);}
     public JLabel getLabelImage() {return labelImage;}
 
-    public void SetLabelImage(JLabel labelImage) {
-        this.labelImage = labelImage;}
+    public void SetLabelImage(String PathImage)
+    {
+        String FullPath = "img/" + PathImage;
+
+        ImageIcon image = new ImageIcon(FullPath);
+        labelImage.setIcon(image);
+    }
 
 
 }

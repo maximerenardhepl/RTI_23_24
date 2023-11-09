@@ -58,6 +58,7 @@ public class Ovesp {
     public void logout() throws IOException {
         String requete = "LOGOUT";
         String reponse = exchange(requete);
+        System.out.println("Réponse reçue: " + reponse);
     }
 
     public void cancel(int indiceArticleSelectionne) throws Exception {
@@ -65,14 +66,18 @@ public class Ovesp {
             Article artSelectionne = panier.get(indiceArticleSelectionne);
 
             String requete = "CANCEL#" + String.valueOf(artSelectionne.getId()) + "#" + String.valueOf(artSelectionne.getQuantite()) + "#" + String.valueOf(indiceArticleSelectionne);
-            exchange(requete);
+            String reponse = exchange(requete);
+            System.out.println("Réponse reçue: " + reponse);
 
             panier.remove(indiceArticleSelectionne);
         }
     }
 
-    public void cancelAll() {
-
+    public void cancelAll() throws Exception {
+        String requete = "CANCELALL";
+        String reponse = exchange(requete);
+        System.out.println("Réponse reçue: " + reponse);
+        panier.clear();
     }
 
     public void closeConnection() {
