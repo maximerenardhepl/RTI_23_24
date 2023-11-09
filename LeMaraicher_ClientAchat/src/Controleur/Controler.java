@@ -3,6 +3,7 @@ package Controleur;
 import Modele.Article;
 import Modele.Ovesp;
 import Vues.ConnectionView;
+import Vues.JTableModel.JTableModelPanier;
 import Vues.MainView;
 
 import javax.swing.*;
@@ -89,7 +90,8 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
 
                     //on récupère l'article courant
                     try {
-                        Ovesp.getInstance().Achat( Ovesp.getInstance().getNumArt(),refMainView.getSpinnerQteArticle());
+                        Article art = Ovesp.getInstance().Achat( Ovesp.getInstance().getNumArt(),refMainView.getSpinnerQteArticle());
+                        refMainView.getModeleTablePanier().addRow(art);
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -101,17 +103,20 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                     if(artSelectionne != -1) {
                         try {
                             Ovesp.getInstance().cancel(artSelectionne);
-                            refJTable.remove(artSelectionne);
+                            refMainView.getModeleTablePanier().removeRow(artSelectionne);
                         }
                         catch(Exception ex) {
                             JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression d'article", JOptionPane.ERROR_MESSAGE);
                         }
                     }
+                    else {
+                        System.out.println("aucune ligne selectionnee...");
+                    }
                 }
                 else if(e.getSource() == refMainView.getBtnViderPanier()) {
                     try {
                         Ovesp.getInstance().cancelAll();
-                        refMainView.getTablePanier().removeAll();
+                        refMainView.getModeleTablePanier().clearTable();
                     }
                     catch(Exception ex) {
                         JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression panier", JOptionPane.ERROR_MESSAGE);

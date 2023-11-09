@@ -28,6 +28,9 @@ public class Ovesp {
         return ArtCourant;
     }
     ////////////////////////////////////////////////////////////////////////////////////
+    public ArrayList<Article> getPanier() {
+        return panier;
+    }
     public void init() {
         if(dataTransfer == null) {
             dataTransfer = new DataTransfer();
@@ -62,14 +65,14 @@ public class Ovesp {
     }
 
     public void cancel(int indiceArticleSelectionne) throws Exception {
-        if(indiceArticleSelectionne > 0 && indiceArticleSelectionne < panier.size()) {
+        if(indiceArticleSelectionne >= 0 && indiceArticleSelectionne < panier.size()) {
             Article artSelectionne = panier.get(indiceArticleSelectionne);
 
             String requete = "CANCEL#" + String.valueOf(artSelectionne.getId()) + "#" + String.valueOf(artSelectionne.getQuantite()) + "#" + String.valueOf(indiceArticleSelectionne);
             String reponse = exchange(requete);
             System.out.println("Réponse reçue: " + reponse);
 
-            panier.remove(indiceArticleSelectionne);
+            //panier.remove(indiceArticleSelectionne);
         }
     }
 
@@ -77,7 +80,7 @@ public class Ovesp {
         String requete = "CANCELALL";
         String reponse = exchange(requete);
         System.out.println("Réponse reçue: " + reponse);
-        panier.clear();
+        //panier.clear();
     }
 
     public void closeConnection() {

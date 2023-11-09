@@ -1,8 +1,12 @@
 package Vues;
 
 import Controleur.Controler;
+import Modele.Ovesp;
+import Vues.JTableModel.JTableModelPanier;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class MainView extends JFrame{
@@ -22,6 +26,7 @@ public class MainView extends JFrame{
     private JSpinner spinnerQteArticle;
     private JTextPane publicite;
     private JTable jTablePanier;
+    private JTableModelPanier modeleTablePanier;
     private JButton supprimerArticleButton;
     private JButton viderLePanierButton;
     private JButton confirmerAchatButton;
@@ -86,6 +91,10 @@ public class MainView extends JFrame{
         return jTablePanier;
     }
 
+    public JTableModelPanier getModeleTablePanier() {
+        return modeleTablePanier;
+    }
+
     //methode pour remplir les champs
     public void SetLabelArticle(String newText) {LabelArticle.setText(newText);}
 
@@ -103,4 +112,9 @@ public class MainView extends JFrame{
     }
 
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+        modeleTablePanier = new JTableModelPanier(Ovesp.getInstance().getPanier());
+        jTablePanier = new JTable(modeleTablePanier);
+    }
 }
