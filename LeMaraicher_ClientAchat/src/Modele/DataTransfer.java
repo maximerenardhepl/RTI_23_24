@@ -15,20 +15,21 @@ public class DataTransfer {
 
     public Socket getSocket() { return s; }
 
-    public DataTransfer() {
-        try {
+    public DataTransfer() throws IOException {
+        //try {
             int port;
             if((port = getDefaultPort()) != -1) {
                 System.out.println("port: " + port);
 
-                s = new Socket("192.168.129.21", port);
+                s = new Socket("10.222.20.245", port);
+                //s = new Socket("192.168.129.21", port);
                 //s = new Socket("192.168.30.130", port);
             }
-        }
-        catch(IOException e) {
+        //}
+        /*catch(IOException e) {
             //JOptionPane.showMessageDialog(null, "Erreur lors de la tentative de connexion au serveur...");
             e.printStackTrace();
-        }
+        }*/
     }
 
     private int getDefaultPort() {

@@ -31,10 +31,12 @@ public class Ovesp {
     public ArrayList<Article> getPanier() {
         return panier;
     }
-    public void init() {
+    public boolean init() throws IOException {
         if(dataTransfer == null) {
             dataTransfer = new DataTransfer();
+            return true;
         }
+        return false;
     }
 
     public boolean login(String username, String password, boolean isNewClient) throws Exception {
@@ -92,7 +94,7 @@ public class Ovesp {
         }
     }
 
-    public void reloadProtocol() {
+    public void reloadProtocol() throws IOException {
         if(dataTransfer.getSocket() != null) {
             closeConnection();
         }

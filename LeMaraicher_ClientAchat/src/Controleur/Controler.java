@@ -1,9 +1,12 @@
 package Controleur;
 
 import Modele.Article;
+import Modele.Interfaces.ActionSocketListener;
 import Modele.Ovesp;
+import Modele.ThSocketEvent;
+import Modele.ThreadInitSocket;
 import Vues.ConnectionView;
-import Vues.JTableModel.JTableModelPanier;
+import Vues.LoadingConnection;
 import Vues.MainView;
 
 import javax.swing.*;
@@ -11,14 +14,16 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 
-public class Controler extends WindowAdapter implements ActionListener, MouseListener, MouseMotionListener {
+public class Controler extends WindowAdapter implements ActionListener, MouseListener, MouseMotionListener, ActionSocketListener {
     private ConnectionView refConnectionView;
     private MainView refMainView;
 
+    private boolean isSocketInit;
     private boolean isViewRegisterDisplayed; //indique si ce qui est affiché sur la vue de Connexion est la vue pour se connecter ou bien la vue pour s'inscrire.
 
     public Controler() {
         isViewRegisterDisplayed = false;
+        isSocketInit = false;
     }
 
     public void setRefView(MainView view) {
@@ -29,25 +34,11 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == refConnectionView.getBtnConnexion()) {
-            String username = refConnectionView.getTxtFieldLogin().getText();
-            String password = String.copyValueOf(refConnectionView.getTxtFieldPassword().getPassword());
+            refConnectionView.afficheChargement();
 
-            try {
-                boolean isNewClient = false;
-                if(isViewRegisterDisplayed) {
-                    isNewClient = true;
-                }
-
-                if(Ovesp.getInstance().login(username, password, isNewClient)) {
-                    refMainView = new MainView();
-                    refMainView.setControler(this);
-                    refConnectionView.dispose();
-                    refMainView.setVisible(true);
-                }
-            }
-            catch(Exception ex) {
-                JOptionPane.showMessageDialog(refConnectionView, ex.getMessage(), "Login - Erreur", JOptionPane.ERROR_MESSAGE);
-            }
+            ThreadInitSocket th = new ThreadInitSocket();
+            th.addSocketListener(this);
+            th.start();
         }
         else {
             if(refMainView != null) {
@@ -126,6 +117,62 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
         }
     }
 
+
+    //Permet de détecter le résultat de l'initialisation de la socket lors de la connexion au serveur.
+    @Override
+    public void actionSocketDetected(ThSocketEvent e) {
+        if(e.isInitSuccessful()) {
+            isSocketInit = true;
+
+            boolean isNewClient = false;
+            if(isViewRegisterDisplayed) {
+                isNewClient = true;
+            }
+
+            try {
+                String username = refConnectionView.getTxtFieldLogin().getText();
+                String password = String.copyValueOf(refConnectionView.getTxtFieldPassword().getPassword());
+
+                if(Ovesp.getInstance().login(username, password, isNewClient)) {
+                    refMainView = new MainView();
+                    refMainView.setControler(this);
+                    refConnectionView.dispose();
+                    refMainView.setVisible(true);
+                }
+            }
+            catch(Exception ex) {
+                JOptionPane.showMessageDialog(refConnectionView, ex.getMessage(), "Login - Erreur", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            LoadingConnection vueConn = refConnectionView.getVueChargement();
+            vueConn.getTextPaneMsg().setText("Une erreur est survenue! Impossible de joindre le serveur...Veuillez réessayer!");
+            vueConn.getPanelBoutons().setVisible(true);
+
+            vueConn.getBtnAbandonner().addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    vueConn.getTextPaneMsg().setText("Veuillez patienter pendant le chargement...");
+                    vueConn.getPanelBoutons().setVisible(false);
+                    refConnectionView.affichePanelConnexion();
+                }
+            });
+
+            Controler refControler = this;
+            vueConn.getBtnReessayer().addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    vueConn.getPanelBoutons().setVisible(false);
+                    vueConn.getTextPaneMsg().setText("Veuillez patienter pendant le chargement...");
+
+                    ThreadInitSocket th = new ThreadInitSocket();
+                    th.addSocketListener(refControler);
+                    th.start();
+                }
+            });
+        }
+    }
+
     public void windowClosing(WindowEvent e) {
         if(e.getSource() == refMainView) {
             try {
@@ -135,7 +182,10 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 JOptionPane.showMessageDialog(refMainView, "Une erreur inconnue est survenue! Fermeture de la connexion. L'application va s'arrêter.", "Logout - Erreur", JOptionPane.ERROR_MESSAGE);
             }
         }
-        Ovesp.getInstance().closeConnection();
+
+        if(isSocketInit) {
+            Ovesp.getInstance().closeConnection();
+        }
     }
 
     @Override

@@ -111,7 +111,6 @@ public class MainView extends JFrame{
         labelImage.setIcon(image);
     }
 
-
     private void createUIComponents() {
         // TODO: place custom component creation code here
         modeleTablePanier = new JTableModelPanier(Ovesp.getInstance().getPanier());

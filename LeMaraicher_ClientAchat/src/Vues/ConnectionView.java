@@ -13,6 +13,8 @@ public class ConnectionView extends JFrame {
     private JPasswordField passwordField;
     private JPanel mainPanel;
     private JLabel labelNotRegister;
+    private LoadingConnection vueChargement;
+
 
     public JButton getBtnConnexion() { return btnConnexion; }
     public JTextField getTxtFieldLogin() { return txtFieldLogin; }
@@ -20,10 +22,18 @@ public class ConnectionView extends JFrame {
 
     public JLabel getLabelNotRegister() { return labelNotRegister; }
 
+    public LoadingConnection getVueChargement() {
+        return vueChargement;
+    }
+
     public ConnectionView() {
         setContentPane(mainPanel);
-        setSize(450, 300);
+        Dimension d = new Dimension(450, 350);
+        setMinimumSize(d);
+        setSize(d);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        vueChargement = new LoadingConnection();
     }
 
     public void setControler(Controler c) {
@@ -31,5 +41,17 @@ public class ConnectionView extends JFrame {
         labelNotRegister.addMouseListener(c);
         labelNotRegister.addMouseMotionListener(c);
         this.addWindowListener(c);
+    }
+
+    public void afficheChargement()
+    {
+        setContentPane(vueChargement.getPanelChargement());
+        setVisible(true);
+    }
+
+    public void affichePanelConnexion()
+    {
+        setContentPane(mainPanel);
+        setVisible(true);
     }
 }
