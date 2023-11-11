@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public class ThreadInitSocket extends Thread {
 
+    //Ici, on peut aussi dire que le thread est un Bean émetteur d'évènements personnalisés.
+    //Car il envoie un Event "ThSocketEvent" à son/ses listener(s) pour le(s) prévenir du résultat de la
+    //tentative de connexion de la Socket sur le serveur.
     private boolean isSocketInit;
     ArrayList<ActionSocketListener> listListeners;
 

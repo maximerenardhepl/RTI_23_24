@@ -171,7 +171,7 @@
             </constraints>
             <properties>
               <editable value="false"/>
-              <font name="Arial Black" size="26" style="1"/>
+              <font name="Calibri" size="24"/>
               <text value="Bienvenu sur le maraicher en ligne"/>
             </properties>
           </component>

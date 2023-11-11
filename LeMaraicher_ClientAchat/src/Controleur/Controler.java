@@ -39,6 +39,8 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
             ThreadInitSocket th = new ThreadInitSocket();
             th.addSocketListener(this);
             th.start();
+
+            //Le login se fera réellement lors de la réception de la réponse de la connexion du thread au serveur...
         }
         else {
             if(refMainView != null) {
@@ -138,32 +140,42 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                     refMainView.setControler(this);
                     refConnectionView.dispose();
                     refMainView.setVisible(true);
+
+
+                    if (Ovesp.getInstance().getNumArt() == 21) {
+                        Ovesp.getInstance().setNumArt(1);
+                        MiseAJour();
+                    } else {
+                        Ovesp.getInstance().setNumArt(Ovesp.getInstance().getNumArt() + 1);
+                        MiseAJour();
+                    }
                 }
             }
             catch(Exception ex) {
+                refConnectionView.affichePanelConnexion();
                 JOptionPane.showMessageDialog(refConnectionView, ex.getMessage(), "Login - Erreur", JOptionPane.ERROR_MESSAGE);
             }
         }
         else {
-            LoadingConnection vueConn = refConnectionView.getVueChargement();
-            vueConn.getTextPaneMsg().setText("Une erreur est survenue! Impossible de joindre le serveur...Veuillez réessayer!");
-            vueConn.getPanelBoutons().setVisible(true);
+            LoadingConnection vueChargement = refConnectionView.getVueChargement();
+            vueChargement.getTextPaneMsg().setText("Une erreur est survenue! Impossible de joindre le serveur...Veuillez réessayer!");
+            vueChargement.getPanelBoutons().setVisible(true);
 
-            vueConn.getBtnAbandonner().addActionListener(new ActionListener() {
+            vueChargement.getBtnAbandonner().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    vueConn.getTextPaneMsg().setText("Veuillez patienter pendant le chargement...");
-                    vueConn.getPanelBoutons().setVisible(false);
+                    vueChargement.getTextPaneMsg().setText("Veuillez patienter pendant le chargement...");
+                    vueChargement.getPanelBoutons().setVisible(false);
                     refConnectionView.affichePanelConnexion();
                 }
             });
 
             Controler refControler = this;
-            vueConn.getBtnReessayer().addActionListener(new ActionListener() {
+            vueChargement.getBtnReessayer().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    vueConn.getPanelBoutons().setVisible(false);
-                    vueConn.getTextPaneMsg().setText("Veuillez patienter pendant le chargement...");
+                    vueChargement.getPanelBoutons().setVisible(false);
+                    vueChargement.getTextPaneMsg().setText("Veuillez patienter pendant le chargement...");
 
                     ThreadInitSocket th = new ThreadInitSocket();
                     th.addSocketListener(refControler);

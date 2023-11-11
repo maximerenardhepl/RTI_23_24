@@ -21,9 +21,7 @@ public class DataTransfer {
             if((port = getDefaultPort()) != -1) {
                 System.out.println("port: " + port);
 
-                s = new Socket("10.222.20.245", port);
-                //s = new Socket("192.168.129.21", port);
-                //s = new Socket("192.168.30.130", port);
+                s = new Socket("192.168.187.250", port);
             }
         //}
         /*catch(IOException e) {
@@ -70,6 +68,9 @@ public class DataTransfer {
 
             StringBuilder request = new StringBuilder(enTete);
             request.append(data);
+
+            System.out.println(request);
+
             int tailleReelle = request.length();
 
             try {

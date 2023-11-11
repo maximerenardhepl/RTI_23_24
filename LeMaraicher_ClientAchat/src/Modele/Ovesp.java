@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Ovesp {
     private DataTransfer dataTransfer;
 
-    private int NumArt = 1;
+    private int NumArt = 0;
     private ArrayList<Article> panier;
 
     private Ovesp() {
@@ -56,7 +56,8 @@ public class Ovesp {
             return true;
         }
         else {
-            throw new Exception("Erreur de login!");
+            String msg = elementsReponse[2];
+            throw new Exception(msg);
         }
     }
 
