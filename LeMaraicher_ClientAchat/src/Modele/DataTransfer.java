@@ -19,7 +19,7 @@ public class DataTransfer {
         if((port = getDefaultPort()) != -1) {
             System.out.println("port: " + port);
 
-            s = new Socket("192.168.0.8", port);
+            s = new Socket("192.168.96.250", port);
         }
     }
 

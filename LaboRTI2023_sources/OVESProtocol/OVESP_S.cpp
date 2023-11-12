@@ -436,7 +436,7 @@ Article buyArticleOnDB(int idArticle, int quantite, MYSQL* conn)
 
             int id = atoi(tuple[0]);
             string intitule = tuple[1];
-            float prix = atoi(tuple[2]);
+            float prix = atof(tuple[2]);
             int stockReel = atof(tuple[3]);
             string image = tuple[4];
 
