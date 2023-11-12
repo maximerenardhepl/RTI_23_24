@@ -126,6 +126,15 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                     }
                     catch(Exception ex) {
                         JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression panier", JOptionPane.ERROR_MESSAGE);
+
+                    }
+                }
+                else if(e.getSource() == refMainView.getBtnConfirmerAchat()) {
+                    try {
+                        Ovesp.getInstance().Confirm(Ovesp.getInstance().loginUser);
+                    }
+                    catch(Exception ex) {
+
                     }
                 }
             }

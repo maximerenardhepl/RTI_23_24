@@ -14,6 +14,8 @@ public class Ovesp {
     private int NumArt = 0;
     private ArrayList<Article> panier;
 
+    public String loginUser;
+
     private Ovesp() {
         panier = new ArrayList<>();
     }
@@ -50,6 +52,8 @@ public class Ovesp {
         else {
             requete = "LOGIN#" + username + "#" + password;
         }
+
+        loginUser = username;
 
         String reponse = exchange(requete);
         System.out.println("Réponse reçue: " + reponse);
@@ -197,5 +201,27 @@ public class Ovesp {
         }
     }
 
+    public boolean Confirm(String login) throws Exception
+    {
+        String requete = String.format("CONFIRM#%s", login);
+        String reponse = exchange(requete);
+
+        String[] tokens = reponse.split("#");
+
+        if (tokens[1].equals("KO")) {
+            int errCode = Integer.parseInt(tokens[2]);
+
+            String message;
+            if (errCode == DataBaseException.QUERY_ERROR) {
+                message = "Une erreur est survenue lors de l'envoi de la requête... Veuillez réessayer!";
+            } else if (errCode == DataBaseException.EMPTY_RESULT_SET) {
+                message = "Une erreur est survenue lors de la création de la facture pour votre compte utilisateur... Veuillez réessayer!";
+            } else {
+                message = "Erreur inconnue...";
+            }
+            throw new Exception(message);
+        }
+        return true;
+    }
 
 }
