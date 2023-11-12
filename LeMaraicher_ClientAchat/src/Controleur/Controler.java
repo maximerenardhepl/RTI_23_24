@@ -158,7 +158,7 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
     //Permet de détecter le résultat de l'initialisation de la socket lors de la connexion au serveur.
     @Override
     public void actionSocketDetected(ThSocketEvent e) {
-        if(e.isInitSuccessful()) {
+        if(e.isInitSuccessful()) { //Si l'initialisation de la socket s'est bien passée -> on procède a la procédure de login (ou register) du client.
             isSocketInit = true;
 
             boolean isNewClient = false;
@@ -176,7 +176,7 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                     refConnectionView.dispose();
                     refMainView.setVisible(true);
 
-
+                    //Une fois loggé, on prépare l'affichage du premier article sur l'UI...(consult)
                     if (Ovesp.getInstance().getNumArt() == 21) {
                         Ovesp.getInstance().setNumArt(1);
                         MiseAJour();
@@ -190,7 +190,7 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 refConnectionView.affichePanelConnexion();
                 JOptionPane.showMessageDialog(refConnectionView, ex.getMessage(), "Login - Erreur", JOptionPane.ERROR_MESSAGE);
             }
-        }
+        } //Erreur lors de la connexion de la socket au serveur...
         else {
             LoadingConnection vueChargement = refConnectionView.getVueChargement();
             vueChargement.getTextPaneMsg().setText("Une erreur est survenue! Impossible de joindre le serveur...Veuillez réessayer!");
@@ -296,20 +296,22 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
 
         try {
             Ovesp.getInstance().Consult(Ovesp.getInstance().getNumArt());
+
+            //afficher dans les champs de l'objet retourner par consult qui seraius une variable membres de mon singleton
+            Art = Ovesp.getInstance().getArtCourant();
+
+            refMainView.SetLabelArticle(Art.getIntitule());
+
+            String stock = Integer.toString(Art.getQuantite());
+            refMainView.SetLabelStock(stock);
+
+            String prix = Float.toString(Art.getPrix());
+            refMainView.SetLabelPrix(prix);
+            refMainView.SetLabelImage(Art.getImage());
+
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur Consultation d'article", JOptionPane.ERROR_MESSAGE);
         }
-        //afficher dans les champs de l'objet retourner par consult qui seraius une variable membres de mon singleton
-        Art = Ovesp.getInstance().getArtCourant();
-
-        refMainView.SetLabelArticle(Art.getIntitule());
-
-        String stock = Integer.toString(Art.getQuantite());
-        refMainView.SetLabelStock(stock);
-
-        String prix = Float.toString(Art.getPrix());
-        refMainView.SetLabelPrix(prix);
-        refMainView.SetLabelImage(Art.getImage());
     }
 
     public void ajouteArticlePanier(Article nouveauArt) {

@@ -9,25 +9,18 @@ import java.util.Arrays;
 import java.util.Properties;
 
 public class DataTransfer {
-    //private String configPath = "\\config\\config.txt";
     private String configPath = "\\config\\config.txt";
     private Socket s;
 
     public Socket getSocket() { return s; }
 
     public DataTransfer() throws IOException {
-        //try {
-            int port;
-            if((port = getDefaultPort()) != -1) {
-                System.out.println("port: " + port);
+        int port;
+        if((port = getDefaultPort()) != -1) {
+            System.out.println("port: " + port);
 
-                s = new Socket("192.168.96.250", port);
-            }
-        //}
-        /*catch(IOException e) {
-            //JOptionPane.showMessageDialog(null, "Erreur lors de la tentative de connexion au serveur...");
-            e.printStackTrace();
-        }*/
+            s = new Socket("192.168.0.8", port);
+        }
     }
 
     private int getDefaultPort() {

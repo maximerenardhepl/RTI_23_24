@@ -71,6 +71,7 @@ public class Ovesp {
     public void logout() throws IOException {
         String requete = "LOGOUT";
         String reponse = exchange(requete);
+        loginUser = "";
         System.out.println("Réponse reçue: " + reponse);
     }
 
@@ -78,11 +79,9 @@ public class Ovesp {
         if(indiceArticleSelectionne >= 0 && indiceArticleSelectionne < panier.size()) {
             Article artSelectionne = panier.get(indiceArticleSelectionne);
 
-            String requete = "CANCEL#" + String.valueOf(artSelectionne.getId()) + "#" + String.valueOf(artSelectionne.getQuantite()) + "#" + String.valueOf(indiceArticleSelectionne);
+            String requete = "CANCEL#" + artSelectionne.getId() + "#" + artSelectionne.getQuantite() + "#" + indiceArticleSelectionne;
             String reponse = exchange(requete);
             System.out.println("Réponse reçue: " + reponse);
-
-            //panier.remove(indiceArticleSelectionne);
         }
     }
 
@@ -90,7 +89,6 @@ public class Ovesp {
         String requete = "CANCELALL";
         String reponse = exchange(requete);
         System.out.println("Réponse reçue: " + reponse);
-        //panier.clear();
     }
 
     public void closeConnection() {
@@ -143,6 +141,17 @@ public class Ovesp {
         {
             int errCode = Integer.parseInt(elementsReponse[2]);
             String message;
+
+            if(errCode == DataBaseException.QUERY_ERROR) {
+                message = "Une erreur est survenue lors de l'envoi de la requete...Veuillez reessayer!";
+            }
+            else if(errCode == DataBaseException.EMPTY_RESULT_SET) {
+                message = "Aucun article correspondant a votre demande n'a ete trouve!";
+            }
+            else {
+                message = "Erreur inconnue...";
+            }
+            throw new Exception(message);
         }
         else
         {
@@ -173,7 +182,7 @@ public class Ovesp {
 
         if (token.equals("KO"))
         {
-            String message = "";
+            String message;
             int errCode = Integer.parseInt(elementsReponse[2]);
             if(errCode == DataBaseException.QUERY_ERROR) {
                 message = "Une erreur est survenue lors de l'envoi de la requete...Veuillez reessayer!";
@@ -184,6 +193,9 @@ public class Ovesp {
             else if(errCode == AchatArticleException.INSUFFICIENT_STOCK)
             {
                 message = elementsReponse[3]; //Récupération du message d'erreur créé par le serveur.
+            }
+            else {
+                message = "Erreur inconnue...";
             }
             throw new Exception(message);
 
