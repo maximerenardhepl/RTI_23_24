@@ -1,5 +1,8 @@
 package Modele;
 
+import Modele.Exceptions.AchatArticleException;
+import Modele.Exceptions.DataBaseException;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -166,8 +169,20 @@ public class Ovesp {
 
         if (token.equals("KO"))
         {
+            String message = "";
             int errCode = Integer.parseInt(elementsReponse[2]);
-            String message;
+            if(errCode == DataBaseException.QUERY_ERROR) {
+                message = "Une erreur est survenue lors de l'envoi de la requete...Veuillez reessayer!";
+            }
+            else if(errCode == DataBaseException.EMPTY_RESULT_SET) {
+                message = "Aucun article correspondant a votre demande n'a ete trouve!";
+            }
+            else if(errCode == AchatArticleException.INSUFFICIENT_STOCK)
+            {
+                message = elementsReponse[3]; //Récupération du message d'erreur créé par le serveur.
+            }
+            throw new Exception(message);
+
         }
         else
         {
@@ -180,7 +195,6 @@ public class Ovesp {
             resArticle = new Article(id, intitule, stock, image, prix);
             return resArticle;
         }
-        return null;
     }
 
 

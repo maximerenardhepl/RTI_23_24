@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Controler extends WindowAdapter implements ActionListener, MouseListener, MouseMotionListener, ActionSocketListener {
     private ConnectionView refConnectionView;
@@ -49,6 +50,12 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                        isViewRegisterDisplayed = false; //On réinitialise le boolean dans le cas ou la connexion qui vient d'avoir lieu était une inscription...
                     }
                     try {
+                        if(!Ovesp.getInstance().getPanier().isEmpty()) {
+                            Ovesp.getInstance().cancelAll();
+                            refMainView.getModeleTablePanier().clearTable();
+                        }
+
+                        Ovesp.getInstance().setNumArt(0); //On remet à 0 le NumArt pour la prochaine connexion qui aura lieu...
                         Ovesp.getInstance().logout();
 
                         refConnectionView = new ConnectionView();
@@ -59,6 +66,9 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                     catch(IOException ex) {
                         JOptionPane.showMessageDialog(refMainView, "Une erreur inconnue est survenue! Fermeture de la connexion. L'application va s'arrêter.", "Logout - Erreur", JOptionPane.ERROR_MESSAGE);
                         refMainView.dispose();
+                    }
+                    catch(Exception ex) {
+                        JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression panier - Logout", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 else if (e.getSource() == refMainView.getBtnPrecedent()) {
@@ -84,9 +94,10 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                     //on récupère l'article courant
                     try {
                         Article art = Ovesp.getInstance().Achat( Ovesp.getInstance().getNumArt(),refMainView.getSpinnerQteArticle());
-                        refMainView.getModeleTablePanier().addRow(art);
+                        ajouteArticlePanier(art);
+
                     } catch (Exception ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur Achat", JOptionPane.ERROR_MESSAGE);
                     }
 
                 }
@@ -108,8 +119,10 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 }
                 else if(e.getSource() == refMainView.getBtnViderPanier()) {
                     try {
-                        Ovesp.getInstance().cancelAll();
-                        refMainView.getModeleTablePanier().clearTable();
+                        if(!Ovesp.getInstance().getPanier().isEmpty()) {
+                            Ovesp.getInstance().cancelAll();
+                            refMainView.getModeleTablePanier().clearTable();
+                        }
                     }
                     catch(Exception ex) {
                         JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression panier", JOptionPane.ERROR_MESSAGE);
@@ -188,10 +201,18 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
     public void windowClosing(WindowEvent e) {
         if(e.getSource() == refMainView) {
             try {
+                if(!Ovesp.getInstance().getPanier().isEmpty()) {
+                    Ovesp.getInstance().cancelAll();
+                    refMainView.getModeleTablePanier().clearTable();
+                }
+
                 Ovesp.getInstance().logout();
             }
             catch(IOException ex) {
                 JOptionPane.showMessageDialog(refMainView, "Une erreur inconnue est survenue! Fermeture de la connexion. L'application va s'arrêter.", "Logout - Erreur", JOptionPane.ERROR_MESSAGE);
+            }
+            catch(Exception ex) {
+                JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur suppression panier - Logout", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -267,5 +288,35 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
         String prix = Float.toString(Art.getPrix());
         refMainView.SetLabelPrix(prix);
         refMainView.SetLabelImage(Art.getImage());
+    }
+
+    public void ajouteArticlePanier(Article nouveauArt) {
+        boolean found = false;
+        int i = 0;
+        ArrayList<Article> refPanier = Ovesp.getInstance().getPanier();
+
+        //Vérifie si cet article qu'on veut ajouter n'est par hasard pas déjà présent dans le vecteur d'articles...
+        while(i < refPanier.size() && !found)
+        {
+            Article artCourant = refPanier.get(i);
+            if(artCourant.getId() == nouveauArt.getId()) {
+                found = true;
+            }
+            else {
+                i++;
+            }
+        }
+
+        if(found)
+        {
+            //On a trouvé le meme article deja existant -> on incremente simplement la quantite.
+            int qteActuelle = refPanier.get(i).getQuantite();
+            int nouvelleQte = qteActuelle + nouveauArt.getQuantite();
+            refPanier.get(i).setQuantite(nouvelleQte);
+        }
+        else
+        {
+            refMainView.getModeleTablePanier().addRow(nouveauArt);
+        }
     }
 }

@@ -90,7 +90,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                   <component id="e625e" class="javax.swing.JLabel">
                     <constraints>
@@ -106,7 +108,9 @@
                         <preferred-size width="150" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <editable value="false"/>
+                    </properties>
                   </component>
                   <component id="2bd15" class="javax.swing.JLabel">
                     <constraints>
@@ -123,6 +127,7 @@
                       </grid>
                     </constraints>
                     <properties>
+                      <editable value="false"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -162,17 +167,17 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="915c" class="javax.swing.JTextPane" binding="publicite" default-binding="true">
+          <component id="915c" class="javax.swing.JTextPane" binding="bienvenueSurLeMaraicherTextPane" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="800" height="80"/>
+                <preferred-size width="800" height="100"/>
                 <maximum-size width="800" height="150"/>
               </grid>
             </constraints>
             <properties>
               <editable value="false"/>
               <font name="Calibri" size="24"/>
-              <text value="Bienvenu sur le maraicher en ligne"/>
+              <text value="Bienvenue sur le maraicher en ligne"/>
             </properties>
           </component>
         </children>
@@ -201,14 +206,19 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="4d6e9" class="javax.swing.JTable" binding="jTablePanier" custom-create="true" default-binding="true">
+              <scrollpane id="568dd">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
-              </component>
+                <border type="none"/>
+                <children>
+                  <component id="4d6e9" class="javax.swing.JTable" binding="jTablePanier" custom-create="true" default-binding="true">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
           </grid>
           <grid id="23dd" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -264,7 +274,9 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <editable value="false"/>
+            </properties>
           </component>
           <hspacer id="b289">
             <constraints>

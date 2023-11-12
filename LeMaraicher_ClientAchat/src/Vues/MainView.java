@@ -5,8 +5,6 @@ import Modele.Ovesp;
 import Vues.JTableModel.JTableModelPanier;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class MainView extends JFrame{
@@ -24,7 +22,7 @@ public class MainView extends JFrame{
     }
 
     private JSpinner spinnerQteArticle;
-    private JTextPane publicite;
+    private JTextPane bienvenueSurLeMaraicherTextPane;
     private JTable jTablePanier;
     private JTableModelPanier modeleTablePanier;
     private JButton supprimerArticleButton;
