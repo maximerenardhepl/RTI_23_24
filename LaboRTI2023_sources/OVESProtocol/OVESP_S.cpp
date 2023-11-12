@@ -237,7 +237,7 @@ bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL* conn, Article
             }
             catch(AchatArticleException e)
             {
-                sprintf(reponse, "ACHAT#KO#%d#%s", e.getCode(), e.getMessage());
+                sprintf(reponse, "ACHAT#KO#%d#%s", e.getCode(), e.getMessage().c_str());
             }
         }
         return true;

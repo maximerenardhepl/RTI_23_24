@@ -93,9 +93,22 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
 
                     //on récupère l'article courant
                     try {
-                        Article art = Ovesp.getInstance().Achat( Ovesp.getInstance().getNumArt(),refMainView.getSpinnerQteArticle());
-                        ajouteArticlePanier(art);
+                        if(refMainView.getSpinnerQteArticle() > 0) {
+                            Article art = Ovesp.getInstance().Achat( Ovesp.getInstance().getNumArt(),refMainView.getSpinnerQteArticle());
+                            ajouteArticlePanier(art);
 
+                            //Met a jour la quantite restante affichée pour l'article courant (au dessus à droite sur l'UI)
+                            Article artCourant = Ovesp.getInstance().getArtCourant();
+                            int ancienStock = artCourant.getQuantite();
+                            int nouveauStock = ancienStock - art.getQuantite();
+                            artCourant.setQuantite(nouveauStock); //On actualise aussi la qte dans l'objet articleCourant.
+                            refMainView.SetLabelStock(String.valueOf(nouveauStock));
+
+                            majTotalAPayer();
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(refMainView, "Veuillez selectionner la quantite souhaitée pour cet article!", "Erreur Achat", JOptionPane.ERROR_MESSAGE);
+                        }
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur Achat", JOptionPane.ERROR_MESSAGE);
                     }
@@ -313,10 +326,21 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
             int qteActuelle = refPanier.get(i).getQuantite();
             int nouvelleQte = qteActuelle + nouveauArt.getQuantite();
             refPanier.get(i).setQuantite(nouvelleQte);
+            refMainView.getModeleTablePanier().refreshRow(i, i); //Permet simplement de rafraichir la JTable sur la ligne qui a été modifiée...
         }
         else
         {
             refMainView.getModeleTablePanier().addRow(nouveauArt);
         }
+    }
+
+    public void majTotalAPayer() {
+        ArrayList<Article> refPanier = Ovesp.getInstance().getPanier();
+
+        float montantTotal = 0;
+        for(Article a : refPanier) {
+            montantTotal += a.getPrix() * a.getQuantite();
+        }
+        refMainView.setTotalAPayer(montantTotal);
     }
 }
