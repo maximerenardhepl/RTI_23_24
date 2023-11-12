@@ -145,9 +145,14 @@ public class Controler extends WindowAdapter implements ActionListener, MouseLis
                 else if(e.getSource() == refMainView.getBtnConfirmerAchat()) {
                     try {
                         Ovesp.getInstance().Confirm(Ovesp.getInstance().loginUser);
+                        refMainView.getModeleTablePanier().clearTable();
+
+                        String message = "Une facture detaillee a bien ete cree pour votre commande !";
+
+                        JOptionPane.showMessageDialog(refMainView, message, "Confirmation d'achat", JOptionPane.INFORMATION_MESSAGE);
                     }
                     catch(Exception ex) {
-
+                        JOptionPane.showMessageDialog(refMainView, ex.getMessage(), "Erreur confirmation achat", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

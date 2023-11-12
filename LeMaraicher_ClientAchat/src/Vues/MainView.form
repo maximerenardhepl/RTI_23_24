@@ -177,6 +177,7 @@
             <properties>
               <editable value="false"/>
               <font name="Calibri" size="24"/>
+              <margin top="35" left="220" bottom="3" right="3"/>
               <text value="Bienvenue sur le maraicher en ligne"/>
             </properties>
           </component>
