@@ -52,6 +52,10 @@ public class JTableModelPanier extends AbstractTableModel {
         fireTableRowsInserted(data.size() - 1, data.size() - 1);
     }
 
+    public void refreshRow(int indDebut, int indFin) {
+        fireTableRowsUpdated(indDebut, indFin);
+    }
+
     //Supprime l'article a l'indice i de l'ArrayList<Article> (le panier) et actualise l'affichage de la JTable
     public void removeRow(int indice) {
         if(indice >= 0 && indice < data.size()) {

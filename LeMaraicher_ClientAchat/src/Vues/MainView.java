@@ -28,14 +28,14 @@ public class MainView extends JFrame{
     private JButton supprimerArticleButton;
     private JButton viderLePanierButton;
     private JButton confirmerAchatButton;
-    private JTextField textField4;
+    private JTextField textFieldTotalAPayer;
     private JPanel mainPanel;
     private JLabel labelImage;
 
     public MainView() {
         setContentPane(mainPanel);
-        setSize(900, 500);
-        setMinimumSize(new Dimension(900, 500));
+        setSize(900, 530);
+        setMinimumSize(new Dimension(900, 530));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         JMenuBar menuPrincipal = new JMenuBar();
@@ -107,6 +107,13 @@ public class MainView extends JFrame{
 
         ImageIcon image = new ImageIcon(FullPath);
         labelImage.setIcon(image);
+    }
+
+    public float getTotalAPayer() {
+        return Float.parseFloat(textFieldTotalAPayer.getText());
+    }
+    public void setTotalAPayer(float totalAPayer) {
+        textFieldTotalAPayer.setText(String.valueOf(totalAPayer));
     }
 
     private void createUIComponents() {
