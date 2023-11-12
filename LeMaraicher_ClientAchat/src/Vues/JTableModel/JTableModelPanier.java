@@ -34,12 +34,12 @@ public class JTableModelPanier extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Article a = data.get(rowIndex);
 
-        return switch (columnIndex) {
-            case 0 -> a.getIntitule();
-            case 1 -> String.valueOf(a.getPrix());
-            case 2 -> String.valueOf(a.getQuantite());
-            default -> null;
-        };
+        switch (columnIndex) {
+            case 0 : return a.getIntitule();
+            case 1 : return String.valueOf(a.getPrix());
+            case 2 : return String.valueOf(a.getQuantite());
+            default : return null;
+        }
     }
 
     @Override
