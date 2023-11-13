@@ -1,5 +1,7 @@
 package ServeurGenerique;
 
+import Logging.Logger;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -43,7 +45,6 @@ public abstract class ThreadClient extends Thread {
                     oos.writeObject(e.getReponse());
                 }
             }
-
         }
         catch (IOException e) {
             logger.Trace("Erreur I/O");

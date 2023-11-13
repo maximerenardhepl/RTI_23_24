@@ -1,5 +1,7 @@
 package ServeurGenerique;
 
+import Logging.Logger;
+
 public class ThreadClientPool extends ThreadClient {
     private FileAttente connexionsEnAttente;
 

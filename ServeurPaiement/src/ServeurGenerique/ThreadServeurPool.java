@@ -1,9 +1,9 @@
 package ServeurGenerique;
 
-import java.io.File;
+import Logging.Logger;
+
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 public class ThreadServeurPool extends ThreadServeur {
     private FileAttente connexionsEnAttente;

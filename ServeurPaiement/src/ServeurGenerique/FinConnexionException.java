@@ -8,5 +8,10 @@ public class FinConnexionException extends Exception {
         this.reponse = reponse;
     }
 
+    public FinConnexionException() {
+        super("Fin de la connexion...");
+        reponse = null;
+    }
+
     public Reponse getReponse() { return reponse; }
 }

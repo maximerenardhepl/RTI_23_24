@@ -1,5 +1,7 @@
 package ServeurGenerique;
 
+import Logging.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
