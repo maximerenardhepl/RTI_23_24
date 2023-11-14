@@ -31,12 +31,20 @@ public class VESPAP implements Protocole {
             return TraiteRequeteLOGIN((RequeteLOGIN) requete, socket);
         }
         if(requete instanceof RequeteGET_FACTURES) {
-            return TraiteRequeteGET_FACTURES((RequeteGET_FACTURES) requete, socket);
+            return TraiteRequeteGET_FACTURES((RequeteGET_FACTURES) requete);
         }
         if(requete instanceof RequetePAY_FACTURE) {
-            return TraiteRequetePAY_FACTURES((RequetePAY_FACTURE) requete, socket);
+            return TraiteRequetePAY_FACTURES((RequetePAY_FACTURE) requete);
+        }
+        if(requete instanceof RequeteLOGOUT) {
+            TraiteRequeteLOGOUT((RequeteLOGOUT) requete);
         }
         return null;
+    }
+
+    @Override
+    public void close() {
+        dal.close();
     }
 
     private synchronized ReponseLOGIN TraiteRequeteLOGIN(RequeteLOGIN requete, Socket socket) throws FinConnexionException {
@@ -54,22 +62,24 @@ public class VESPAP implements Protocole {
             return new ReponseLOGIN(false);
         }
         catch (DALException e) {
-            throw new FinConnexionException();
+            ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());
+            throw new FinConnexionException(reponseErr);
         }
     }
 
-    private synchronized ReponseGET_FACTURES TraiteRequeteGET_FACTURES(RequeteGET_FACTURES requete, Socket socket) throws FinConnexionException {
+    private synchronized ReponseGET_FACTURES TraiteRequeteGET_FACTURES(RequeteGET_FACTURES requete) throws FinConnexionException {
         logger.Trace("RequeteGET_FACTURES reçue");
         try {
             ArrayList<Facture> listeFactures = dal.getFactures(requete);
             return new ReponseGET_FACTURES(listeFactures);
         }
         catch (DALException e) {
-            throw new FinConnexionException();
+            ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());
+            throw new FinConnexionException(reponseErr);
         }
     }
 
-    private synchronized ReponsePAY_FACTURE TraiteRequetePAY_FACTURES(RequetePAY_FACTURE requete, Socket socket) throws FinConnexionException {
+    private synchronized ReponsePAY_FACTURE TraiteRequetePAY_FACTURES(RequetePAY_FACTURE requete) throws FinConnexionException {
         logger.Trace("RequetePAY_FACTURE reçue");
         try {
             if(isVisaOk(requete.getVisa())) {
@@ -82,7 +92,8 @@ public class VESPAP implements Protocole {
             return new ReponsePAY_FACTURE(false, "Le numéro de carte VISA est invalide!");
         }
         catch (DALException e) {
-            throw new FinConnexionException();
+            ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());
+            throw new FinConnexionException(reponseErr);
         }
     }
 
@@ -95,5 +106,12 @@ public class VESPAP implements Protocole {
             }
         }
         return false;
+    }
+
+    private synchronized void TraiteRequeteLOGOUT(RequeteLOGOUT requete) throws FinConnexionException {
+        logger.Trace("RequeteLOGOUT reçue de " + requete.getLogin());
+        clientsConnectes.remove(requete.getLogin());
+        logger.Trace(requete.getLogin() + " correctement déloggé");
+        throw new FinConnexionException(); //Permet de signaler au ThreadClient que l'échange entre le serveur et le client est terminé -> il y aura fermeture de la socket...
     }
 }

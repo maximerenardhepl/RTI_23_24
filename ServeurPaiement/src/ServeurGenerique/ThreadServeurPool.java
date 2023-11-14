@@ -1,6 +1,7 @@
 package ServeurGenerique;
 
 import Logging.Logger;
+import ProtocoleVESPAP.VESPAP;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -40,5 +41,7 @@ public class ThreadServeurPool extends ThreadServeur {
         }
         logger.Trace("TH Serveur (Pool) interrompu.");
         pool.interrupt();
+        protocole.close(); //Va permettre de fermer la connexion a la base de données
+                            //Permettrait également de pouvoir par exemple fermer d'autres ressources ouvertes par le protocole.
     }
 }

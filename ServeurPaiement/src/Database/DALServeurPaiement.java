@@ -17,13 +17,23 @@ public class DALServeurPaiement {
     public DALServeurPaiement(Logger logger) {
         try {
             //Il faut récupérer l'IP sur laquelle se trouve la BD pour l'affecter au parametre "server" de DatabaseConnection.
-            String server = "192.168.129.21";
+            String server = "192.168.96.250";
             connectionDB = new DatabaseConnection(DatabaseConnection.MYSQL, server, "PourStudent", "Student", "PassStudent1_");
         }
         catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
         this.logger = logger;
+    }
+
+    public void close() {
+        try {
+            connectionDB.close();
+        }
+        catch(SQLException e) {
+            logger.Trace("Erreur DatabaseConnection: " + e.getMessage());
+        }
     }
 
     public boolean loginEmploye(RequeteLOGIN requete) throws DALException {

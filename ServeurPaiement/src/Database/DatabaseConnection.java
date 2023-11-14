@@ -14,7 +14,7 @@ public class DatabaseConnection {
     }
 
     public DatabaseConnection(String type, String server, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
-        Class leDriver = Class.forName(drivers.get(type));
+        Class.forName(drivers.get(type));
 
         String url = null;
 

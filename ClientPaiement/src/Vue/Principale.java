@@ -1,6 +1,7 @@
 package Vue;
 
 import javax.swing.*;
+import Controleur.Controleur;
 
 public class Principale extends JFrame{
     private JPanel panel1;
@@ -10,9 +11,18 @@ public class Principale extends JFrame{
     private JTextField visa;
     private JButton voirFacturesButton;
     private JButton payerFactureButton;
-    private JTable table1;
+    private JTable tableFactures;
+    private JMenuItem menuDeconnexion;
 
-    public void Principale()
+    public String getUsername() { return username.getText(); }
+    public String getPassword() { return String.valueOf(password.getPassword()); }
+
+    public JMenuItem getMenuDeconnexion() { return menuDeconnexion; }
+    public JButton getLoginButton() { return loginButton; }
+    public JButton getVoirFacturesButton() { return  voirFacturesButton; }
+    public JButton getPayerFactureButton() { return payerFactureButton; }
+
+    public Principale()
     {
         setContentPane(panel1);
         setSize(900, 530);
@@ -20,5 +30,16 @@ public class Principale extends JFrame{
 
         JMenuBar menuPrincipal = new JMenuBar();
         setJMenuBar(menuPrincipal);
+
+        JMenu menuProfil = new JMenu("Profil");
+        menuDeconnexion = new JMenuItem("Deconnexion");
+        menuProfil.add(menuDeconnexion);
+        menuPrincipal.add(menuProfil);
+    }
+
+    public void setControler(Controleur c) {
+        loginButton.addActionListener(c);
+        voirFacturesButton.addActionListener(c);
+        payerFactureButton.addActionListener(c);
     }
 }
