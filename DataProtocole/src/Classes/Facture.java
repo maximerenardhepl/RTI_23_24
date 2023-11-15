@@ -14,4 +14,20 @@ public class Facture {
         this.montant = montant;
         this.paye = paye;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public float getMontant() {
+        return montant;
+    }
+
+    public boolean isPaye() {
+        return paye;
+    }
 }

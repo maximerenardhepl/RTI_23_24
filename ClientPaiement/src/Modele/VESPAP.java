@@ -6,13 +6,20 @@ import Intefaces.Reponse;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class VESPAP {
     Communication communication;
     private static VESPAP instance;
+    private ArrayList<Facture> listeFacture;
+
+    public ArrayList<Facture> getListeFacture() {
+        return listeFacture;
+    }
 
     private VESPAP() {
         communication = new Communication();
+        listeFacture = new ArrayList<>();
     }
 
     public static VESPAP getInstance() {

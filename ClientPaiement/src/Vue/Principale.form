@@ -75,7 +75,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="d634d" class="javax.swing.JTable" binding="tableFactures">
+              <component id="d634d" class="javax.swing.JTable" binding="tableFactures" custom-create="true">
                 <constraints/>
                 <properties/>
               </component>

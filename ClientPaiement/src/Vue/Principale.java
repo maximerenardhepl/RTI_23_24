@@ -2,6 +2,8 @@ package Vue;
 
 import javax.swing.*;
 import Controleur.Controleur;
+import Modele.VESPAP;
+import Vue.JTableModel.JTableModelFactures;
 
 public class Principale extends JFrame{
     private JPanel panel1;
@@ -12,6 +14,7 @@ public class Principale extends JFrame{
     private JButton voirFacturesButton;
     private JButton payerFactureButton;
     private JTable tableFactures;
+    private JTableModelFactures tableModelFactures;
     private JMenuItem menuDeconnexion;
 
     public String getUsername() { return username.getText(); }
@@ -41,5 +44,11 @@ public class Principale extends JFrame{
         loginButton.addActionListener(c);
         voirFacturesButton.addActionListener(c);
         payerFactureButton.addActionListener(c);
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+        tableModelFactures = new JTableModelFactures(VESPAP.getInstance().getListeFacture());
+        tableFactures = new JTable(tableModelFactures);
     }
 }
