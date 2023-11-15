@@ -13,6 +13,13 @@ typedef struct
   char  image[20];
 } ARTICLE;
 
+typedef struct 
+{
+  int id;
+  char login[50];
+  char motDePasse[50];
+} EMPLOYE;
+
 ARTICLE Elm[] = 
 {
   {-1,"carottes",2.16f,9,"carottes.jpg"},
@@ -38,6 +45,14 @@ ARTICLE Elm[] =
   {-1,"tomates",5.49f,22,"tomates.jpg"}
 };
 
+EMPLOYE employes[] = {
+  {-1, "Barack Afrites", "123"},
+  {-1, "Gerard Mentor", "123"},
+  {-1, "Jean Tanrien", "123"},
+  {-1, "Kelly Diote", "123"},
+  {-1, "Karl Lage", "123"}
+};
+
 int main(int argc,char *argv[])
 {
   // Connection a MySql
@@ -50,6 +65,7 @@ int main(int argc,char *argv[])
   mysql_query(connexion, "drop table ventes;");
   mysql_query(connexion, "drop table factures;");
   mysql_query(connexion, "drop table clients;");
+  mysql_query(connexion, "drop table employes");
   mysql_query(connexion,"drop table articles;"); // au cas ou elle existerait deja
 
   printf("Creation de la table articles...\n");
@@ -57,6 +73,9 @@ int main(int argc,char *argv[])
 
   printf("Creation de la table clients...\n");
   mysql_query(connexion, "create table clients (id INT(4) auto_increment primary key, login varchar(50) not null, password varchar(255) not null, unique(login));");
+
+  printf("Creation de la table employes...\n");
+  mysql_query(connexion, "create table employes (id INT(4) auto_increment primary key, login varchar(50) not null, password varchar(255) not null, unique(login));");
 
   printf("Creation de la table factures...\n");
   mysql_query(connexion, "create table factures (id varchar(50) primary key, idClient INT(4), date DATE, montant FLOAT(4), paye BOOLEAN, FOREIGN KEY (idClient) REFERENCES clients(id));");
@@ -71,6 +90,13 @@ int main(int argc,char *argv[])
   {
 	  sprintf(requete,"insert into articles values (NULL,'%s',%f,%d,'%s');",Elm[i].intitule,Elm[i].prix,Elm[i].stock,Elm[i].image);
 	  mysql_query(connexion,requete);
+  }
+
+  printf("Ajout de 5 employes.....\n");
+  for(int i=0; i<5; i++)
+  {
+    sprintf(requete, "insert into employes values (NULL, '%s', '%s');", employes[i].login, employes[i].motDePasse);
+    mysql_query(connexion, requete);
   }
 
   // Deconnection de la BD

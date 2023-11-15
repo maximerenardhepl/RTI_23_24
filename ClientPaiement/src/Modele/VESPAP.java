@@ -1,7 +1,9 @@
 package Modele;
 
 import Classes.*;
+import Intefaces.Reponse;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -30,13 +32,21 @@ public class VESPAP {
 
         RequeteLOGIN requete = new RequeteLOGIN(username, password);
         try {
-            ReponseLOGIN reponse = (ReponseLOGIN) communication.traiteRequete(requete);
-            if(reponse.isValide()) {
-                return true;
+            Reponse reponse = communication.traiteRequete(requete);
+            if(reponse instanceof ReponseErreurServeur) {
+                throw new Exception(((ReponseErreurServeur) reponse).getMessage());
+            }
+            else if(reponse instanceof ReponseLOGIN) {
+                if(((ReponseLOGIN) reponse).isValide()) {
+                    return true;
+                }
+                else { //La réponse login nous a retourné false
+                    String msg = "Le nom d'utilisateur ou le mot passe entré est incorrect!";
+                    throw new Exception(msg);
+                }
             }
             else {
-                String msg = "Le nom d'utilisateur ou le mot passe entré est incorrect!";
-                throw new Exception(msg);
+                throw new Exception("Une erreur inconnue est survenue...");
             }
         }
         catch(IOException | ClassNotFoundException e) {
