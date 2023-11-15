@@ -5,9 +5,10 @@ public class UserInfo {
     private String password;
     private String username;
 
-    public void UserInfo()
+    public UserInfo(String Password, String Username)
     {
-
+        password = password;
+        username = Username;
     }
 
     public String getPassword() {

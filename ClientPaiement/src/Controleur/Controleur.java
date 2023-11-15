@@ -56,7 +56,7 @@ public class Controleur implements ActionListener {
     }
 
     private void onPush_BtnLogout() {
-
+        VESPAP.getInstance().Logout(VESPAP.getInstance().getInfoclient());
     }
 
     private void onPush_BtnVoirFactures() {

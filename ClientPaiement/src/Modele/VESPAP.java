@@ -39,6 +39,9 @@ public class VESPAP {
             }
             else if(reponse instanceof ReponseLOGIN) {
                 if(((ReponseLOGIN) reponse).isValide()) {
+                    infoclient = new UserInfo(password, username);
+                    infoclient.setPassword(password);
+                    infoclient.setUsername(username);
                     return true;
                 }
                 else { //La réponse login nous a retourné false
@@ -65,7 +68,6 @@ public class VESPAP {
         {
             throw new RuntimeException(e);
         }
-
     }
 
     public void GetFactures() {
@@ -76,7 +78,7 @@ public class VESPAP {
 
     }
 
-    public UserInfo getInfoclient() {
-        return infoclient;
+    public String getInfoclient() {
+        return infoclient.getUsername();
     }
 }
