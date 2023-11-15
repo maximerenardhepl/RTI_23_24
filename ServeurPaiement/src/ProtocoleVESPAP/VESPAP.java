@@ -2,9 +2,11 @@ package ProtocoleVESPAP;
 
 import Database.DALException;
 import Database.DALServeurPaiement;
-import Database.Facture;
+import Intefaces.Reponse;
+import Intefaces.Requete;
 import Logging.Logger;
 import ServeurGenerique.*;
+import Classes.*;
 
 import java.net.Socket;
 import java.util.ArrayList;

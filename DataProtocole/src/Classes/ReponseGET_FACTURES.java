@@ -1,5 +1,6 @@
-package Modele;
+package Classes;
 
+import Intefaces.Reponse;
 import java.util.ArrayList;
 
 public class ReponseGET_FACTURES implements Reponse {

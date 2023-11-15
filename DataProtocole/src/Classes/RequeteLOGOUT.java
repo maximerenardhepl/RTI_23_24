@@ -1,4 +1,7 @@
-package Modele;
+package Classes;
+
+import Intefaces.Requete;
+
 public class RequeteLOGOUT implements Requete {
     private String login;
 

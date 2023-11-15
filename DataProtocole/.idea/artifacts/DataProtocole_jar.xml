@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DataProtocole:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/DataProtocole_jar</output-path>
+    <root id="archive" name="DataProtocole.jar">
+      <element id="module-output" name="DataProtocole" />
+    </root>
+  </artifact>
+</component>

@@ -1,6 +1,6 @@
-package ProtocoleVESPAP;
+package Classes;
 
-import ServeurGenerique.Reponse;
+import Intefaces.Reponse;
 
 public class ReponseErreurServeur implements Reponse {
     public static int DATABASE_ERROR = 1;

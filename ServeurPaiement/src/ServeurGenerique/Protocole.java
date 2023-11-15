@@ -1,5 +1,8 @@
 package ServeurGenerique;
 
+import Intefaces.Reponse;
+import Intefaces.Requete;
+
 import java.net.Socket;
 
 public interface Protocole {

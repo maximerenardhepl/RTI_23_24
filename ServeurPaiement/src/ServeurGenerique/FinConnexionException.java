@@ -1,5 +1,7 @@
 package ServeurGenerique;
 
+import Intefaces.Reponse;
+
 public class FinConnexionException extends Exception {
     private Reponse reponse;
 

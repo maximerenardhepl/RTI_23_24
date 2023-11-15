@@ -1,5 +1,7 @@
 package ServeurGenerique;
 
+import Intefaces.Reponse;
+import Intefaces.Requete;
 import Logging.Logger;
 
 import java.io.IOException;

@@ -1,4 +1,7 @@
-package Modele;
+package Classes;
+
+import Intefaces.Reponse;
+
 public class ReponsePAY_FACTURE implements Reponse {
     private boolean valide;
     private String message;

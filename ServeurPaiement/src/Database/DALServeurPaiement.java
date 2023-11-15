@@ -1,8 +1,6 @@
 package Database;
 
-import ProtocoleVESPAP.RequeteGET_FACTURES;
-import ProtocoleVESPAP.RequeteLOGIN;
-import ProtocoleVESPAP.RequetePAY_FACTURE;
+import Classes.*;
 import Logging.Logger;
 
 import java.sql.ResultSet;
@@ -17,7 +15,7 @@ public class DALServeurPaiement {
     public DALServeurPaiement(Logger logger) {
         try {
             //Il faut récupérer l'IP sur laquelle se trouve la BD pour l'affecter au parametre "server" de DatabaseConnection.
-            String server = "192.168.96.250";
+            String server = "10.222.20.237";
             connectionDB = new DatabaseConnection(DatabaseConnection.MYSQL, server, "PourStudent", "Student", "PassStudent1_");
         }
         catch (SQLException | ClassNotFoundException e) {

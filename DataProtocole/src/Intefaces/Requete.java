@@ -1,4 +1,4 @@
-package ServeurGenerique;
+package Intefaces;
 
 import java.io.Serializable;
 

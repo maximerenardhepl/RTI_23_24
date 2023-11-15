@@ -1,4 +1,7 @@
-package Modele;
+package Classes;
+
+import Intefaces.Reponse;
+
 public class ReponseLOGIN implements Reponse {
     private boolean valide;
 

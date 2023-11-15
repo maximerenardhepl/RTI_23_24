@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ServeurPaiement:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ServeurPaiement_jar</output-path>
+    <root id="archive" name="ServeurPaiement.jar">
+      <element id="module-output" name="ServeurPaiement" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/Drivers/mysql-connector-j-8.2.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -1,6 +1,6 @@
-package ProtocoleVESPAP;
+package Classes;
 
-import ServeurGenerique.Requete;
+import Intefaces.Requete;
 
 public class RequeteGET_FACTURES implements Requete {
     private int idClient;

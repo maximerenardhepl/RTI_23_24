@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Properties;
+import Classes.*;
+import Intefaces.*;
 
 public class Communication {
     private Socket socketClient;
@@ -49,6 +51,9 @@ public class Communication {
     }
 
     public Reponse traiteRequete(Requete requete) throws IOException, ClassNotFoundException {
+        if(requete instanceof RequeteLOGIN) {
+            System.out.println("C'est une RequeteLOGIN...");
+        }
         writer.writeObject(requete);
         return (Reponse) reader.readObject();
     }

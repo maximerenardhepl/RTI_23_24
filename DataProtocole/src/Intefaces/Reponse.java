@@ -1,4 +1,4 @@
-package Modele;
+package Intefaces;
 
 import java.io.Serializable;
 
