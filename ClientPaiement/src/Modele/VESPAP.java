@@ -12,6 +12,7 @@ public class VESPAP {
     Communication communication;
     private static VESPAP instance;
     private ArrayList<Facture> listeFacture;
+    private UserInfo infoclient;
 
     public ArrayList<Facture> getListeFacture() {
         return listeFacture;
@@ -39,16 +40,18 @@ public class VESPAP {
 
         RequeteLOGIN requete = new RequeteLOGIN(username, password);
         try {
+
             Reponse reponse = communication.traiteRequete(requete);
             if(reponse instanceof ReponseErreurServeur) {
                 throw new Exception(((ReponseErreurServeur) reponse).getMessage());
             }
             else if(reponse instanceof ReponseLOGIN) {
                 if(((ReponseLOGIN) reponse).isValide()) {
+                    infoclient = new UserInfo(password, username); //On stocke les informations du client connecté dans l'objet Communication de VESPAP.
                     return true;
                 }
                 else { //La réponse login nous a retourné false
-                    String msg = "Le nom d'utilisateur ou le mot passe entré est incorrect!";
+                    String msg = ((ReponseLOGIN) reponse).getMessage(); //On récupère donc le message d'erreur fourni.
                     throw new Exception(msg);
                 }
             }
@@ -61,15 +64,47 @@ public class VESPAP {
         }
     }
 
-    public void Logout() {
-
+    public void Logout(String username) {
+        try
+        {
+            RequeteLOGOUT requete = new RequeteLOGOUT(username);
+            communication.getWriter().writeObject(requete);
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void GetFactures() {
-
+    public ArrayList<Facture> GetFactures(int numClient) throws Exception {
+        RequeteGET_FACTURES requete = new RequeteGET_FACTURES(numClient);
+        try {
+            Reponse reponse = communication.traiteRequete(requete);
+            if(reponse instanceof ReponseErreurServeur) {
+                throw new Exception(((ReponseErreurServeur) reponse).getMessage());
+            }
+            else if(reponse instanceof ReponseGET_FACTURES) {
+                if(((ReponseGET_FACTURES) reponse).getListeFactures().size() > 0) {
+                    return listeFacture = ((ReponseGET_FACTURES) reponse).getListeFactures();
+                }
+                else {
+                    throw new Exception("Aucune facture n'a été trouvé pour ce numéro de client!");
+                }
+            }
+            else {
+                throw new Exception("Une erreur inconnue est survenue...");
+            }
+        }
+        catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void PayFacture() {
 
+    }
+
+    public String getInfoclient() {
+        return infoclient.getUsername();
     }
 }

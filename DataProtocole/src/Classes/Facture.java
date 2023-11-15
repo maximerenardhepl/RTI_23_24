@@ -1,21 +1,22 @@
 package Classes;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Facture {
-    private int id;
+public class Facture implements Serializable {
+    private String id;
     private Date date;
     private float montant;
     private boolean paye;
 
-    public Facture(int id, Date date, float montant, boolean paye) {
+    public Facture(String id, Date date, float montant, boolean paye) {
         this.id = id;
         this.date = date;
         this.montant = montant;
         this.paye = paye;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

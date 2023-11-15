@@ -29,7 +29,7 @@ public class ThreadServeurPool extends ThreadServeur {
         while(!this.isInterrupted()) {
             Socket socketClient;
             try {
-                socketServeur.setSoTimeout(300000);
+                //socketServeur.setSoTimeout(300000);
                 socketClient = socketServeur.accept();
                 logger.Trace("Connexion acceptée, mise en file d'attente.");
                 connexionsEnAttente.addConnexion(socketClient);

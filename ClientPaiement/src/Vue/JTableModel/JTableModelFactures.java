@@ -70,4 +70,9 @@ public class JTableModelFactures extends AbstractTableModel {
         data.clear();
         fireTableRowsDeleted(0, size-1);
     }
+
+    public void updateDataSource(ArrayList<Facture> newData) {
+        this.data = newData;
+        fireTableDataChanged(); //Permet de notifier la JTable que la source de données a été modifiée.
+    }
 }

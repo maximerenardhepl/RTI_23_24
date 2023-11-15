@@ -16,6 +16,10 @@ public class Communication {
     private String configPath = "\\config\\config.txt";
     public Communication() { }
 
+    public ObjectOutputStream getWriter() {
+        return writer;
+    }
+
     public void init() throws IOException {
         try {
             SocketInfos infos = getDefaultSocketInfos();
@@ -51,9 +55,6 @@ public class Communication {
     }
 
     public Reponse traiteRequete(Requete requete) throws IOException, ClassNotFoundException {
-        if(requete instanceof RequeteLOGIN) {
-            System.out.println("C'est une RequeteLOGIN...");
-        }
         writer.writeObject(requete);
         return (Reponse) reader.readObject();
     }

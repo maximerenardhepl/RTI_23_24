@@ -10,20 +10,24 @@ public class Principale extends JFrame{
     private JButton loginButton;
     private JPasswordField password;
     private JTextField username;
-    private JTextField visa;
+    private JTextField numClient;
     private JButton voirFacturesButton;
     private JButton payerFactureButton;
     private JTable tableFactures;
     private JTableModelFactures tableModelFactures;
     private JMenuItem menuDeconnexion;
 
-    public String getUsername() { return username.getText(); }
-    public String getPassword() { return String.valueOf(password.getPassword()); }
+    public JTextField getTxtFieldUsername() { return username; }
+    public JPasswordField getTxtFieldPassword() { return password; }
+
+    public JTextField getTxtFieldNumClient() { return numClient; }
 
     public JMenuItem getMenuDeconnexion() { return menuDeconnexion; }
     public JButton getLoginButton() { return loginButton; }
     public JButton getVoirFacturesButton() { return  voirFacturesButton; }
     public JButton getPayerFactureButton() { return payerFactureButton; }
+
+    public JTableModelFactures getTableModelFactures() { return tableModelFactures; }
 
     public Principale()
     {
@@ -38,10 +42,13 @@ public class Principale extends JFrame{
         menuDeconnexion = new JMenuItem("Deconnexion");
         menuProfil.add(menuDeconnexion);
         menuPrincipal.add(menuProfil);
+
+        DesactiveVuePrincipale();
     }
 
     public void setControler(Controleur c) {
         loginButton.addActionListener(c);
+        menuDeconnexion.addActionListener(c);
         voirFacturesButton.addActionListener(c);
         payerFactureButton.addActionListener(c);
     }
@@ -50,5 +57,31 @@ public class Principale extends JFrame{
         // TODO: place custom component creation code here
         tableModelFactures = new JTableModelFactures(VESPAP.getInstance().getListeFacture());
         tableFactures = new JTable(tableModelFactures);
+    }
+
+    public void ActiveVuePrincipale()
+    {
+        voirFacturesButton.setEnabled(true);
+        tableFactures.setEnabled(true);
+        numClient.setEnabled(true);
+        voirFacturesButton.setEnabled(true);
+        payerFactureButton.setEnabled(true);
+        menuDeconnexion.setEnabled(true);
+
+        loginButton.setEnabled(false);
+        username.setText("");
+        password.setText("");
+    }
+
+    public void DesactiveVuePrincipale()
+    {
+        voirFacturesButton.setEnabled(false);
+        tableFactures.setEnabled(false);
+        numClient.setEnabled(false);
+        voirFacturesButton.setEnabled(false);
+        payerFactureButton.setEnabled(false);
+        menuDeconnexion.setEnabled(false);
+
+        loginButton.setEnabled(true);
     }
 }

@@ -52,16 +52,21 @@ public class VESPAP implements Protocole {
     private synchronized ReponseLOGIN TraiteRequeteLOGIN(RequeteLOGIN requete, Socket socket) throws FinConnexionException {
         logger.Trace("RequeteLOGIN reçue de " + requete.getLogin());
         try {
-            boolean areIdentifiantsOk = dal.loginEmploye(requete);
-            if(areIdentifiantsOk) {
-                String ipPortClient = socket.getInetAddress().getHostAddress() + "/" + socket.getPort();
-                logger.Trace(requete.getLogin() + " correctement loggé. En provenance de " + ipPortClient);
+            if(!clientsConnectes.containsKey(requete.getLogin())) {
+                boolean areIdentifiantsOk = dal.loginEmploye(requete);
+                if(areIdentifiantsOk) {
+                    String ipPortClient = socket.getInetAddress().getHostAddress() + "/" + socket.getPort();
+                    logger.Trace(requete.getLogin() + " correctement loggé. En provenance de " + ipPortClient);
 
-                //Ajout du client dans la HashMap des clients connectes + creation de la reponse.
-                clientsConnectes.put(requete.getLogin(), socket);
-                return new ReponseLOGIN(true);
+                    //Ajout du client dans la HashMap des clients connectes + creation de la reponse.
+                    clientsConnectes.put(requete.getLogin(), socket);
+                    return new ReponseLOGIN(true);
+                }
+                return new ReponseLOGIN(false, "Le nom d'utilisateur ou le mot passe entré est incorrect!");
             }
-            return new ReponseLOGIN(false);
+            else {
+                return new ReponseLOGIN(false, "Connexion impossible! Ce client est déjà connecté...");
+            }
         }
         catch (DALException e) {
             ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());

@@ -7,6 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="DataProtocole" level="project" />
+    <orderEntry type="library" exported="" name="DataProtocole" level="project" />
+    <orderEntry type="library" exported="" name="flatlaf-3.2.5" level="project" />
   </component>
 </module>

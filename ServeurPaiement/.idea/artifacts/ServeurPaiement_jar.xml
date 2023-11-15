@@ -4,6 +4,7 @@
     <root id="archive" name="ServeurPaiement.jar">
       <element id="module-output" name="ServeurPaiement" />
       <element id="extracted-dir" path="$PROJECT_DIR$/src/Drivers/mysql-connector-j-8.2.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../DataProtocole/out/artifacts/DataProtocole_jar/DataProtocole.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

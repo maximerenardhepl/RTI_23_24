@@ -1,2 +1,2 @@
-defaultPort=55000
-ipServeur=10.222.20.213
+defaultPort=60000
+ipServeur=192.168.96.62

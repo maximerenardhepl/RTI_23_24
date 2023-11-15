@@ -10,7 +10,7 @@ public class Main {
         ConsoleLogger logger = new ConsoleLogger();
         VESPAP protocole = new VESPAP(logger);
         try {
-            ThreadServeurPool threadServeurPool = new ThreadServeurPool(55000, protocole, 5, logger);
+            ThreadServeurPool threadServeurPool = new ThreadServeurPool(60000, protocole, 5, logger);
             threadServeurPool.start();
         }
         catch (IOException e) {
