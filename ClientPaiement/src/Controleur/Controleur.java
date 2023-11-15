@@ -40,6 +40,7 @@ public class Controleur implements ActionListener {
             try {
                 boolean identifiantsOk = VESPAP.getInstance().Login(username, password);
                 if(identifiantsOk) {
+                    vuePrincipale.ActiveVuePrincipale();
                     String bienvenue = "Connexion établie! Bienvenue " + username + "!";
                     JOptionPane.showMessageDialog(vuePrincipale, bienvenue, "Bienvenue", JOptionPane.INFORMATION_MESSAGE);
                 }

@@ -8,7 +8,7 @@ import java.net.Socket;
 public class VESPAP {
     Communication communication;
     private static VESPAP instance;
-
+    private UserInfo infoclient;
     private VESPAP() {
         communication = new Communication();
     }
@@ -32,6 +32,8 @@ public class VESPAP {
         try {
             ReponseLOGIN reponse = (ReponseLOGIN) communication.traiteRequete(requete);
             if(reponse.isValide()) {
+                infoclient.setUsername(username);
+                infoclient.setPassword(password);
                 return true;
             }
             else {
@@ -44,8 +46,9 @@ public class VESPAP {
         }
     }
 
-    public void Logout() {
-
+    public void Logout(String username) {
+        RequeteLOGOUT requete = new RequeteLOGOUT(username);
+        //communication.traiteRequete(requete);
     }
 
     public void GetFactures() {
@@ -54,5 +57,9 @@ public class VESPAP {
 
     public void PayFacture() {
 
+    }
+
+    public UserInfo getInfoclient() {
+        return infoclient;
     }
 }

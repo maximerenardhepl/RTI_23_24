@@ -31,6 +31,8 @@ public class Principale extends JFrame{
         JMenuBar menuPrincipal = new JMenuBar();
         setJMenuBar(menuPrincipal);
 
+        DesactiveVuePrincipale();
+
         JMenu menuProfil = new JMenu("Profil");
         menuDeconnexion = new JMenuItem("Deconnexion");
         menuProfil.add(menuDeconnexion);
@@ -41,5 +43,29 @@ public class Principale extends JFrame{
         loginButton.addActionListener(c);
         voirFacturesButton.addActionListener(c);
         payerFactureButton.addActionListener(c);
+    }
+
+    public void ActiveVuePrincipale()
+    {
+        voirFacturesButton.setEnabled(true);
+        tableFactures.setEnabled(true);
+        visa.setEnabled(true);
+        voirFacturesButton.setEnabled(true);
+        payerFactureButton.setEnabled(true);
+        menuDeconnexion.setEnabled(true);
+
+        loginButton.setEnabled(false);
+        username.setText("");
+        password.setText("");
+    }
+
+    public void DesactiveVuePrincipale()
+    {
+        voirFacturesButton.setEnabled(false);
+        tableFactures.setEnabled(false);
+        visa.setEnabled(false);
+        voirFacturesButton.setEnabled(false);
+        payerFactureButton.setEnabled(false);
+        menuDeconnexion.setEnabled(false);
     }
 }
