@@ -35,6 +35,9 @@ public class VESPAP implements Protocole {
         if(requete instanceof RequeteGET_FACTURES) {
             return TraiteRequeteGET_FACTURES((RequeteGET_FACTURES) requete);
         }
+        if(requete instanceof RequeteFACTURE_DETAILLEE) {
+            return TraiteRequeteFACTURE_DETAILLEE((RequeteFACTURE_DETAILLEE) requete);
+        }
         if(requete instanceof RequetePAY_FACTURE) {
             return TraiteRequetePAY_FACTURES((RequetePAY_FACTURE) requete);
         }
@@ -81,6 +84,18 @@ public class VESPAP implements Protocole {
             return new ReponseGET_FACTURES(listeFactures);
         }
         catch (DALException e) {
+            ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());
+            throw new FinConnexionException(reponseErr);
+        }
+    }
+
+    private synchronized ReponseFACTURE_DETAILLEE TraiteRequeteFACTURE_DETAILLEE(RequeteFACTURE_DETAILLEE requete) throws FinConnexionException {
+        logger.Trace("RequeteFACTURE_DETAILLEE reçue");
+        try {
+            ArrayList<Article> listeArticles = dal.getFactureDetaillee(requete);
+            return new ReponseFACTURE_DETAILLEE(listeArticles);
+        }
+        catch(DALException e) {
             ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());
             throw new FinConnexionException(reponseErr);
         }

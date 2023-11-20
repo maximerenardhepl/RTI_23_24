@@ -3,7 +3,10 @@ package Vue;
 import javax.swing.*;
 import Controleur.Controleur;
 import Modele.VESPAP;
+import Vue.JTableModel.JTableModelFactureDetaillee;
 import Vue.JTableModel.JTableModelFactures;
+
+import java.util.ArrayList;
 
 public class Principale extends JFrame{
     private JPanel panel1;
@@ -14,8 +17,11 @@ public class Principale extends JFrame{
     private JButton voirFacturesButton;
     private JButton payerFactureButton;
     private JTable tableFactures;
+    private JTable tableFactureDetaillee;
     private JTableModelFactures tableModelFactures;
+    private JTableModelFactureDetaillee tableModelFactureDetaillee;
     private JMenuItem menuDeconnexion;
+
 
     public JTextField getTxtFieldUsername() { return username; }
     public JPasswordField getTxtFieldPassword() { return password; }
@@ -27,7 +33,10 @@ public class Principale extends JFrame{
     public JButton getVoirFacturesButton() { return  voirFacturesButton; }
     public JButton getPayerFactureButton() { return payerFactureButton; }
 
+    public JTable getTableFactures() { return tableFactures; }
     public JTableModelFactures getTableModelFactures() { return tableModelFactures; }
+
+    public JTableModelFactureDetaillee getTableModelFactureDetaillee() { return tableModelFactureDetaillee; }
 
     public Principale()
     {
@@ -51,12 +60,17 @@ public class Principale extends JFrame{
         menuDeconnexion.addActionListener(c);
         voirFacturesButton.addActionListener(c);
         payerFactureButton.addActionListener(c);
+        tableFactures.addMouseListener(c);
+        this.addWindowListener(c);
     }
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
         tableModelFactures = new JTableModelFactures(VESPAP.getInstance().getListeFacture());
         tableFactures = new JTable(tableModelFactures);
+
+        tableModelFactureDetaillee = new JTableModelFactureDetaillee(new ArrayList<>());
+        tableFactureDetaillee = new JTable(tableModelFactureDetaillee);
     }
 
     public void ActiveVuePrincipale()

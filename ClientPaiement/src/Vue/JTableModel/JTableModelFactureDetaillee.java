@@ -1,16 +1,19 @@
 package Vue.JTableModel;
 
+import Classes.Article;
 import Classes.Facture;
 
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 
-public class JTableModelFactures extends AbstractTableModel {
+public class JTableModelFactureDetaillee extends AbstractTableModel {
+    private String[] columnNames = {"Article", "Quantite", "Prix Unitaire"};
+    private ArrayList<Article> data;
 
-    private String[] columnNames = {"Date", "Montant", "Payé"};
-    private ArrayList<Facture> data;
-
-    public JTableModelFactures(ArrayList<Facture> data) { this.data = data; }
+    public JTableModelFactureDetaillee(ArrayList<Article> data) {
+        this.data = data;
+    }
 
     @Override
     public int getRowCount() {
@@ -23,35 +26,18 @@ public class JTableModelFactures extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(Object value, int row, int col) {
-        super.setValueAt(value, row, col);
-    }
-
-    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Facture f = data.get(rowIndex);
-        switch(columnIndex) {
-            case 0: return f.getDate();
-            case 1: return String.valueOf(f.getMontant());
-            case 2: {
-                if(f.isPaye()) {
-                    return "Oui";
-                }
-                else return "Non";
-            }
+        Article art = data.get(rowIndex);
+        switch (columnIndex) {
+            case 0: return art.getIntitule();
+            case 1: return art.getQuantite();
+            case 2: return String.valueOf(art.getPrix());
             default: return null;
         }
     }
 
     @Override
-    public String getColumnName(int c) {
-        return columnNames[c];
-    }
-
-    public void addRow(Facture f) {
-        data.add(f);
-        fireTableRowsInserted(data.size() - 1, data.size() - 1);
-    }
+    public String getColumnName(int c) { return columnNames[c]; }
 
     public void refreshRow(int indDebut, int indFin) {
         fireTableRowsUpdated(indDebut, indFin);
@@ -73,7 +59,7 @@ public class JTableModelFactures extends AbstractTableModel {
         }
     }
 
-    public void updateDataSource(ArrayList<Facture> newData) {
+    public void updateDataSource(ArrayList<Article> newData) {
         this.data = newData;
         fireTableDataChanged(); //Permet de notifier la JTable que la source de données a été modifiée.
     }

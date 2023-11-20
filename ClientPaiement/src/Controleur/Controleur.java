@@ -1,15 +1,15 @@
 package Controleur;
 
+import Classes.Article;
 import Classes.Facture;
 import Modele.VESPAP;
 import Vue.Principale;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Controleur implements ActionListener {
+public class Controleur extends WindowAdapter implements ActionListener, MouseListener {
     private Principale vuePrincipale;
 
     public Controleur(Principale vuePrincipale)
@@ -24,7 +24,7 @@ public class Controleur implements ActionListener {
                 onPush_BtnLogin();
             }
             else if(e.getSource() == vuePrincipale.getMenuDeconnexion()) {
-                onPush_BtnLogout();
+                onPush_BtnLogout(true);
             }
             else if(e.getSource() == vuePrincipale.getVoirFacturesButton()) {
                 onPush_BtnVoirFactures();
@@ -32,6 +32,13 @@ public class Controleur implements ActionListener {
             else if(e.getSource() == vuePrincipale.getPayerFactureButton()) {
                 onPush_BtnPayerFacture();
             }
+        }
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        if(VESPAP.getInstance().isClientConnected()) {
+            onPush_BtnLogout(false);
         }
     }
 
@@ -58,10 +65,14 @@ public class Controleur implements ActionListener {
         }
     }
 
-    private void onPush_BtnLogout() {
-        VESPAP.getInstance().Logout(VESPAP.getInstance().getInfoclient());
+    private void onPush_BtnLogout(boolean afficheMsgDeconnexion) {
+        VESPAP.getInstance().Logout();
+        vuePrincipale.getTableModelFactures().clearTable(); //Permet de vider la JTable quand on se déconnecte.
+        vuePrincipale.getTxtFieldNumClient().setText("");
         vuePrincipale.DesactiveVuePrincipale();
-        JOptionPane.showMessageDialog(vuePrincipale, "Vous êtes bien déconnecté!", "Déconnexion", JOptionPane.INFORMATION_MESSAGE);
+        if(afficheMsgDeconnexion) {
+            JOptionPane.showMessageDialog(vuePrincipale, "Vous êtes bien déconnecté!", "Déconnexion", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void onPush_BtnVoirFactures() {
@@ -79,10 +90,49 @@ public class Controleur implements ActionListener {
         catch(Exception e) {
             JOptionPane.showMessageDialog(vuePrincipale, e.getMessage(), "Erreur de login", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     private void onPush_BtnPayerFacture() {
+
+    }
+
+    private void onReceive_FactureDetaillee() {
+        try {
+            int indice = vuePrincipale.getTableFactures().getSelectedRow();
+            Facture facture = VESPAP.getInstance().getListeFacture().get(indice);
+            ArrayList<Article> listeArticles = VESPAP.getInstance().GetFactureDetaillee(facture);
+            vuePrincipale.getTableModelFactureDetaillee().updateDataSource(listeArticles);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(vuePrincipale, e.getMessage(), "Erreur de login", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(e.getSource() == vuePrincipale.getTableFactures()) {
+            onReceive_FactureDetaillee();
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }

@@ -15,7 +15,7 @@ public class DALServeurPaiement {
     public DALServeurPaiement(Logger logger) {
         try {
             //Il faut récupérer l'IP sur laquelle se trouve la BD pour l'affecter au parametre "server" de DatabaseConnection.
-            String server = "192.168.96.250";
+            String server = "192.168.1.15";
             connectionDB = new DatabaseConnection(DatabaseConnection.MYSQL, server, "PourStudent", "Student", "PassStudent1_");
         }
         catch (SQLException | ClassNotFoundException e) {
@@ -76,6 +76,37 @@ public class DALServeurPaiement {
             return listeFactures;
         }
         catch (SQLException e) {
+            logger.Trace("Erreur DatabaseConnection: " + e.getMessage());
+            throw new DALException("Une erreur est survenue lors de l'envoi de la requete!");
+        }
+    }
+
+    public ArrayList<Article> getFactureDetaillee(RequeteFACTURE_DETAILLEE requete) throws DALException {
+        String idFacture = requete.getIdFacture();
+        try {
+            String requeteSql = "SELECT idArticle, quantite FROM ventes WHERE idFacture LIKE '" + idFacture + "';";
+            ResultSet rs = connectionDB.executeQuery(requeteSql);
+
+            ArrayList<Article> listeArticles = new ArrayList<>();
+            while(rs.next()) {
+                int idArticle = rs.getInt("idArticle");
+                int quantite = rs.getInt("quantite");
+
+                String sousRequeteSql = "SELECT intitule, prix FROM articles WHERE id = " + idArticle + ";";
+                ResultSet rsSousRequete = connectionDB.executeQuery(sousRequeteSql);
+
+                String intituleArticle = null;
+                float prixArticle = 0;
+                while(rsSousRequete.next()) { //Normalement il ne doit y aovir qu'un seul tour de boucle en toute logique (requete de selection sur la clé primaire)...
+                    intituleArticle = rsSousRequete.getString("intitule");
+                    prixArticle = rsSousRequete.getFloat("prix");
+                }
+                Article nouvelArticle = new Article(idArticle, intituleArticle, quantite, prixArticle);
+                listeArticles.add(nouvelArticle);
+            }
+            return listeArticles;
+        }
+        catch(SQLException e) {
             logger.Trace("Erreur DatabaseConnection: " + e.getMessage());
             throw new DALException("Une erreur est survenue lors de l'envoi de la requete!");
         }

@@ -3,9 +3,7 @@ package Modele;
 import Classes.*;
 import Intefaces.Reponse;
 
-import javax.swing.*;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class VESPAP {
@@ -17,10 +15,14 @@ public class VESPAP {
     public ArrayList<Facture> getListeFacture() {
         return listeFacture;
     }
+    public boolean isClientConnected() {
+        return infoclient.isConnected();
+    }
 
     private VESPAP() {
         communication = new Communication();
         listeFacture = new ArrayList<>();
+        infoclient = new UserInfo();
     }
 
     public static VESPAP getInstance() {
@@ -47,7 +49,9 @@ public class VESPAP {
             }
             else if(reponse instanceof ReponseLOGIN) {
                 if(((ReponseLOGIN) reponse).isValide()) {
-                    infoclient = new UserInfo(password, username); //On stocke les informations du client connecté dans l'objet Communication de VESPAP.
+                    infoclient.setUsername(username);
+                    infoclient.setPassword(password); //On stocke les informations du client connecté dans l'objet UserInfo de VESPAP.
+                    infoclient.connect();
                     return true;
                 }
                 else { //La réponse login nous a retourné false
@@ -64,10 +68,12 @@ public class VESPAP {
         }
     }
 
-    public void Logout(String username) {
+    public void Logout() {
         try
         {
+            String username = infoclient.getUsername();
             RequeteLOGOUT requete = new RequeteLOGOUT(username);
+            infoclient.disconnect(); //Faire passer le booleen "isConnected" à false dans l'objet UserInfo.
             communication.getWriter().writeObject(requete);
         }
         catch(IOException e)
@@ -104,7 +110,26 @@ public class VESPAP {
 
     }
 
-    public String getInfoclient() {
-        return infoclient.getUsername();
+    public ArrayList<Article> GetFactureDetaillee(Facture facture) throws Exception {
+        RequeteFACTURE_DETAILLEE requete = new RequeteFACTURE_DETAILLEE(facture.getId());
+        try {
+            Reponse reponse = communication.traiteRequete(requete);
+            if(reponse instanceof ReponseErreurServeur) {
+                throw new Exception(((ReponseErreurServeur) reponse).getMessage());
+            }
+            else if(reponse instanceof ReponseFACTURE_DETAILLEE) {
+                if(((ReponseFACTURE_DETAILLEE) reponse).getListeArticles().size() > 0) {
+                    return ((ReponseFACTURE_DETAILLEE) reponse).getListeArticles();
+                }
+                else {
+                    throw new Exception("Une erreur est survenue! La facture detaillee n'a pas pu etre affichee...");
+                }
+            }
+            else {
+                throw new Exception("Une erreur inconnue est survenue...");
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,2 +1,2 @@
 defaultPort=60000
-ipServeur=192.168.96.62
+ipServeur=192.168.8.1
