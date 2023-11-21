@@ -3,6 +3,7 @@ package Controleur;
 import Classes.Article;
 import Classes.Facture;
 import Modele.VESPAP;
+import Vue.PayFactureDialogue;
 import Vue.Principale;
 
 import javax.swing.*;
@@ -93,6 +94,24 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
     }
 
     private void onPush_BtnPayerFacture() {
+        try{
+            int indice = vuePrincipale.getTableFactures().getSelectedRow();
+            Facture facture = VESPAP.getInstance().getListeFacture().get(indice);
+
+            PayFactureDialogue dialog = new PayFactureDialogue();
+            dialog.setVisible(true);
+
+            if(dialog.isOk())
+            {
+                String titulaire = dialog.getTitulaire();
+                String visa = dialog.getVisa();
+                VESPAP.getInstance().PayFacture(facture,titulaire,visa);
+            }
+            dialog.dispose();
+        }catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(vuePrincipale, e.getMessage(), "erreur de paiement", JOptionPane.ERROR_MESSAGE);
+        }
 
     }
 

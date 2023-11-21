@@ -106,7 +106,37 @@ public class VESPAP {
         }
     }
 
-    public void PayFacture() {
+    public boolean PayFacture(Facture facture, String nom, String visa) {
+
+        RequetePAY_FACTURE requete = new RequetePAY_FACTURE(facture.getId(),nom,visa);
+
+        try
+        {
+            Reponse reponse = communication.traiteRequete(requete);
+            if(reponse instanceof ReponseErreurServeur) {
+                throw new Exception(((ReponseErreurServeur) reponse).getMessage());
+            }
+            else if(reponse instanceof ReponsePAY_FACTURE)
+            {
+                if(((ReponsePAY_FACTURE) reponse).isValide())
+                {
+                    return true;
+                }
+                else
+                {
+                    throw new Exception(((ReponsePAY_FACTURE) reponse).getMessage());
+                }
+            }
+            else {
+                throw new Exception("Une erreur inconnue est survenue...");
+            }
+        }
+        catch(IOException | ClassNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
