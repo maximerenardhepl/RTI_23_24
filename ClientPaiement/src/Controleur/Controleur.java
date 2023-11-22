@@ -116,6 +116,9 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
         }
     }
 
+
+    //Ces méthodes ne servent à rien ici...obligé de les redéfinir car on implémente l'interface MouseListener...
+    //Impossible d'hériter de MouseAdapter (pour n'avoir qu'à redéfinir la méthode qui nous intéresse) car notre Controleur hérite déjà d'une classe (WindowAdapter).
     @Override
     public void mousePressed(MouseEvent e) {
 
