@@ -126,8 +126,12 @@ public class VESPAP implements Protocole {
                     return false;
                 }
             }
+            return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     private synchronized void TraiteRequeteLOGOUT(RequeteLOGOUT requete) throws FinConnexionException {

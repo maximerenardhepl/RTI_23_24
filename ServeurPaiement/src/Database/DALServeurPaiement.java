@@ -15,7 +15,7 @@ public class DALServeurPaiement {
     public DALServeurPaiement(Logger logger) {
         try {
             //Il faut récupérer l'IP sur laquelle se trouve la BD pour l'affecter au parametre "server" de DatabaseConnection.
-            String server = "192.168.1.15";
+            String server = "10.222.20.117";
             connectionDB = new DatabaseConnection(DatabaseConnection.MYSQL, server, "PourStudent", "Student", "PassStudent1_");
         }
         catch (SQLException | ClassNotFoundException e) {
@@ -113,9 +113,9 @@ public class DALServeurPaiement {
     }
 
     public boolean payFacture(RequetePAY_FACTURE requete) throws DALException {
-        int idFacture = requete.getIdFacture();
+        String idFacture = requete.getIdFacture();
         try {
-            String requeteSql = "UPDATE factures SET paye = 'true' WHERE id = " + idFacture + ";";
+            String requeteSql = "UPDATE factures SET paye = true WHERE id = '" + idFacture + "';";
             int nbLignesAffectees = connectionDB.executeUpdate(requeteSql);
             if(nbLignesAffectees == 1) {
                 return true;

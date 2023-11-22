@@ -31,4 +31,8 @@ public class Facture implements Serializable {
     public boolean isPaye() {
         return paye;
     }
+
+    public void setStatePaye(boolean paye) {
+        this.paye = paye;
+    }
 }
