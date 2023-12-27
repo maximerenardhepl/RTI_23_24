@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="DataProtocole">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../DataProtocole/out/artifacts/DataProtocole_jar/DataProtocole.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

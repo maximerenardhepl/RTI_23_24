@@ -15,7 +15,7 @@ public class DALServeurPaiement {
     public DALServeurPaiement(Logger logger) {
         try {
             //Il faut récupérer l'IP sur laquelle se trouve la BD pour l'affecter au parametre "server" de DatabaseConnection.
-            String server = "10.222.20.117";
+            String server = "192.168.37.250";
             connectionDB = new DatabaseConnection(DatabaseConnection.MYSQL, server, "PourStudent", "Student", "PassStudent1_");
         }
         catch (SQLException | ClassNotFoundException e) {

@@ -26,6 +26,14 @@ public abstract class ThreadClient extends Thread {
         this.numero = numCourant++;
     }
 
+    public ThreadClient(Protocole protocole, Socket socket, Logger logger) throws IOException {
+        super("TH Client " + numCourant + " (protocole=" + protocole.getNom() + ")");
+        this.protocole = protocole;
+        this.socketClient = socket;
+        this.logger = logger;
+        this.numero = numCourant++;
+    }
+
     @Override
     public void run() {
         try {

@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ClientPaiement:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ClientPaiement_jar</output-path>
+    <root id="archive" name="ClientPaiement.jar">
+      <element id="module-output" name="ClientPaiement" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../DataProtocole/out/artifacts/DataProtocole_jar/DataProtocole.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../LeMaraicher_ClientAchat/out/production/LeMaraicher_ClientAchat/libs/flatlaf-3.2.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
