@@ -2,6 +2,7 @@
   <library name="DataProtocole">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../DataProtocole/out/artifacts/DataProtocole_jar/DataProtocole.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/bcprov-jdk15to18-169.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
