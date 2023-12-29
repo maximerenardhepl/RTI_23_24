@@ -1,10 +1,10 @@
 package org.example;
 
 import com.sun.net.httpserver.HttpServer;
+import org.example.Handlers.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.logging.Handler;
 
 public class Main {
     public static void main(String[] args)
@@ -14,7 +14,10 @@ public class Main {
         try{
 
             serveur = HttpServer.create(new InetSocketAddress(8080),0);
-            serveur.createContext("/",new HandlerRoot());
+            serveur.createContext("/",new HandlerHtml());
+
+            serveur.createContext("/style",new HandlerCss());
+            serveur.createContext("/images",new HandlerImage());
             serveur.start();
 
             System.out.println("Démarrage serveur web");
