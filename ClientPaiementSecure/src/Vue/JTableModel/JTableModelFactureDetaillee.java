@@ -1,7 +1,6 @@
 package Vue.JTableModel;
 
-import Classes.Article;
-import Classes.Facture;
+import Classes.Data.Article;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="DataProtocole:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d9aaebdc-96f6-4e39-acc6-88c4bc2c1292" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../ScriptGenerationCles/ScriptGenerationCles.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ServeurPaiement/.idea/libraries/bcprov_jdk15to18_169.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientPaiementSecure/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientPaiementSecure/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientPaiementSecure/ClientPaiement.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientPaiementSecure/ClientPaiement.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientPaiementSecure/config/config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientPaiementSecure/config/config.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientPaiementSecure/src/Controleur/Controleur.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientPaiementSecure/src/Controleur/Controleur.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientPaiementSecure/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientPaiementSecure/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientPaiementSecure/src/Modele/VESPAP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientPaiementSecure/src/Modele/VESPAPS.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ClientPaiementSecure/src/Vue/Principale.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ClientPaiementSecure/src/Vue/Principale.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/.idea/libraries/mysql_connector_j_8_2_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/.idea/libraries/mysql_connector_j_8_2_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/ServeurPaiement.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/ServeurPaiement.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/src/Database/DALServeurPaiement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/src/Database/DALServeurPaiement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/src/ProtocoleVESPAP/VESPAP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/src/Protocoles/VESPAP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/src/ServeurGenerique/Protocole.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/src/ServeurGenerique/Protocole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ServeurPaiement/src/ServeurGenerique/ThreadServeurPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ServeurPaiement/src/ServeurGenerique/ThreadServeurPool.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2YCY6dFr52R9TrWWZmD2t4OTsOZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/utilisateur/OneDrive/Cours informatique/Bloc 3/RTI/Laboratoire/RTI_23_24/DataProtocole&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\utilisateur\OneDrive\Cours informatique\Bloc 3\RTI\Laboratoire\RTI_23_24\DataProtocole\src\Classes" />
+      <recent name="C:\Users\utilisateur\OneDrive\Cours informatique\Bloc 3\RTI\Laboratoire\RTI_23_24\DataProtocole\src\Intefaces" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="Classes" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d9aaebdc-96f6-4e39-acc6-88c4bc2c1292" name="Changes" comment="" />
+      <created>1700030856310</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1700030856310</updated>
+      <workItem from="1700030857614" duration="2535000" />
+      <workItem from="1700036659176" duration="3989000" />
+      <workItem from="1700119323973" duration="724000" />
+      <workItem from="1700480908121" duration="3842000" />
+      <workItem from="1700636993839" duration="831000" />
+      <workItem from="1700638584734" duration="697000" />
+      <workItem from="1700680556449" duration="660000" />
+      <workItem from="1700774953678" duration="16000" />
+      <workItem from="1703762967429" duration="8063000" />
+      <workItem from="1703783692366" duration="2010000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

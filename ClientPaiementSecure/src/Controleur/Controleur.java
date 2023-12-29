@@ -1,8 +1,8 @@
 package Controleur;
 
-import Classes.Article;
-import Classes.Facture;
-import Modele.VESPAP;
+import Classes.Data.Article;
+import Classes.Data.Facture;
+import Modele.VESPAPS;
 import Vue.PayFactureDialogue;
 import Vue.Principale;
 
@@ -38,7 +38,7 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
 
     @Override
     public void windowClosing(WindowEvent e) {
-        if(VESPAP.getInstance().isClientConnected()) {
+        if(VESPAPS.getInstance().isClientConnected()) {
             onPush_BtnLogout(false);
         }
     }
@@ -48,7 +48,7 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
         String password = String.valueOf(vuePrincipale.getTxtFieldPassword().getPassword());
         if(!username.isEmpty() && !password.isEmpty()) {
             try {
-                boolean identifiantsOk = VESPAP.getInstance().Login(username, password);
+                boolean identifiantsOk = VESPAPS.getInstance().Login(username, password);
                 if(identifiantsOk) {
                     vuePrincipale.ActiveVuePrincipale();
                     String bienvenue = "Connexion établie! Bienvenue " + username + "!";
@@ -67,7 +67,7 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
     }
 
     private void onPush_BtnLogout(boolean afficheMsgDeconnexion) {
-        VESPAP.getInstance().Logout();
+        VESPAPS.getInstance().Logout();
         vuePrincipale.getTableModelFactures().clearTable(); //Permet de vider la JTable quand on se déconnecte.
         vuePrincipale.getTxtFieldNumClient().setText("");
         vuePrincipale.DesactiveVuePrincipale();
@@ -81,7 +81,7 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
             String numClientStr = vuePrincipale.getTxtFieldNumClient().getText();
             int numClient = Integer.parseInt(numClientStr);
 
-            ArrayList<Facture> listeFacture = VESPAP.getInstance().GetFactures(numClient);
+            ArrayList<Facture> listeFacture = VESPAPS.getInstance().GetFactures(numClient);
             vuePrincipale.getTableModelFactures().updateDataSource(listeFacture);
         }
         catch(NumberFormatException e) {
@@ -96,7 +96,7 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
     private void onPush_BtnPayerFacture() {
         try {
             int indice = vuePrincipale.getTableFactures().getSelectedRow();
-            Facture facture = VESPAP.getInstance().getListeFacture().get(indice);
+            Facture facture = VESPAPS.getInstance().getListeFacture().get(indice);
 
             PayFactureDialogue dialog = new PayFactureDialogue();
             dialog.setVisible(true);
@@ -105,7 +105,7 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
             {
                 String titulaire = dialog.getTitulaire();
                 String visa = dialog.getVisa();
-                boolean isPaiementOk = VESPAP.getInstance().PayFacture(facture,titulaire,visa);
+                boolean isPaiementOk = VESPAPS.getInstance().PayFacture(facture,titulaire,visa);
                 if(isPaiementOk) {
                     facture.setStatePaye(true);
                     vuePrincipale.getTableModelFactures().refreshRow(indice, indice);
@@ -115,7 +115,7 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
             dialog.dispose();
         }
         catch(Exception e) {
-            JOptionPane.showMessageDialog(vuePrincipale, e.getMessage(), "erreur de paiement", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vuePrincipale, e.getMessage(), "Erreur de paiement", JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -123,8 +123,8 @@ public class Controleur extends WindowAdapter implements ActionListener, MouseLi
     private void onReceive_FactureDetaillee() {
         try {
             int indice = vuePrincipale.getTableFactures().getSelectedRow();
-            Facture facture = VESPAP.getInstance().getListeFacture().get(indice);
-            ArrayList<Article> listeArticles = VESPAP.getInstance().GetFactureDetaillee(facture);
+            Facture facture = VESPAPS.getInstance().getListeFacture().get(indice);
+            ArrayList<Article> listeArticles = VESPAPS.getInstance().GetFactureDetaillee(facture);
             vuePrincipale.getTableModelFactureDetaillee().updateDataSource(listeArticles);
         }
         catch (Exception e) {

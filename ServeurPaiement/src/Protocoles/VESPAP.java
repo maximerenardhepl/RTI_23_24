@@ -1,12 +1,15 @@
-package ProtocoleVESPAP;
+package Protocoles;
 
+import Classes.Data.Article;
+import Classes.Data.Facture;
+import Classes.Reponses.NoSecure.*;
+import Classes.Requetes.NoSecure.*;
 import Database.DALException;
 import Database.DALServeurPaiement;
 import Intefaces.Reponse;
 import Intefaces.Requete;
 import Logging.Logger;
 import ServeurGenerique.*;
-import Classes.*;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -80,7 +83,7 @@ public class VESPAP implements Protocole {
     private synchronized ReponseGET_FACTURES TraiteRequeteGET_FACTURES(RequeteGET_FACTURES requete) throws FinConnexionException {
         logger.Trace("RequeteGET_FACTURES reçue");
         try {
-            ArrayList<Facture> listeFactures = dal.getFactures(requete);
+            ArrayList<Facture> listeFactures = dal.getFactures(requete.getIdClient());
             return new ReponseGET_FACTURES(listeFactures);
         }
         catch (DALException e) {
@@ -92,7 +95,7 @@ public class VESPAP implements Protocole {
     private synchronized ReponseFACTURE_DETAILLEE TraiteRequeteFACTURE_DETAILLEE(RequeteFACTURE_DETAILLEE requete) throws FinConnexionException {
         logger.Trace("RequeteFACTURE_DETAILLEE reçue");
         try {
-            ArrayList<Article> listeArticles = dal.getFactureDetaillee(requete);
+            ArrayList<Article> listeArticles = dal.getFactureDetaillee(requete.getIdFacture());
             return new ReponseFACTURE_DETAILLEE(listeArticles);
         }
         catch(DALException e) {
@@ -105,7 +108,7 @@ public class VESPAP implements Protocole {
         logger.Trace("RequetePAY_FACTURE reçue");
         try {
             if(isVisaOk(requete.getVisa())) {
-                boolean isPaiementEffectue = dal.payFacture(requete);
+                boolean isPaiementEffectue = dal.payFacture(requete.getIdFacture());
                 if(isPaiementEffectue) {
                     return new ReponsePAY_FACTURE(true);
                 }

@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Properties;
-import Classes.*;
 import Intefaces.*;
 
 public class Communication {
@@ -38,20 +37,15 @@ public class Communication {
         String rootDirectory = System.getProperty("user.dir");
         String completePath = rootDirectory + configPath;
 
-        try {
-            Properties prop = new Properties();
-            FileInputStream fis = new FileInputStream(completePath);
+        Properties prop = new Properties();
+        FileInputStream fis = new FileInputStream(completePath);
 
-            prop.load(fis);
-            int defaultPort = Integer.parseInt(prop.getProperty("defaultPort"));
-            String defaultIp = prop.getProperty("ipServeur");
-            SocketInfos infos = new SocketInfos(defaultPort, defaultIp);
-            fis.close();
-            return infos;
-        }
-        catch(IOException | NumberFormatException e) {
-            throw e;
-        }
+        prop.load(fis);
+        int defaultPort = Integer.parseInt(prop.getProperty("defaultPort"));
+        String defaultIp = prop.getProperty("ipServeur");
+        SocketInfos infos = new SocketInfos(defaultPort, defaultIp);
+        fis.close();
+        return infos;
     }
 
     public Reponse traiteRequete(Requete requete) throws IOException, ClassNotFoundException {

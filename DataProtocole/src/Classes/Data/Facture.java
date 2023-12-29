@@ -1,4 +1,4 @@
-package Classes;
+package Classes.Data;
 
 import java.io.Serializable;
 import java.util.Date;

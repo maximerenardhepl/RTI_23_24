@@ -1,7 +1,6 @@
 package ServeurGenerique;
 
 import Logging.Logger;
-import ProtocoleVESPAP.VESPAP;
 
 import java.io.IOException;
 import java.net.Socket;

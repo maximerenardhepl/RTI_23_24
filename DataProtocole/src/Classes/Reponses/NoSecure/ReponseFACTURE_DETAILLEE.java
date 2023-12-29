@@ -1,5 +1,6 @@
-package Classes;
+package Classes.Reponses.NoSecure;
 
+import Classes.Data.Article;
 import Intefaces.Reponse;
 
 import java.util.ArrayList;

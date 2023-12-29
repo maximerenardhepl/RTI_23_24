@@ -1,8 +1,15 @@
 package Database;
 
-import Classes.*;
+import Classes.Data.Article;
+import Classes.Data.Facture;
+import Classes.Requetes.NoSecure.RequeteLOGIN;
+import Classes.Requetes.Secure.RequeteSecureLOGIN;
 import Logging.Logger;
+import ServeurGenerique.InfoServer;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,10 +22,10 @@ public class DALServeurPaiement {
     public DALServeurPaiement(Logger logger) {
         try {
             //Il faut récupérer l'IP sur laquelle se trouve la BD pour l'affecter au parametre "server" de DatabaseConnection.
-            String server = "192.168.37.250";
-            connectionDB = new DatabaseConnection(DatabaseConnection.MYSQL, server, "PourStudent", "Student", "PassStudent1_");
+            String dbserverIp = InfoServer.getDbServerIp();
+            connectionDB = new DatabaseConnection(DatabaseConnection.MYSQL, dbserverIp, "PourStudent", "Student", "PassStudent1_");
         }
-        catch (SQLException | ClassNotFoundException e) {
+        catch (SQLException | ClassNotFoundException | IOException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
@@ -57,8 +64,31 @@ public class DALServeurPaiement {
         return false;
     }
 
-    public ArrayList<Facture> getFactures(RequeteGET_FACTURES requete) throws DALException {
-        int idClient = requete.getIdClient();
+    public boolean loginEmploye(RequeteSecureLOGIN requete) throws DALException {
+        String login = requete.getLogin();
+        try {
+            String requeteSql = "SELECT password FROM employes WHERE login LIKE '" + login + "';";
+            ResultSet rs = connectionDB.executeQuery(requeteSql);
+            while(rs.next()) {
+                String passwordDb = rs.getString("password");
+                try {
+                    if(requete.verifiyPassword(passwordDb)) {
+                        return true;
+                    }
+                } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException e) {
+                    logger.Trace("Erreur VerifyPassword: " + e.getMessage());
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        catch(SQLException e) {
+            logger.Trace("Erreur DatabaseConnection: " + e.getMessage());
+            throw new DALException("Une erreur est survenue lors de l'envoi de la requete!");
+        }
+        return false;
+    }
+
+    public ArrayList<Facture> getFactures(int idClient) throws DALException {
         try {
             String requeteSql = "SELECT id, date, montant, paye FROM factures WHERE idClient = " + idClient + ";";
             ResultSet rs = connectionDB.executeQuery(requeteSql);
@@ -81,8 +111,7 @@ public class DALServeurPaiement {
         }
     }
 
-    public ArrayList<Article> getFactureDetaillee(RequeteFACTURE_DETAILLEE requete) throws DALException {
-        String idFacture = requete.getIdFacture();
+    public ArrayList<Article> getFactureDetaillee(String idFacture) throws DALException {
         try {
             String requeteSql = "SELECT idArticle, quantite FROM ventes WHERE idFacture LIKE '" + idFacture + "';";
             ResultSet rs = connectionDB.executeQuery(requeteSql);
@@ -112,8 +141,7 @@ public class DALServeurPaiement {
         }
     }
 
-    public boolean payFacture(RequetePAY_FACTURE requete) throws DALException {
-        String idFacture = requete.getIdFacture();
+    public boolean payFacture(String idFacture) throws DALException {
         try {
             String requeteSql = "UPDATE factures SET paye = true WHERE id = '" + idFacture + "';";
             int nbLignesAffectees = connectionDB.executeUpdate(requeteSql);

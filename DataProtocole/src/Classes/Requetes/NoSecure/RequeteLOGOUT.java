@@ -1,4 +1,4 @@
-package Classes;
+package Classes.Requetes.NoSecure;
 
 import Intefaces.Requete;
 

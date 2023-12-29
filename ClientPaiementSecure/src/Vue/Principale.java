@@ -2,7 +2,7 @@ package Vue;
 
 import javax.swing.*;
 import Controleur.Controleur;
-import Modele.VESPAP;
+import Modele.VESPAPS;
 import Vue.JTableModel.JTableModelFactureDetaillee;
 import Vue.JTableModel.JTableModelFactures;
 
@@ -66,7 +66,7 @@ public class Principale extends JFrame{
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        tableModelFactures = new JTableModelFactures(VESPAP.getInstance().getListeFacture());
+        tableModelFactures = new JTableModelFactures(VESPAPS.getInstance().getListeFacture());
         tableFactures = new JTable(tableModelFactures);
 
         tableModelFactureDetaillee = new JTableModelFactureDetaillee(new ArrayList<>());

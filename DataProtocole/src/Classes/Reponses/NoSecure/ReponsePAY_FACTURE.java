@@ -1,21 +1,23 @@
-package Classes;
+package Classes.Reponses.NoSecure;
 
 import Intefaces.Reponse;
 
-public class ReponseLOGIN implements Reponse {
+public class ReponsePAY_FACTURE implements Reponse {
     private boolean valide;
     private String message;
 
-    public ReponseLOGIN(boolean valide) {
+    public ReponsePAY_FACTURE(boolean valide) {
         this.valide = valide;
     }
-    public ReponseLOGIN(boolean valide, String message) {
+
+    public ReponsePAY_FACTURE(boolean valide, String msg) {
         this.valide = valide;
-        this.message = message;
+        this.message = msg;
     }
 
     public boolean isValide() {
         return valide;
     }
+
     public String getMessage() { return message; }
 }

@@ -1,9 +1,10 @@
-package Classes;
+package Classes.Reponses.NoSecure;
 
 import Intefaces.Reponse;
 
 public class ReponseErreurServeur implements Reponse {
     public static int DATABASE_ERROR = 1;
+    public static int SECURITY_ERROR_INVALID_SIGNATURE = 2;
 
     private int code;
     private String message;
