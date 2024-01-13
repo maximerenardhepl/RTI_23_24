@@ -18,6 +18,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import javax.crypto.*;
 import java.io.*;
 import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
 public class VESPAPS {
@@ -48,12 +50,14 @@ public class VESPAPS {
         infoclient = new UserInfo();
         try {
             generateAndShareSessionKey();
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | ClassNotFoundException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | ClassNotFoundException |
+                 NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException |
+                 CertificateException | KeyStoreException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void generateAndShareSessionKey() throws NoSuchAlgorithmException, NoSuchProviderException, IOException, ClassNotFoundException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    private void generateAndShareSessionKey() throws NoSuchAlgorithmException, NoSuchProviderException, IOException, ClassNotFoundException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, CertificateException, KeyStoreException {
         Security.addProvider(new BouncyCastleProvider());
         KeyGenerator keyGen = KeyGenerator.getInstance("DES", "BC");
         keyGen.init(new SecureRandom());
@@ -215,17 +219,38 @@ public class VESPAPS {
         }
     }
 
-    public PublicKey RecupereClePubliqueServeur() throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePubliqueServeur.ser"));
+    public PublicKey RecupereClePubliqueServeur() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException {
+
+        FileInputStream fis = new FileInputStream("../JavaKeyStores/KeyStore_ClientPaiement");
+        String keyStorePass = "clientpaiement";
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(fis, keyStorePass.toCharArray());
+
+        X509Certificate certificat = (X509Certificate) ks.getCertificate("certificatserveur");
+        PublicKey cle = certificat.getPublicKey();
+        return cle;
+
+
+        /*ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePubliqueServeur.ser"));
         PublicKey cle = (PublicKey) ois.readObject();
         ois.close();
-        return cle;
+        return cle;*/
     }
 
-    public PrivateKey RecupereClePriveeClient() throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePriveeClients.ser"));
+    public PrivateKey RecupereClePriveeClient() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+
+        FileInputStream fis = new FileInputStream("../JavaKeyStores/KeyStore_ClientPaiement");
+        String keyStorePass = "clientpaiement";
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(fis, keyStorePass.toCharArray());
+
+        String keyPass = "cleclient";
+        PrivateKey cle = (PrivateKey) ks.getKey("cleclientpaiement", keyPass.toCharArray());
+        return cle;
+
+        /*ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePriveeClients.ser"));
         PrivateKey cle = (PrivateKey) ois.readObject();
         ois.close();
-        return cle;
+        return cle;*/
     }
 }

@@ -27,6 +27,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.Socket;
 import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -126,7 +128,9 @@ public class VESPAPS implements ProtocoleSecurise {
             ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());
             throw new FinConnexionException(reponseErr);
         }
-        catch (NoSuchPaddingException | IllegalBlockSizeException | IOException | NoSuchAlgorithmException | BadPaddingException | NoSuchProviderException | InvalidKeyException | SignatureException | ClassNotFoundException e) {
+        catch (NoSuchPaddingException | IllegalBlockSizeException | IOException | NoSuchAlgorithmException |
+               BadPaddingException | NoSuchProviderException | InvalidKeyException | SignatureException |
+               ClassNotFoundException | CertificateException | KeyStoreException e) {
             throw new RuntimeException(e);
         }
     }
@@ -194,7 +198,9 @@ public class VESPAPS implements ProtocoleSecurise {
             ReponseErreurServeur reponseErr = new ReponseErreurServeur(ReponseErreurServeur.DATABASE_ERROR, e.getMessage());
             throw new FinConnexionException(reponseErr);
         }
-        catch (IOException | NoSuchAlgorithmException | SignatureException | NoSuchProviderException | InvalidKeyException | ClassNotFoundException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+        catch (IOException | NoSuchAlgorithmException | SignatureException | NoSuchProviderException |
+               InvalidKeyException | ClassNotFoundException | NoSuchPaddingException | IllegalBlockSizeException |
+               BadPaddingException | CertificateException | KeyStoreException e) {
             throw new RuntimeException(e);
         }
     }
@@ -209,10 +215,19 @@ public class VESPAPS implements ProtocoleSecurise {
     @Override
     public void close() { dal.close(); }
 
-    private PublicKey recupereClePubliqueClient() throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePubliqueClients.ser"));
+    private PublicKey recupereClePubliqueClient() throws IOException, ClassNotFoundException, KeyStoreException, CertificateException, NoSuchAlgorithmException {
+        FileInputStream fis = new FileInputStream("../JavaKeyStores/KeyStore_ServeurPaiement");
+        String keyStorePass = "serveurpaiement";
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(fis, keyStorePass.toCharArray());
+
+        X509Certificate certificat = (X509Certificate) ks.getCertificate("certificatclient");
+        PublicKey cle = certificat.getPublicKey();
+        return cle;
+
+        /*ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePubliqueClients.ser"));
         PublicKey cle = (PublicKey) ois.readObject();
         ois.close();
-        return cle;
+        return cle;*/
     }
 }

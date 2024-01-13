@@ -9,7 +9,8 @@ import jdk.jshell.spi.ExecutionControl;
 import javax.crypto.SecretKey;
 import java.io.*;
 import java.net.Socket;
-import java.security.PrivateKey;
+import java.security.*;
+import java.security.cert.CertificateException;
 
 public class ThreadClientSecure extends Thread {
     protected ProtocoleSecurise protocole;
@@ -50,7 +51,7 @@ public class ThreadClientSecure extends Thread {
                 ois = new ObjectInputStream(socketClient.getInputStream());
 
                 PrivateKey clePriveeServeur = recupereClePriveeServeur();
-                //System.out.println("Clé privée Serveur: " + clePriveeServeur);
+                System.out.println("Clé privée Serveur: " + clePriveeServeur);
 
                 Requete requete = (Requete) ois.readObject();
                 Reponse reponse = protocole.TraiteRequete(requete, socketClient, clePriveeServeur, cleSessionClient);
@@ -67,6 +68,8 @@ public class ThreadClientSecure extends Thread {
                 if(e.getReponse() != null) {
                     oos.writeObject(e.getReponse());
                 }
+            } catch (UnrecoverableKeyException | CertificateException | KeyStoreException | NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
             }
         }
         catch (IOException e) {
@@ -86,10 +89,20 @@ public class ThreadClientSecure extends Thread {
         }
     }
 
-    private PrivateKey recupereClePriveeServeur() throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePriveeServeur.ser"));
+    private PrivateKey recupereClePriveeServeur() throws IOException, ClassNotFoundException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+
+        FileInputStream fis = new FileInputStream("../JavaKeyStores/KeyStore_ServeurPaiement");
+        String keyStorePass = "serveurpaiement";
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(fis, keyStorePass.toCharArray());
+
+        String keyPass = "cleserveur";
+        PrivateKey cle = (PrivateKey) ks.getKey("cleserveurpaiement", keyPass.toCharArray());
+        return cle;
+
+        /*ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cles/clePriveeServeur.ser"));
         PrivateKey cle = (PrivateKey) ois.readObject();
         ois.close();
-        return cle;
+        return cle;*/
     }
 }
