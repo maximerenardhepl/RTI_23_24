@@ -2,6 +2,7 @@ package org.example.handlers;
 
 import com.nimbusds.jose.shaded.gson.Gson;
 import com.nimbusds.jose.shaded.gson.JsonArray;
+import com.nimbusds.jose.shaded.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.example.modele.Article;
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,14 +41,42 @@ public class HandlerForm implements HttpHandler {
             BufferedReader br = new BufferedReader(isr);
             String data = br.readLine();
 
-            //envoyer donner a la bd
+            // Extraction des données JSON du corps de la requête
+            Gson gson = new Gson();
+            Article updatedArticle = gson.fromJson(data, Article.class);
 
-            // Envoyer une réponse au client
-            String response = "Mise à jour du stock effectuée avec succès";
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            // Mise à jour de la base de données
+            try {
+                // Construire la requête SQL de mise à jour
+                String updateQuery = String.format(
+                        "UPDATE articles SET prix = %s, stock = %s WHERE id = %s",
+                        updatedArticle.getPrix(),
+                        updatedArticle.getQuantiter(),
+                        updatedArticle.getId()
+                );
+
+                // Exécution de la requête SQL
+                con.executeUpdate(updateQuery);
+
+                // Envoyer une réponse au client
+                String response = "Mise à jour du stock effectuée avec succès";
+                exchange.sendResponseHeaders(200, response.length());
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            } catch (SQLException e) {
+                // Gérer l'exception SQL ici
+                System.err.println("Erreur lors de l'exécution de la requête SQL : " + e.getMessage());
+                exchange.sendResponseHeaders(500, 0);  // Code 500 pour une erreur interne du serveur
+                OutputStream os = exchange.getResponseBody();
+                os.close();
+            } catch (JsonSyntaxException e) {
+                // Gérer l'exception Gson ici
+                System.err.println("Erreur lors de la conversion JSON : " + e.getMessage());
+                exchange.sendResponseHeaders(400, 0);  // Code 400 pour une mauvaise requête du client
+                OutputStream os = exchange.getResponseBody();
+                os.close();
+            }
         }
         else
         {

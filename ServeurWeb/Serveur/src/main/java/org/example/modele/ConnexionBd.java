@@ -53,10 +53,12 @@ public class ConnexionBd {
 
     //ferme la connexion a la base de donnée
     public synchronized void close() throws SQLException {
-        if(connection != null && !connection.isClosed()) {
+        if (connection != null && !connection.isClosed()) {
             connection.close();
         }
     }
+
+
 }
 
 

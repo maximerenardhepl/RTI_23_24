@@ -11,21 +11,22 @@ import java.nio.file.Files;
 public class HandlerImage implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-// Lecture de la requete
+
+        // Lecture de la requete
         String requestPath = exchange.getRequestURI().getPath();
         String requestMethod = exchange.getRequestMethod();
-        System.out.print("HandlerImages (methode " + requestMethod + ") = " +
-                requestPath + " --> ");
+        System.out.print("HandlerImages (methode " + requestMethod + ") = " + requestPath + " --> ");
+
         // Ecriture de la reponse
         if (requestPath.endsWith(".jpg"))
         {
-            String fichier = "/home/student/MonSite/" + requestPath;
+            String temp = System.getProperty("user.dir") + "\\src\\main\\resources";
+            String fichier = temp + requestPath.replace("/","\\");
             File file = new File(fichier);
             if (file.exists())
             {
                 exchange.sendResponseHeaders(200, file.length());
-                exchange.getResponseHeaders().set("Content-Type",
-                        "image/jpeg");
+                exchange.getResponseHeaders().set("Content-Type", "image/jpeg");
                 OutputStream os = exchange.getResponseBody();
                 Files.copy(file.toPath(), os);
                 os.close();

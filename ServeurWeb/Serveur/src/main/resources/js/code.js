@@ -1,4 +1,4 @@
-var currentArticle = {
+var Articlecourrant = {
     id: -1,
     nom: "",
     prix: 0.0,
@@ -6,13 +6,14 @@ var currentArticle = {
     image: "",
 };
 
-var listArticle = [];  // Correction: changement de 'listeArticle' à 'listArticle'
+var listArticle = [];
+var data;  // Déclarer la variable data à un niveau supérieur
 
 document.addEventListener("DOMContentLoaded", function () {
     getArticle();
 
     document.getElementById("updateButton").addEventListener("click", function (event) {
-        event.preventDefault();  // Empêche le rechargement de la page
+        event.preventDefault();
         updateDB();
     });
 });
@@ -29,14 +30,15 @@ function getArticle() {
     };
     xhr.open("GET", url, true);
     xhr.send();
+
+    document.getElementById("tableBody").classList.add("animate__animated", "animate__fadeInUp");
 }
 
 function tableUpdate(articles) {
     resetTable();
-    resetForm();
     listArticle = [];
     var body = document.getElementById("tableBody");
-    currentArticle.id = -1;
+    Articlecourrant.id = -1;
 
     articles.forEach((element) => {
         const newRow = body.insertRow();
@@ -46,23 +48,28 @@ function tableUpdate(articles) {
         newRow.insertCell(2).textContent = element.prix;
         newRow.insertCell(3).textContent = element.quantiter;
         listArticle.push(element);
+
+        // Ajouter une animation pour chaque ligne du tableau
+        newRow.classList.add("animate__animated", "animate__fadeIn");
+
         newRow.onclick = function () {
-            if (currentArticle.id !== -1) {
+            if (Articlecourrant.id !== -1) {
                 var selectedRows = body.getElementsByClassName("selected");
                 selectedRows[0].classList.remove("selected");
             }
 
             this.classList.add("selected");
+
+            this.classList.add("animate__animated", "animate__pulse");
+
             var idSelected = parseInt(this.cells[0].innerHTML);
-            currentArticle = listArticle.find((article) => article.id === idSelected);
+            Articlecourrant = listArticle.find((article) => article.id === idSelected);
 
-            document.getElementById("id").value = currentArticle.id;
-            document.getElementById("article").value = currentArticle.nom;
-            document.getElementById("prixUnitaire").value = currentArticle.prix;
-            document.getElementById("quantite").value = currentArticle.quantiter;
-            document.getElementById("imageaff").src = "img/" + currentArticle.image;
-            console.log("img/" + currentArticle.image);
-
+            document.getElementById("id").value = Articlecourrant.id;
+            document.getElementById("article").value = Articlecourrant.nom;
+            document.getElementById("prixUnitaire").value = Articlecourrant.prix;
+            document.getElementById("quantite").value = Articlecourrant.quantiter;
+            document.getElementById("imageaff").src = "images/" + Articlecourrant.image;
         };
     });
 }
@@ -75,30 +82,10 @@ function resetTable() {
     }
 }
 
-function resetForm() {
-    document.getElementById("id").value = "";
-    document.getElementById("article").value = "";
-    document.getElementById("prixUnitaire").value = 0;
-    document.getElementById("quantite").value = 0;
-}
-
-function updateCurrentArticleFromForm() {
-    currentArticle.prix = document.getElementById("prixUnitaire").value;
-    currentArticle.quantiter = document.getElementById("quantite").value;
-}
-
 function updateDB() {
     var xhr = new XMLHttpRequest();
     var url = "http://localhost:8080/FormArticle";
-    updateCurrentArticleFromForm();
-    var data =
-        "id=" +
-        currentArticle.id +
-        "&price=" +
-        currentArticle.prix +
-        "&quantity=" +
-        currentArticle.quantiter;
-
+    update();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             getArticle();
@@ -107,4 +94,30 @@ function updateDB() {
     url += data;
     xhr.open("POST", url, true);
     xhr.send();
+
+    document.getElementById("tableBody").classList.add("animate__animated", "animate__shakeX");
+    setTimeout(function () {
+        document.getElementById("tableBody").classList.remove("animate__animated", "animate__shakeX");
+    }, 1000);
+}
+
+function resetFormulaire() {
+    document.getElementById("id").value = "";
+    document.getElementById("article").value = "";
+    document.getElementById("prixUnitaire").value = 0;
+    document.getElementById("quantite").value = 0;
+}
+
+function update() {
+    Articlecourrant.prix = document.getElementById("prixUnitaire").value;
+    Articlecourrant.quantiter = document.getElementById("quantite").value;
+
+    // Mettre à jour la variable data avec les nouvelles valeurs
+    data =
+        "id=" +
+        Articlecourrant.id +
+        "&price=" +
+        Articlecourrant.prix +
+        "&quantity=" +
+        Articlecourrant.quantiter;
 }
