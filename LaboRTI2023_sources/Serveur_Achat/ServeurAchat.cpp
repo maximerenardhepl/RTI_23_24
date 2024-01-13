@@ -223,8 +223,10 @@ void TraitementClient(int sService)
         }
     
         //si oncontinue deviens false c'est la fin de la connexion
-        if(!onContinue)
+        if(!onContinue) {
             printf("\t[THREAD %p] Fin de connexion de la socket %d\n", pthread_self(), sService);
+            retire(sService);
+        }
     }
 }
 
