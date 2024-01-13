@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClientGerant</title>
-    <link href="style/style.css" rel="stylesheet" type="text/css" >
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="style/style.css" rel="stylesheet" type="text/css">
+    <script src="./js/code.js"></script>
 </head>
 <body>
-    <h1>!!! Bienvenu sur le site du Maraicher en ligne</h1>
+<h1>!!! Bienvenue sur le site du Maraîcher en ligne</h1>
 <div id="contenu">
     <div id="tableau">
         <table border="1" id="tab">
@@ -24,19 +25,14 @@
         </table>
     </div>
 
-
-
     <div id="formulaire">
-
+        <p>Article sélectionné :</p>
         <form id="updateForm">
-
-            <p>Article sélectionné :</p>
-
             <label for="id">ID :</label>
-            <input type="text" id="id" name="id" required><br>
+            <input type="text" id="id" name="id" readonly required><br>
 
             <label for="article">Article :</label>
-            <input type="text" id="article" name="article" required><br>
+            <input type="text" id="article" name="article" readonly required><br>
 
             <label for="prixUnitaire">Prix Unitaire :</label>
             <input type="number" id="prixUnitaire" name="prixUnitaire" required><br>
@@ -44,59 +40,12 @@
             <label for="quantite">Quantité :</label>
             <input type="number" id="quantite" name="quantite" required><br>
 
-            <button type="button" onclick="updateValues()">Mettre à jour</button>
+            <button type="button" id="updateButton">Mettre à jour</button>
         </form>
     </div>
 
-    <div id="image">
-    <img src="" alt="">
-    </div>
+    <img id="imageaff" src="" alt="cliquer pour voir l'article séléectionner">
+
 </div>
-
-    <script>
-        function updateValues() {
-            // recup les val
-            var id = document.getElementById("id").value;
-            var article = document.getElementById("article").value;
-            var prixUnitaire = document.getElementById("prixUnitaire").value;
-            var quantite = document.getElementById("quantite").value;
-
-            // affichage consol
-            console.log("ID:", id);
-            console.log("Article:", article);
-            console.log("Prix Unitaire:", prixUnitaire);
-            console.log("Quantité:", quantite);
-        }
-
-        // Données dynamiques pour le tableau
-        var produits = [
-            { id: 1, article: "Produit A", prixUnitaire: 10.99, quantite: 5 },
-            { id: 2, article: "Produit B", prixUnitaire: 25.50, quantite: 3 },
-            { id: 3, article: "Produit C", prixUnitaire: 5.00, quantite: 10 },
-            // Ajoutez autant d'objets que nécessaire
-        ];
-
-        // Fonction pour générer le contenu du tableau
-        function generateTable() {
-            var tableBody = document.getElementById("tableBody");
-
-            // Boucle à travers les produits et génère les lignes du tableau
-            for (var i = 0; i < produits.length; i++) {
-                var row = tableBody.insertRow(i);
-                var cellId = row.insertCell(0);
-                var cellArticle = row.insertCell(1);
-                var cellPrixUnitaire = row.insertCell(2);
-                var cellQuantite = row.insertCell(3);
-
-                cellId.innerHTML = produits[i].id;
-                cellArticle.innerHTML = produits[i].article;
-                cellPrixUnitaire.innerHTML = produits[i].prixUnitaire.toFixed(2);
-                cellQuantite.innerHTML = produits[i].quantite;
-            }
-        }
-
-        // Appeler la fonction pour générer le tableau lors du chargement de la page
-        window.onload = generateTable;
-    </script>
 </body>
 </html>

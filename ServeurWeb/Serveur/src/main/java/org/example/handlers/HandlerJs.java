@@ -1,4 +1,4 @@
-package org.example.Handlers;
+package org.example.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-public class HandlerHtml implements HttpHandler {
+public class HandlerJs implements HttpHandler {
+
     @Override
     public void handle(HttpExchange exchange) throws IOException
     {
@@ -19,17 +20,17 @@ public class HandlerHtml implements HttpHandler {
         System.out.print("HandlerHtml (methode " + requestMethod + ") = " + requestPath + " --> ");
 
         // Ecriture de la reponse
-        if (requestPath.endsWith(".html"))
+        if (requestPath.endsWith(".js"))
         {
 
             String temp = System.getProperty("user.dir") + "\\src\\main\\resources";
 
-            String fichier = "\\index.html" ;
+            String fichier = "\\js\\code.js" ;
             File file = new File(temp + fichier);
             if (file.exists())
             {
                 exchange.sendResponseHeaders(200, file.length());
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.getResponseHeaders().set("Content-Type", "text/js");
                 OutputStream os = exchange.getResponseBody();
                 Files.copy(file.toPath(), os);
                 os.close();
@@ -51,3 +52,4 @@ public class HandlerHtml implements HttpHandler {
         System.out.println("KO");
     }
 }
+
