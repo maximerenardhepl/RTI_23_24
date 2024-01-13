@@ -91,14 +91,16 @@ function updateDB() {
             getArticle();
         }
     };
-    url += data;
     xhr.open("POST", url, true);
-    xhr.send();
 
-    document.getElementById("tableBody").classList.add("animate__animated", "animate__shakeX");
-    setTimeout(function () {
-        document.getElementById("tableBody").classList.remove("animate__animated", "animate__shakeX");
-    }, 1000);
+    // Définir l'en-tête de la requête pour indiquer l'envoi de données JSON
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    console.log(data)
+
+    xhr.send(data);
+    getArticle();
+    resetTable();
 }
 
 function resetFormulaire() {
@@ -113,11 +115,12 @@ function update() {
     Articlecourrant.quantiter = document.getElementById("quantite").value;
 
     // Mettre à jour la variable data avec les nouvelles valeurs
-    data =
-        "id=" +
-        Articlecourrant.id +
-        "&price=" +
-        Articlecourrant.prix +
-        "&quantity=" +
-        Articlecourrant.quantiter;
+    var articleData = {
+        id: Articlecourrant.id,
+        price: Articlecourrant.prix,
+        quantity: Articlecourrant.quantiter
+    };
+
+    // Convertir les données en JSON
+    data = JSON.stringify(articleData);
 }
