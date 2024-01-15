@@ -6,7 +6,7 @@ import java.util.Hashtable;
 public class ConnexionBd {
     private static Connection connection;
     private static final String MYSQL = "MySql";
-    private static final String SERVER = "192.168.223.128";
+    private static final String SERVER = "192.168.207.250";
     private static final String DB_NAME = "PourStudent";
     private static final String USER = "Student";
     private static final String PASSWORD = "PassStudent1_";

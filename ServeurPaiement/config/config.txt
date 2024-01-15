@@ -1,2 +1,2 @@
-DbServerIp=192.168.1.22
+DbServerIp=10.222.20.31
 port=60000

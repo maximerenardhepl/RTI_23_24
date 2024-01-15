@@ -18,6 +18,11 @@
 
 using namespace std;
 
+//Gestion des clients
+bool estPresent(int socket);
+bool ajoute(int socket);
+void retire(int socket);
+
 //prend la requete du client et la décortique
 bool OVESP_Decode(char* requete, char* reponse, int socket, MYSQL *conn, Article* panier[]);
 

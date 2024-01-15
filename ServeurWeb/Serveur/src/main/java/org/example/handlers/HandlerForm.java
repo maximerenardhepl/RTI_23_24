@@ -35,7 +35,6 @@ public class HandlerForm implements HttpHandler {
         System.out.print("call HandlerForm");
         if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
             System.out.print("request POST");
-            System.out.print("aaaaaaaaaaaaaaaa");
 
             // Traitement des requêtes POST
             // Récupérer les données du corps de la requête
